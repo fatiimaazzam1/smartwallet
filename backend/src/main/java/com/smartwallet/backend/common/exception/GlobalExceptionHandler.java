@@ -23,18 +23,16 @@ public class GlobalExceptionHandler {
         String message = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .map(error ->
+                        error.getField() + ": " + error.getDefaultMessage()
+                )
                 .collect(Collectors.joining(", "));
 
-        ApiErrorResponse response = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
                 message,
-                request.getRequestURI()
+                request
         );
-
-        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -43,15 +41,11 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
 
-        ApiErrorResponse response = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
                 exception.getMessage(),
-                request.getRequestURI()
+                request
         );
-
-        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -60,16 +54,68 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
 
+        return buildResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentialsException(
+            InvalidCredentialsException exception,
+            HttpServletRequest request
+    ) {
+
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(AccountDisabledException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccountDisabledException(
+            AccountDisabledException exception,
+            HttpServletRequest request
+    ) {
+
+        return buildResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidRefreshTokenException(
+            InvalidRefreshTokenException exception,
+            HttpServletRequest request
+    ) {
+
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    private ResponseEntity<ApiErrorResponse> buildResponse(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request
+    ) {
+
         ApiErrorResponse response = new ApiErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.CONFLICT.value(),
-                HttpStatus.CONFLICT.getReasonPhrase(),
-                exception.getMessage(),
+                status.value(),
+                status.getReasonPhrase(),
+                message,
                 request.getRequestURI()
         );
 
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
+                .status(status)
                 .body(response);
     }
 }
