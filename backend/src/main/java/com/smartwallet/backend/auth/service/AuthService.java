@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smartwallet.backend.auth.domain.EmailActionCode;
 import com.smartwallet.backend.auth.domain.EmailActionPurpose;
+import com.smartwallet.backend.auth.dto.request.EmailRequest;
 import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
@@ -38,6 +39,10 @@ public class AuthService {
 
     private static final String INVALID_EMAIL_CODE_MESSAGE =
             "The email code is invalid or expired";
+
+    private static final String GENERIC_VERIFICATION_RESEND_MESSAGE =
+            "If an unverified account exists, "
+                    + "a new verification code has been sent.";
 
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
@@ -157,6 +162,52 @@ public class AuthService {
 
         return new MessageResponse(
                 "Email verified successfully"
+        );
+    }
+
+    @Transactional
+    public MessageResponse resendVerificationCode(
+            EmailRequest request
+    ) {
+
+        String normalizedEmail = request.email()
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
+        User user = userRepository
+                .findByEmailIgnoreCase(normalizedEmail)
+                .orElse(null);
+
+        if (user == null
+                || user.getAccountStatus() == AccountStatus.DISABLED) {
+
+            return new MessageResponse(
+                    GENERIC_VERIFICATION_RESEND_MESSAGE
+            );
+        }
+
+        if (user.getAccountStatus() == AccountStatus.ACTIVE
+                && user.getEmailVerifiedAt() != null) {
+
+            return new MessageResponse(
+                    "Email is already verified"
+            );
+        }
+
+        String verificationCode =
+                emailActionCodeService.issueCode(
+                        user,
+                        EmailActionPurpose.EMAIL_VERIFICATION
+                );
+
+        emailSenderService.sendVerificationCode(
+                user.getEmail(),
+                user.getFirstName(),
+                verificationCode
+        );
+
+        return new MessageResponse(
+                "A new verification code was sent"
         );
     }
 

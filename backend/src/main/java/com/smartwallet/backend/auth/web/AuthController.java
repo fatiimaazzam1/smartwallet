@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smartwallet.backend.auth.dto.request.EmailRequest;
 import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
@@ -47,6 +48,17 @@ public class AuthController {
 
         MessageResponse response =
                 authService.verifyEmail(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/resend-verification-code")
+    public ResponseEntity<MessageResponse> resendVerificationCode(
+            @Valid @RequestBody EmailRequest request
+    ) {
+
+        MessageResponse response =
+                authService.resendVerificationCode(request);
 
         return ResponseEntity.ok(response);
     }
