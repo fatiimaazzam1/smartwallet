@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.smartwallet.backend.auth.domain.EmailActionCode;
 import com.smartwallet.backend.auth.domain.EmailActionPurpose;
 import com.smartwallet.backend.auth.repository.EmailActionCodeRepository;
+import com.smartwallet.backend.common.exception.InvalidEmailActionCodeException;
 import com.smartwallet.backend.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,11 @@ public class EmailActionCodeService {
 
     private static final Duration RESEND_COOLDOWN =
             Duration.ofSeconds(60);
+
+    private static final int MAX_FAILED_ATTEMPTS = 5;
+
+    private static final String INVALID_CODE_MESSAGE =
+            "The email code is invalid or expired";
 
     private final EmailActionCodeRepository emailActionCodeRepository;
     private final EmailCodeService emailCodeService;
@@ -52,30 +58,124 @@ public class EmailActionCodeService {
                         purpose,
                         emailCodeService.encode(rawCode),
                         now.plus(CODE_EXPIRATION),
-                        now.plus(RESEND_COOLDOWN));
+                        now.plus(RESEND_COOLDOWN)
+                );
 
         emailActionCodeRepository.save(newCode);
 
         return rawCode;
     }
 
+    @Transactional(
+            noRollbackFor = InvalidEmailActionCodeException.class
+    )
+    public EmailActionCode verifyCode(
+            User user,
+            EmailActionPurpose purpose,
+            String rawCode) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        EmailActionCode actionCode =
+                emailActionCodeRepository
+                        .findFirstByUserAndPurposeAndInvalidatedAtIsNullAndUsedAtIsNullOrderByCreatedAtDesc(
+                                user,
+                                purpose)
+                        .orElseThrow(() ->
+                                new InvalidEmailActionCodeException(
+                                        INVALID_CODE_MESSAGE
+                                )
+                        );
+
+        validateCodeState(actionCode, now);
+
+        if (!emailCodeService.matches(
+                rawCode,
+                actionCode.getCodeHash()
+        )) {
+            registerFailedAttempt(actionCode, now);
+
+            throw new InvalidEmailActionCodeException(
+                    INVALID_CODE_MESSAGE
+            );
+        }
+
+        actionCode.setVerifiedAt(now);
+
+        return emailActionCodeRepository.save(actionCode);
+    }
+
+    @Transactional
+    public void markUsed(EmailActionCode actionCode) {
+
+        actionCode.setUsedAt(LocalDateTime.now());
+
+        emailActionCodeRepository.save(actionCode);
+    }
+
+    private void validateCodeState(
+            EmailActionCode actionCode,
+            LocalDateTime now) {
+
+        boolean expired =
+                !now.isBefore(actionCode.getExpiresAt());
+
+        boolean alreadyVerified =
+                actionCode.getVerifiedAt() != null;
+
+        boolean attemptsExceeded =
+                actionCode.getFailedAttempts()
+                        >= MAX_FAILED_ATTEMPTS;
+
+        if (expired || alreadyVerified || attemptsExceeded) {
+
+            if (actionCode.getInvalidatedAt() == null) {
+                actionCode.setInvalidatedAt(now);
+                emailActionCodeRepository.save(actionCode);
+            }
+
+            throw new InvalidEmailActionCodeException(
+                    INVALID_CODE_MESSAGE
+            );
+        }
+    }
+
+    private void registerFailedAttempt(
+            EmailActionCode actionCode,
+            LocalDateTime now) {
+
+        int updatedAttempts =
+                actionCode.getFailedAttempts() + 1;
+
+        actionCode.setFailedAttempts(updatedAttempts);
+
+        if (updatedAttempts >= MAX_FAILED_ATTEMPTS) {
+            actionCode.setInvalidatedAt(now);
+        }
+
+        emailActionCodeRepository.save(actionCode);
+    }
+
     private void validateResendCooldown(
             EmailActionCode existingCode,
             LocalDateTime now) {
 
-        if (!now.isBefore(existingCode.getResendAvailableAt())) {
+        if (!now.isBefore(
+                existingCode.getResendAvailableAt()
+        )) {
             return;
         }
 
         long remainingSeconds =
                 Duration.between(
                         now,
-                        existingCode.getResendAvailableAt())
-                        .toSeconds();
+                        existingCode.getResendAvailableAt()
+                ).toSeconds();
 
         throw new IllegalStateException(
                 "A new email code can be requested in "
                         + Math.max(1, remainingSeconds)
-                        + " seconds.");
+                        + " seconds."
+        );
     }
 }

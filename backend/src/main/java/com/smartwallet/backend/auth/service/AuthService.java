@@ -1,21 +1,26 @@
 package com.smartwallet.backend.auth.service;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartwallet.backend.auth.domain.EmailActionCode;
 import com.smartwallet.backend.auth.domain.EmailActionPurpose;
 import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
+import com.smartwallet.backend.auth.dto.request.VerifyEmailRequest;
 import com.smartwallet.backend.auth.dto.response.AuthenticatedUserResponse;
 import com.smartwallet.backend.auth.dto.response.LoginResponse;
+import com.smartwallet.backend.auth.dto.response.MessageResponse;
 import com.smartwallet.backend.auth.dto.response.RefreshTokenResponse;
 import com.smartwallet.backend.auth.dto.response.RegisterResponse;
 import com.smartwallet.backend.common.exception.AccountDisabledException;
 import com.smartwallet.backend.common.exception.InvalidCredentialsException;
+import com.smartwallet.backend.common.exception.InvalidEmailActionCodeException;
 import com.smartwallet.backend.preference.domain.UserPreference;
 import com.smartwallet.backend.preference.repository.UserPreferenceRepository;
 import com.smartwallet.backend.security.jwt.JwtService;
@@ -30,6 +35,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private static final String INVALID_EMAIL_CODE_MESSAGE =
+            "The email code is invalid or expired";
 
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
@@ -95,6 +103,60 @@ public class AuthService {
                 savedUser.getLastName(),
                 savedUser.getEmail(),
                 "Account created. Check your email for the verification code."
+        );
+    }
+
+    @Transactional(
+            noRollbackFor = InvalidEmailActionCodeException.class
+    )
+    public MessageResponse verifyEmail(
+            VerifyEmailRequest request
+    ) {
+
+        String normalizedEmail = request.email()
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
+        User user = userRepository
+                .findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() ->
+                        new InvalidEmailActionCodeException(
+                                INVALID_EMAIL_CODE_MESSAGE
+                        )
+                );
+
+        if (user.getAccountStatus() == AccountStatus.DISABLED) {
+            throw new AccountDisabledException(
+                    "This account is disabled"
+            );
+        }
+
+        if (user.getAccountStatus() == AccountStatus.ACTIVE
+                && user.getEmailVerifiedAt() != null) {
+
+            return new MessageResponse(
+                    "Email is already verified"
+            );
+        }
+
+        EmailActionCode actionCode =
+                emailActionCodeService.verifyCode(
+                        user,
+                        EmailActionPurpose.EMAIL_VERIFICATION,
+                        request.code()
+                );
+
+        LocalDateTime now = LocalDateTime.now();
+
+        user.setAccountStatus(AccountStatus.ACTIVE);
+        user.setEmailVerifiedAt(now);
+
+        userRepository.save(user);
+
+        emailActionCodeService.markUsed(actionCode);
+
+        return new MessageResponse(
+                "Email verified successfully"
         );
     }
 

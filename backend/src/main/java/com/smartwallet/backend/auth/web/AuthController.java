@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
+import com.smartwallet.backend.auth.dto.request.VerifyEmailRequest;
 import com.smartwallet.backend.auth.dto.response.LoginResponse;
+import com.smartwallet.backend.auth.dto.response.MessageResponse;
 import com.smartwallet.backend.auth.dto.response.RefreshTokenResponse;
 import com.smartwallet.backend.auth.dto.response.RegisterResponse;
 import com.smartwallet.backend.auth.service.AuthService;
@@ -30,11 +32,23 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request
     ) {
 
-        RegisterResponse response = authService.register(request);
+        RegisterResponse response =
+                authService.register(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<MessageResponse> verifyEmail(
+            @Valid @RequestBody VerifyEmailRequest request
+    ) {
+
+        MessageResponse response =
+                authService.verifyEmail(request);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
@@ -42,7 +56,8 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request
     ) {
 
-        LoginResponse response = authService.login(request);
+        LoginResponse response =
+                authService.login(request);
 
         return ResponseEntity.ok(response);
     }

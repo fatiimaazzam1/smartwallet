@@ -61,6 +61,20 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidEmailActionCodeException.class)
+    public ResponseEntity<ApiErrorResponse>
+            handleInvalidEmailActionCodeException(
+                    InvalidEmailActionCodeException exception,
+                    HttpServletRequest request
+            ) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                request
+        );
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidCredentialsException(
             InvalidCredentialsException exception,
