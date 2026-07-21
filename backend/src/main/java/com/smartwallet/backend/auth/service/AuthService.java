@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartwallet.backend.auth.domain.EmailActionPurpose;
 import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
@@ -36,6 +37,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final EmailActionCodeService emailActionCodeService;
+    private final EmailSenderService emailSenderService;
 
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
@@ -74,12 +77,24 @@ public class AuthService {
                 new UserPreference(savedUser)
         );
 
+        String verificationCode =
+                emailActionCodeService.issueCode(
+                        savedUser,
+                        EmailActionPurpose.EMAIL_VERIFICATION
+                );
+
+        emailSenderService.sendVerificationCode(
+                savedUser.getEmail(),
+                savedUser.getFirstName(),
+                verificationCode
+        );
+
         return new RegisterResponse(
                 savedUser.getId(),
                 savedUser.getFirstName(),
                 savedUser.getLastName(),
                 savedUser.getEmail(),
-                "Account created successfully"
+                "Account created. Check your email for the verification code."
         );
     }
 
