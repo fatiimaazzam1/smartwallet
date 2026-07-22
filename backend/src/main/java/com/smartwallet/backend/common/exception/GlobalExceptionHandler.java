@@ -88,6 +88,20 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(EmailVerificationRequiredException.class)
+    public ResponseEntity<ApiErrorResponse>
+            handleEmailVerificationRequiredException(
+                    EmailVerificationRequiredException exception,
+                    HttpServletRequest request
+            ) {
+
+        return buildResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage(),
+                request
+        );
+    }
+
     @ExceptionHandler(AccountDisabledException.class)
     public ResponseEntity<ApiErrorResponse> handleAccountDisabledException(
             AccountDisabledException exception,

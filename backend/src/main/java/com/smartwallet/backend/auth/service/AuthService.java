@@ -20,6 +20,7 @@ import com.smartwallet.backend.auth.dto.response.MessageResponse;
 import com.smartwallet.backend.auth.dto.response.RefreshTokenResponse;
 import com.smartwallet.backend.auth.dto.response.RegisterResponse;
 import com.smartwallet.backend.common.exception.AccountDisabledException;
+import com.smartwallet.backend.common.exception.EmailVerificationRequiredException;
 import com.smartwallet.backend.common.exception.InvalidCredentialsException;
 import com.smartwallet.backend.common.exception.InvalidEmailActionCodeException;
 import com.smartwallet.backend.preference.domain.UserPreference;
@@ -220,9 +221,11 @@ public class AuthService {
 
         User user = userRepository
                 .findByEmailIgnoreCase(normalizedEmail)
-                .orElseThrow(() -> new InvalidCredentialsException(
-                        "Invalid email or password"
-                ));
+                .orElseThrow(() ->
+                        new InvalidCredentialsException(
+                                "Invalid email or password"
+                        )
+                );
 
         if (!passwordEncoder.matches(
                 request.password(),
@@ -239,7 +242,17 @@ public class AuthService {
             );
         }
 
-        String accessToken = jwtService.generateAccessToken(user);
+        if (user.getAccountStatus()
+                == AccountStatus.PENDING_VERIFICATION
+                || user.getEmailVerifiedAt() == null) {
+
+            throw new EmailVerificationRequiredException(
+                    "Email verification is required"
+            );
+        }
+
+        String accessToken =
+                jwtService.generateAccessToken(user);
 
         String refreshToken =
                 refreshTokenService.createRefreshToken(user);
@@ -275,7 +288,8 @@ public class AuthService {
             );
         }
 
-        String accessToken = jwtService.generateAccessToken(user);
+        String accessToken =
+                jwtService.generateAccessToken(user);
 
         return new RefreshTokenResponse(
                 accessToken,
