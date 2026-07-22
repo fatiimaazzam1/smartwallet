@@ -15,9 +15,11 @@ import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
 import com.smartwallet.backend.auth.dto.request.VerifyEmailRequest;
+import com.smartwallet.backend.auth.dto.request.VerifyPasswordResetCodeRequest;
 import com.smartwallet.backend.auth.dto.response.AuthenticatedUserResponse;
 import com.smartwallet.backend.auth.dto.response.LoginResponse;
 import com.smartwallet.backend.auth.dto.response.MessageResponse;
+import com.smartwallet.backend.auth.dto.response.PasswordResetTokenResponse;
 import com.smartwallet.backend.auth.dto.response.RefreshTokenResponse;
 import com.smartwallet.backend.auth.dto.response.RegisterResponse;
 import com.smartwallet.backend.common.exception.AccountDisabledException;
@@ -44,6 +46,9 @@ public class AuthService {
 
     private static final String INVALID_EMAIL_VERIFICATION_MESSAGE =
             "The email verification request is invalid or expired";
+
+    private static final String INVALID_PASSWORD_RESET_CODE_MESSAGE =
+            "The password reset code is invalid or expired";
 
     private static final String GENERIC_VERIFICATION_RESEND_MESSAGE =
             "If an unverified account exists, "
@@ -136,8 +141,8 @@ public class AuthService {
 
         User user = userRepository
                 .findByEmailIgnoreCase(normalizedEmail)
-                .orElseThrow(() ->
-                        invalidEmailVerificationRequest()
+                .orElseThrow(
+                        this::invalidEmailVerificationRequest
                 );
 
         if (user.getAccountStatus()
@@ -239,6 +244,47 @@ public class AuthService {
 
         return new MessageResponse(
                 GENERIC_PASSWORD_RESET_MESSAGE
+        );
+    }
+
+    @Transactional(
+            noRollbackFor =
+                    InvalidEmailActionCodeException.class
+    )
+    public PasswordResetTokenResponse verifyPasswordResetCode(
+            VerifyPasswordResetCodeRequest request
+    ) {
+
+        String normalizedEmail =
+                normalizeEmail(request.email());
+
+        User user = userRepository
+                .findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(
+                        this::invalidPasswordResetCode
+                );
+
+        if (!isActiveAndVerified(user)) {
+            throw invalidPasswordResetCode();
+        }
+
+        String resetToken;
+
+        try {
+            resetToken =
+                    emailActionCodeService
+                            .verifyPasswordResetCode(
+                                    user,
+                                    request.code()
+                            );
+        } catch (InvalidEmailActionCodeException exception) {
+            throw invalidPasswordResetCode();
+        }
+
+        return new PasswordResetTokenResponse(
+                resetToken,
+                emailActionCodeService
+                        .getActionTokenExpirationSeconds()
         );
     }
 
@@ -391,6 +437,14 @@ public class AuthService {
 
         return new InvalidEmailActionCodeException(
                 INVALID_EMAIL_VERIFICATION_MESSAGE
+        );
+    }
+
+    private InvalidEmailActionCodeException
+            invalidPasswordResetCode() {
+
+        return new InvalidEmailActionCodeException(
+                INVALID_PASSWORD_RESET_CODE_MESSAGE
         );
     }
 

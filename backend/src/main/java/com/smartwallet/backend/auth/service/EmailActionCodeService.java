@@ -25,6 +25,9 @@ public class EmailActionCodeService {
     private static final Duration RESEND_COOLDOWN =
             Duration.ofSeconds(60);
 
+    private static final Duration ACTION_TOKEN_EXPIRATION =
+            Duration.ofMinutes(10);
+
     private static final int MAX_FAILED_ATTEMPTS = 5;
 
     private static final String INVALID_CODE_MESSAGE =
@@ -32,6 +35,7 @@ public class EmailActionCodeService {
 
     private final EmailActionCodeRepository emailActionCodeRepository;
     private final EmailCodeService emailCodeService;
+    private final PasswordResetTokenService passwordResetTokenService;
 
     @Transactional
     public String issueCode(
@@ -131,6 +135,52 @@ public class EmailActionCodeService {
         );
     }
 
+    @Transactional(
+            noRollbackFor =
+                    InvalidEmailActionCodeException.class
+    )
+    public String verifyPasswordResetCode(
+            User user,
+            String rawCode
+    ) {
+
+        EmailActionCode actionCode =
+                verifyCode(
+                        user,
+                        EmailActionPurpose.PASSWORD_RESET,
+                        rawCode
+                );
+
+        LocalDateTime now = LocalDateTime.now();
+
+        String rawResetToken =
+                passwordResetTokenService.generateToken();
+
+        String resetTokenHash =
+                passwordResetTokenService.hashToken(
+                        rawResetToken
+                );
+
+        actionCode.setActionTokenHash(
+                resetTokenHash
+        );
+
+        actionCode.setActionTokenExpiresAt(
+                now.plus(ACTION_TOKEN_EXPIRATION)
+        );
+
+        emailActionCodeRepository.save(
+                actionCode
+        );
+
+        return rawResetToken;
+    }
+
+    public long getActionTokenExpirationSeconds() {
+
+        return ACTION_TOKEN_EXPIRATION.toSeconds();
+    }
+
     @Transactional
     public void markUsed(
             EmailActionCode actionCode
@@ -162,10 +212,13 @@ public class EmailActionCodeService {
                 actionCode.getFailedAttempts()
                         >= MAX_FAILED_ATTEMPTS;
 
-        if (!expired
-                && !alreadyVerified
-                && !attemptsExceeded) {
+        if (alreadyVerified) {
+            throw new InvalidEmailActionCodeException(
+                    INVALID_CODE_MESSAGE
+            );
+        }
 
+        if (!expired && !attemptsExceeded) {
             return;
         }
 

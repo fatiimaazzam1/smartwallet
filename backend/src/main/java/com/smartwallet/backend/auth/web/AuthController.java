@@ -12,8 +12,10 @@ import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
 import com.smartwallet.backend.auth.dto.request.VerifyEmailRequest;
+import com.smartwallet.backend.auth.dto.request.VerifyPasswordResetCodeRequest;
 import com.smartwallet.backend.auth.dto.response.LoginResponse;
 import com.smartwallet.backend.auth.dto.response.MessageResponse;
+import com.smartwallet.backend.auth.dto.response.PasswordResetTokenResponse;
 import com.smartwallet.backend.auth.dto.response.RefreshTokenResponse;
 import com.smartwallet.backend.auth.dto.response.RegisterResponse;
 import com.smartwallet.backend.auth.service.AuthService;
@@ -81,6 +83,19 @@ public class AuthController {
 
         MessageResponse response =
                 authService.resendPasswordResetCode(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-password-reset-code")
+    public ResponseEntity<PasswordResetTokenResponse>
+            verifyPasswordResetCode(
+                    @Valid @RequestBody
+                    VerifyPasswordResetCodeRequest request
+            ) {
+
+        PasswordResetTokenResponse response =
+                authService.verifyPasswordResetCode(request);
 
         return ResponseEntity.ok(response);
     }
