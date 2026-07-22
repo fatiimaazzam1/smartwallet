@@ -63,6 +63,28 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<MessageResponse> forgotPassword(
+            @Valid @RequestBody EmailRequest request
+    ) {
+
+        MessageResponse response =
+                authService.forgotPassword(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/resend-password-reset-code")
+    public ResponseEntity<MessageResponse> resendPasswordResetCode(
+            @Valid @RequestBody EmailRequest request
+    ) {
+
+        MessageResponse response =
+                authService.resendPasswordResetCode(request);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request

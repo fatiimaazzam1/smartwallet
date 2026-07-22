@@ -70,7 +70,9 @@ public class SecurityConfig {
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/refresh",
                                 "/api/v1/auth/verify-email",
-                                "/api/v1/auth/resend-verification-code"
+                                "/api/v1/auth/resend-verification-code",
+                                "/api/v1/auth/forgot-password",
+                                "/api/v1/auth/resend-password-reset-code"
                         )
                         .permitAll()
 

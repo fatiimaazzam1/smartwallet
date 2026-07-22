@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.smartwallet.backend.auth.domain.EmailActionCode;
 import com.smartwallet.backend.auth.domain.EmailActionPurpose;
 import com.smartwallet.backend.auth.repository.EmailActionCodeRepository;
+import com.smartwallet.backend.common.exception.EmailCodeCooldownException;
 import com.smartwallet.backend.common.exception.InvalidEmailActionCodeException;
 import com.smartwallet.backend.user.domain.User;
 
@@ -35,22 +36,32 @@ public class EmailActionCodeService {
     @Transactional
     public String issueCode(
             User user,
-            EmailActionPurpose purpose) {
+            EmailActionPurpose purpose
+    ) {
 
         LocalDateTime now = LocalDateTime.now();
 
         emailActionCodeRepository
                 .findFirstByUserAndPurposeAndInvalidatedAtIsNullAndUsedAtIsNullOrderByCreatedAtDesc(
                         user,
-                        purpose)
+                        purpose
+                )
                 .ifPresent(existingCode -> {
-                    validateResendCooldown(existingCode, now);
+
+                    validateResendCooldown(
+                            existingCode,
+                            now
+                    );
 
                     existingCode.setInvalidatedAt(now);
-                    emailActionCodeRepository.save(existingCode);
+
+                    emailActionCodeRepository.save(
+                            existingCode
+                    );
                 });
 
-        String rawCode = emailCodeService.generateCode();
+        String rawCode =
+                emailCodeService.generateCode();
 
         EmailActionCode newCode =
                 new EmailActionCode(
@@ -67,12 +78,14 @@ public class EmailActionCodeService {
     }
 
     @Transactional(
-            noRollbackFor = InvalidEmailActionCodeException.class
+            noRollbackFor =
+                    InvalidEmailActionCodeException.class
     )
     public EmailActionCode verifyCode(
             User user,
             EmailActionPurpose purpose,
-            String rawCode) {
+            String rawCode
+    ) {
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -80,20 +93,31 @@ public class EmailActionCodeService {
                 emailActionCodeRepository
                         .findFirstByUserAndPurposeAndInvalidatedAtIsNullAndUsedAtIsNullOrderByCreatedAtDesc(
                                 user,
-                                purpose)
+                                purpose
+                        )
                         .orElseThrow(() ->
                                 new InvalidEmailActionCodeException(
                                         INVALID_CODE_MESSAGE
                                 )
                         );
 
-        validateCodeState(actionCode, now);
+        validateCodeState(
+                actionCode,
+                now
+        );
 
-        if (!emailCodeService.matches(
-                rawCode,
-                actionCode.getCodeHash()
-        )) {
-            registerFailedAttempt(actionCode, now);
+        boolean codeMatches =
+                emailCodeService.matches(
+                        rawCode,
+                        actionCode.getCodeHash()
+                );
+
+        if (!codeMatches) {
+
+            registerFailedAttempt(
+                    actionCode,
+                    now
+            );
 
             throw new InvalidEmailActionCodeException(
                     INVALID_CODE_MESSAGE
@@ -102,23 +126,34 @@ public class EmailActionCodeService {
 
         actionCode.setVerifiedAt(now);
 
-        return emailActionCodeRepository.save(actionCode);
+        return emailActionCodeRepository.save(
+                actionCode
+        );
     }
 
     @Transactional
-    public void markUsed(EmailActionCode actionCode) {
+    public void markUsed(
+            EmailActionCode actionCode
+    ) {
 
-        actionCode.setUsedAt(LocalDateTime.now());
+        actionCode.setUsedAt(
+                LocalDateTime.now()
+        );
 
-        emailActionCodeRepository.save(actionCode);
+        emailActionCodeRepository.save(
+                actionCode
+        );
     }
 
     private void validateCodeState(
             EmailActionCode actionCode,
-            LocalDateTime now) {
+            LocalDateTime now
+    ) {
 
         boolean expired =
-                !now.isBefore(actionCode.getExpiresAt());
+                !now.isBefore(
+                        actionCode.getExpiresAt()
+                );
 
         boolean alreadyVerified =
                 actionCode.getVerifiedAt() != null;
@@ -127,38 +162,52 @@ public class EmailActionCodeService {
                 actionCode.getFailedAttempts()
                         >= MAX_FAILED_ATTEMPTS;
 
-        if (expired || alreadyVerified || attemptsExceeded) {
+        if (!expired
+                && !alreadyVerified
+                && !attemptsExceeded) {
 
-            if (actionCode.getInvalidatedAt() == null) {
-                actionCode.setInvalidatedAt(now);
-                emailActionCodeRepository.save(actionCode);
-            }
+            return;
+        }
 
-            throw new InvalidEmailActionCodeException(
-                    INVALID_CODE_MESSAGE
+        if (actionCode.getInvalidatedAt() == null) {
+
+            actionCode.setInvalidatedAt(now);
+
+            emailActionCodeRepository.save(
+                    actionCode
             );
         }
+
+        throw new InvalidEmailActionCodeException(
+                INVALID_CODE_MESSAGE
+        );
     }
 
     private void registerFailedAttempt(
             EmailActionCode actionCode,
-            LocalDateTime now) {
+            LocalDateTime now
+    ) {
 
         int updatedAttempts =
                 actionCode.getFailedAttempts() + 1;
 
-        actionCode.setFailedAttempts(updatedAttempts);
+        actionCode.setFailedAttempts(
+                updatedAttempts
+        );
 
         if (updatedAttempts >= MAX_FAILED_ATTEMPTS) {
             actionCode.setInvalidatedAt(now);
         }
 
-        emailActionCodeRepository.save(actionCode);
+        emailActionCodeRepository.save(
+                actionCode
+        );
     }
 
     private void validateResendCooldown(
             EmailActionCode existingCode,
-            LocalDateTime now) {
+            LocalDateTime now
+    ) {
 
         if (!now.isBefore(
                 existingCode.getResendAvailableAt()
@@ -172,10 +221,8 @@ public class EmailActionCodeService {
                         existingCode.getResendAvailableAt()
                 ).toSeconds();
 
-        throw new IllegalStateException(
-                "A new email code can be requested in "
-                        + Math.max(1, remainingSeconds)
-                        + " seconds."
+        throw new EmailCodeCooldownException(
+                remainingSeconds
         );
     }
 }
