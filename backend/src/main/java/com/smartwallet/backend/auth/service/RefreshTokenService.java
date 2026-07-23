@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,46 +24,71 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RefreshTokenService {
 
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final SecureRandom SECURE_RANDOM =
+            new SecureRandom();
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProperties jwtProperties;
 
     @Transactional
-    public String createRefreshToken(User user) {
+    public String createRefreshToken(
+            User user
+    ) {
 
-        String rawToken = generateRandomToken();
-        String tokenHash = hashToken(rawToken);
+        String rawToken =
+                generateRandomToken();
 
-        LocalDateTime expiresAt = LocalDateTime.now()
-                .plusDays(jwtProperties.getRefreshTokenExpirationDays());
+        String tokenHash =
+                hashToken(rawToken);
 
-        RefreshToken refreshToken = new RefreshToken(
-                user,
-                tokenHash,
-                expiresAt
+        LocalDateTime expiresAt =
+                LocalDateTime.now()
+                        .plusDays(
+                                jwtProperties
+                                        .getRefreshTokenExpirationDays()
+                        );
+
+        RefreshToken refreshToken =
+                new RefreshToken(
+                        user,
+                        tokenHash,
+                        expiresAt
+                );
+
+        refreshTokenRepository.save(
+                refreshToken
         );
-
-        refreshTokenRepository.save(refreshToken);
 
         return rawToken;
     }
 
     @Transactional
-    public User validateAndGetUser(String rawToken) {
+    public User validateAndGetUser(
+            String rawToken
+    ) {
 
-        String tokenHash = hashToken(rawToken);
+        String tokenHash =
+                hashToken(rawToken);
 
-        RefreshToken refreshToken = refreshTokenRepository
-                .findByTokenHashAndRevokedFalse(tokenHash)
-                .orElseThrow(() -> new InvalidRefreshTokenException(
-                        "Invalid or expired refresh token"
-                ));
+        RefreshToken refreshToken =
+                refreshTokenRepository
+                        .findByTokenHashAndRevokedFalse(
+                                tokenHash
+                        )
+                        .orElseThrow(() ->
+                                new InvalidRefreshTokenException(
+                                        "Invalid or expired refresh token"
+                                )
+                        );
 
-        if (!refreshToken.getExpiresAt().isAfter(LocalDateTime.now())) {
+        if (!refreshToken.getExpiresAt()
+                .isAfter(LocalDateTime.now())) {
 
             refreshToken.setRevoked(true);
-            refreshTokenRepository.save(refreshToken);
+
+            refreshTokenRepository.save(
+                    refreshToken
+            );
 
             throw new InvalidRefreshTokenException(
                     "Invalid or expired refresh token"
@@ -73,32 +99,75 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public void revokeRefreshToken(String rawToken) {
+    public void revokeRefreshToken(
+            String rawToken
+    ) {
 
-        String tokenHash = hashToken(rawToken);
+        String tokenHash =
+                hashToken(rawToken);
 
-        RefreshToken refreshToken = refreshTokenRepository
-                .findByTokenHashAndRevokedFalse(tokenHash)
-                .orElseThrow(() -> new InvalidRefreshTokenException(
-                        "Invalid or expired refresh token"
-                ));
+        RefreshToken refreshToken =
+                refreshTokenRepository
+                        .findByTokenHashAndRevokedFalse(
+                                tokenHash
+                        )
+                        .orElseThrow(() ->
+                                new InvalidRefreshTokenException(
+                                        "Invalid or expired refresh token"
+                                )
+                        );
 
         refreshToken.setRevoked(true);
 
-        refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.save(
+                refreshToken
+        );
     }
 
-    public String hashToken(String rawToken) {
+    @Transactional
+    public void revokeAllRefreshTokens(
+            User user
+    ) {
+
+        List<RefreshToken> activeRefreshTokens =
+                refreshTokenRepository
+                        .findAllByUserAndRevokedFalse(
+                                user
+                        );
+
+        if (activeRefreshTokens.isEmpty()) {
+            return;
+        }
+
+        activeRefreshTokens.forEach(
+                refreshToken ->
+                        refreshToken.setRevoked(true)
+        );
+
+        refreshTokenRepository.saveAll(
+                activeRefreshTokens
+        );
+    }
+
+    public String hashToken(
+            String rawToken
+    ) {
 
         try {
             MessageDigest digest =
-                    MessageDigest.getInstance("SHA-256");
+                    MessageDigest.getInstance(
+                            "SHA-256"
+                    );
 
-            byte[] hashBytes = digest.digest(
-                    rawToken.getBytes(StandardCharsets.UTF_8)
-            );
+            byte[] hashBytes =
+                    digest.digest(
+                            rawToken.getBytes(
+                                    StandardCharsets.UTF_8
+                            )
+                    );
 
-            return HexFormat.of().formatHex(hashBytes);
+            return HexFormat.of()
+                    .formatHex(hashBytes);
 
         } catch (NoSuchAlgorithmException exception) {
 
@@ -111,9 +180,12 @@ public class RefreshTokenService {
 
     private String generateRandomToken() {
 
-        byte[] randomBytes = new byte[32];
+        byte[] randomBytes =
+                new byte[32];
 
-        SECURE_RANDOM.nextBytes(randomBytes);
+        SECURE_RANDOM.nextBytes(
+                randomBytes
+        );
 
         return Base64.getUrlEncoder()
                 .withoutPadding()

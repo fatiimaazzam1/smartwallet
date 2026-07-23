@@ -73,7 +73,8 @@ public class SecurityConfig {
                                 "/api/v1/auth/resend-verification-code",
                                 "/api/v1/auth/forgot-password",
                                 "/api/v1/auth/resend-password-reset-code",
-                                "/api/v1/auth/verify-password-reset-code"
+                                "/api/v1/auth/verify-password-reset-code",
+                                "/api/v1/auth/reset-password"
                         )
                         .permitAll()
 

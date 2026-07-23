@@ -14,6 +14,7 @@ import com.smartwallet.backend.auth.dto.request.EmailRequest;
 import com.smartwallet.backend.auth.dto.request.LoginRequest;
 import com.smartwallet.backend.auth.dto.request.RefreshTokenRequest;
 import com.smartwallet.backend.auth.dto.request.RegisterRequest;
+import com.smartwallet.backend.auth.dto.request.ResetPasswordRequest;
 import com.smartwallet.backend.auth.dto.request.VerifyEmailRequest;
 import com.smartwallet.backend.auth.dto.request.VerifyPasswordResetCodeRequest;
 import com.smartwallet.backend.auth.dto.response.AuthenticatedUserResponse;
@@ -49,6 +50,9 @@ public class AuthService {
 
     private static final String INVALID_PASSWORD_RESET_CODE_MESSAGE =
             "The password reset code is invalid or expired";
+
+    private static final String INVALID_PASSWORD_RESET_TOKEN_MESSAGE =
+            "The password reset token is invalid or expired";
 
     private static final String GENERIC_VERIFICATION_RESEND_MESSAGE =
             "If an unverified account exists, "
@@ -288,6 +292,65 @@ public class AuthService {
         );
     }
 
+    @Transactional(
+            noRollbackFor =
+                    InvalidEmailActionCodeException.class
+    )
+    public MessageResponse resetPassword(
+            ResetPasswordRequest request
+    ) {
+
+        if (!request.newPassword().equals(
+                request.confirmPassword()
+        )) {
+            throw new IllegalArgumentException(
+                    "New password and confirmation password do not match"
+            );
+        }
+
+        EmailActionCode actionCode;
+
+        try {
+            actionCode =
+                    emailActionCodeService
+                            .validatePasswordResetToken(
+                                    request.resetToken()
+                            );
+        } catch (InvalidEmailActionCodeException exception) {
+            throw invalidPasswordResetToken();
+        }
+
+        User user =
+                actionCode.getUser();
+
+        if (!isActiveAndVerified(user)) {
+            throw invalidPasswordResetToken();
+        }
+
+        String newPasswordHash =
+                passwordEncoder.encode(
+                        request.newPassword()
+                );
+
+        user.setPasswordHash(
+                newPasswordHash
+        );
+
+        userRepository.save(user);
+
+        refreshTokenService.revokeAllRefreshTokens(
+                user
+        );
+
+        emailActionCodeService.markUsed(
+                actionCode
+        );
+
+        return new MessageResponse(
+                "Password reset successfully"
+        );
+    }
+
     @Transactional
     public LoginResponse login(
             LoginRequest request
@@ -445,6 +508,14 @@ public class AuthService {
 
         return new InvalidEmailActionCodeException(
                 INVALID_PASSWORD_RESET_CODE_MESSAGE
+        );
+    }
+
+    private InvalidEmailActionCodeException
+            invalidPasswordResetToken() {
+
+        return new InvalidEmailActionCodeException(
+                INVALID_PASSWORD_RESET_TOKEN_MESSAGE
         );
     }
 

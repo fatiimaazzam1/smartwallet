@@ -33,6 +33,9 @@ public class EmailActionCodeService {
     private static final String INVALID_CODE_MESSAGE =
             "The email code is invalid or expired";
 
+    private static final String INVALID_RESET_TOKEN_MESSAGE =
+            "The password reset token is invalid or expired";
+
     private final EmailActionCodeRepository emailActionCodeRepository;
     private final EmailCodeService emailCodeService;
     private final PasswordResetTokenService passwordResetTokenService;
@@ -174,6 +177,64 @@ public class EmailActionCodeService {
         );
 
         return rawResetToken;
+    }
+
+    @Transactional(
+            noRollbackFor =
+                    InvalidEmailActionCodeException.class
+    )
+    public EmailActionCode validatePasswordResetToken(
+            String rawResetToken
+    ) {
+
+        if (rawResetToken == null
+                || rawResetToken.isBlank()) {
+
+            throw new InvalidEmailActionCodeException(
+                    INVALID_RESET_TOKEN_MESSAGE
+            );
+        }
+
+        String resetTokenHash =
+                passwordResetTokenService.hashToken(
+                        rawResetToken
+                );
+
+        LocalDateTime now = LocalDateTime.now();
+
+        EmailActionCode actionCode =
+                emailActionCodeRepository
+                        .findByActionTokenHashAndPurposeAndVerifiedAtIsNotNullAndInvalidatedAtIsNullAndUsedAtIsNull(
+                                resetTokenHash,
+                                EmailActionPurpose.PASSWORD_RESET
+                        )
+                        .orElseThrow(() ->
+                                new InvalidEmailActionCodeException(
+                                        INVALID_RESET_TOKEN_MESSAGE
+                                )
+                        );
+
+        LocalDateTime tokenExpiresAt =
+                actionCode.getActionTokenExpiresAt();
+
+        boolean tokenExpired =
+                tokenExpiresAt == null
+                        || !now.isBefore(tokenExpiresAt);
+
+        if (tokenExpired) {
+
+            actionCode.setInvalidatedAt(now);
+
+            emailActionCodeRepository.save(
+                    actionCode
+            );
+
+            throw new InvalidEmailActionCodeException(
+                    INVALID_RESET_TOKEN_MESSAGE
+            );
+        }
+
+        return actionCode;
     }
 
     public long getActionTokenExpirationSeconds() {

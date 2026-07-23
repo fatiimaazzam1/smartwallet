@@ -14,10 +14,12 @@ public interface EmailActionCodeRepository
     Optional<EmailActionCode>
             findFirstByUserAndPurposeAndInvalidatedAtIsNullAndUsedAtIsNullOrderByCreatedAtDesc(
                     User user,
-                    EmailActionPurpose purpose);
+                    EmailActionPurpose purpose
+            );
 
     Optional<EmailActionCode>
-            findByActionTokenHashAndPurposeAndInvalidatedAtIsNullAndUsedAtIsNull(
+            findByActionTokenHashAndPurposeAndVerifiedAtIsNotNullAndInvalidatedAtIsNullAndUsedAtIsNull(
                     String actionTokenHash,
-                    EmailActionPurpose purpose);
+                    EmailActionPurpose purpose
+            );
 }
