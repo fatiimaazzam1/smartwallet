@@ -1,5 +1,5 @@
 name: smartwallet_mobile
-description: "A new Flutter project."
+description: "SmartWallet personal finance mobile application."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -10,9 +10,16 @@ dependencies:
   flutter:
     sdk: flutter
 
+  dio: ^5.9.2
+  flutter_secure_storage: ^10.3.1
+  provider: ^6.1.5+1
+  go_router: ^17.3.0
+  shared_preferences: ^2.5.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^6.0.0
 
 flutter:
