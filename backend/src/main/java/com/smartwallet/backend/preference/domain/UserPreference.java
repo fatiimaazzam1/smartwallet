@@ -4,7 +4,10 @@ import com.smartwallet.backend.common.domain.BaseEntity;
 import com.smartwallet.backend.user.domain.User;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -40,19 +43,21 @@ public class UserPreference extends BaseEntity {
     @Column(name = "budget_warning_threshold", nullable = false)
     private int budgetWarningThreshold = 70;
 
+    @Convert(converter = DateFormatPreferenceConverter.class)
     @Column(name = "date_format", nullable = false, length = 20)
-    private String dateFormat = "DD/MM/YYYY";
+    private DateFormatPreference dateFormat = DateFormatPreference.DD_MM_YYYY;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "dashboard_period", nullable = false, length = 30)
-    private String dashboardPeriod = "CURRENT_MONTH";
+    private DashboardPeriod dashboardPeriod = DashboardPeriod.CURRENT_MONTH;
 
-    public UserPreference(User user) {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "language", nullable = false, length = 20)
+    private AppLanguage language = AppLanguage.SYSTEM;
+
+    public UserPreference(
+            User user
+    ) {
         this.user = user;
-        this.hideBalanceByDefault = false;
-        this.compactTransactionList = false;
-        this.showBudgetWarnings = true;
-        this.budgetWarningThreshold = 70;
-        this.dateFormat = "DD/MM/YYYY";
-        this.dashboardPeriod = "CURRENT_MONTH";
     }
 }

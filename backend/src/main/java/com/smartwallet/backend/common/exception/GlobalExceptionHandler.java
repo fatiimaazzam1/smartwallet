@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,12 +38,24 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request
+    ) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Invalid request value or malformed JSON",
+                request
+        );
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleIllegalArgumentException(
-                    IllegalArgumentException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(
+            IllegalArgumentException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
@@ -52,11 +65,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleIllegalStateException(
-                    IllegalStateException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleIllegalStateException(
+            IllegalStateException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.CONFLICT,
@@ -66,11 +78,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailCodeCooldownException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleEmailCodeCooldownException(
-                    EmailCodeCooldownException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleEmailCodeCooldownException(
+            EmailCodeCooldownException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.CONFLICT,
@@ -80,11 +91,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidEmailActionCodeException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleInvalidEmailActionCodeException(
-                    InvalidEmailActionCodeException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleInvalidEmailActionCodeException(
+            InvalidEmailActionCodeException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
@@ -94,11 +104,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleInvalidCredentialsException(
-                    InvalidCredentialsException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentialsException(
+            InvalidCredentialsException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.UNAUTHORIZED,
@@ -108,11 +117,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailVerificationRequiredException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleEmailVerificationRequiredException(
-                    EmailVerificationRequiredException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleEmailVerificationRequiredException(
+            EmailVerificationRequiredException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.FORBIDDEN,
@@ -122,11 +130,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccountDisabledException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleAccountDisabledException(
-                    AccountDisabledException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleAccountDisabledException(
+            AccountDisabledException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.FORBIDDEN,
@@ -136,11 +143,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidRefreshTokenException.class)
-    public ResponseEntity<ApiErrorResponse>
-            handleInvalidRefreshTokenException(
-                    InvalidRefreshTokenException exception,
-                    HttpServletRequest request
-            ) {
+    public ResponseEntity<ApiErrorResponse> handleInvalidRefreshTokenException(
+            InvalidRefreshTokenException exception,
+            HttpServletRequest request
+    ) {
+
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(CurrentUserNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleCurrentUserNotFoundException(
+            CurrentUserNotFoundException exception,
+            HttpServletRequest request
+    ) {
 
         return buildResponse(
                 HttpStatus.UNAUTHORIZED,
