@@ -1,46 +1,48 @@
-package com.smartwallet.backend.user.web;
+package com.smartwallet.backend.preference.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smartwallet.backend.preference.dto.request.UpdateUserPreferenceRequest;
+import com.smartwallet.backend.preference.dto.response.UserPreferenceResponse;
+import com.smartwallet.backend.preference.service.UserPreferenceService;
 import com.smartwallet.backend.user.domain.User;
-import com.smartwallet.backend.user.dto.request.UpdateCurrentUserRequest;
-import com.smartwallet.backend.user.dto.response.CurrentUserResponse;
-import com.smartwallet.backend.user.service.UserService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/users/me/preferences")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-public class UserController {
+public class UserPreferenceController {
 
-    private final UserService userService;
+    private final UserPreferenceService userPreferenceService;
 
-    @GetMapping("/me")
-    public ResponseEntity<CurrentUserResponse> getCurrentUser(
+    @GetMapping
+    public ResponseEntity<UserPreferenceResponse> getPreferences(
             @AuthenticationPrincipal User currentUser
     ) {
         return ResponseEntity.ok(
-                userService.getCurrentUser(currentUser.getId())
+                userPreferenceService.getCurrentUserPreferences(
+                        currentUser.getId()
+                )
         );
     }
 
-    @PatchMapping("/me")
-    public ResponseEntity<CurrentUserResponse> updateCurrentUser(
+    @PutMapping
+    public ResponseEntity<UserPreferenceResponse> updatePreferences(
             @AuthenticationPrincipal User currentUser,
-            @Valid @RequestBody UpdateCurrentUserRequest request
+            @Valid @RequestBody UpdateUserPreferenceRequest request
     ) {
         return ResponseEntity.ok(
-                userService.updateCurrentUser(
+                userPreferenceService.updateCurrentUserPreferences(
                         currentUser.getId(),
                         request
                 )

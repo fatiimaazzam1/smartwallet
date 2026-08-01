@@ -15,6 +15,7 @@ Spring Boot REST API for the SmartWallet personal finance mobile application.
 - JWT authentication
 - OpenAPI and Swagger UI
 - SMTP email delivery
+- H2 for isolated automated tests
 
 ## Requirements
 
@@ -113,8 +114,12 @@ http://localhost:8080
 From the `backend` directory, run:
 
 ```bash
-./mvnw clean test -Dspring.profiles.active=dev
+./mvnw test
 ```
+
+The automated test configuration uses an isolated H2 database through the test
+profile. It does not replace or modify the PostgreSQL configuration used by the
+`dev` or production profiles.
 
 A successful execution ends with:
 
@@ -135,6 +140,7 @@ The current migrations are:
 ```text
 V1__create_initial_schema.sql
 V2__add_email_authentication.sql
+V3__add_user_language_preference.sql
 ```
 
 `V1__create_initial_schema.sql` creates the initial SmartWallet database
@@ -142,6 +148,18 @@ foundation.
 
 `V2__add_email_authentication.sql` adds email verification and password-reset
 database support.
+
+`V3__add_user_language_preference.sql` adds the controlled language preference
+to `user_preferences` and creates default preference rows for users who do not
+already have one.
+
+The migration accepts these stored language values:
+
+```text
+SYSTEM
+ENGLISH
+ARABIC
+```
 
 Applied Flyway migrations must never be modified.
 
@@ -151,6 +169,12 @@ version number.
 ## OpenAPI and Swagger UI
 
 After starting the backend, Swagger UI is available at:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+It is also available through:
 
 ```text
 http://localhost:8080/swagger-ui/index.html
@@ -165,8 +189,21 @@ http://localhost:8080/v3/api-docs
 Swagger automatically discovers available REST controllers and displays their
 endpoints after the application starts.
 
-Protected endpoints can use the JWT Bearer authorization option provided in
-Swagger UI.
+Protected profile and preference endpoints are marked with the JWT Bearer
+security requirement.
+
+To test a protected endpoint in Swagger:
+
+```text
+1. Log in through POST /api/v1/auth/login.
+2. Copy the returned access token.
+3. Click Authorize in Swagger.
+4. Enter the access token in the Bearer authorization field.
+5. Execute the protected request.
+```
+
+Passwords, access tokens, refresh tokens, reset tokens, and email codes must
+never be shared or committed.
 
 ## Authentication Features
 
@@ -187,6 +224,8 @@ The SmartWallet backend currently supports:
 - Secure password update
 - Revocation of existing refresh tokens after password reset
 - Retrieval of the currently authenticated user
+- Update of the authenticated user's first and last names
+- Retrieval and update of authenticated-user preferences
 
 ## Authentication API Endpoints
 
@@ -216,11 +255,14 @@ already having a valid JWT access token.
 
 The endpoints still validate their required credentials, codes, and tokens.
 
-### Protected Authentication Endpoints
+### Protected Authentication, Profile, and Preference Endpoints
 
 ```text
-POST /api/v1/auth/logout
-GET /api/v1/users/me
+POST  /api/v1/auth/logout
+GET   /api/v1/users/me
+PATCH /api/v1/users/me
+GET   /api/v1/users/me/preferences
+PUT   /api/v1/users/me/preferences
 ```
 
 Protected endpoints require a valid JWT access token in the HTTP authorization
@@ -228,6 +270,180 @@ header:
 
 ```text
 Authorization: Bearer <access-token>
+```
+
+## Authenticated User Profile API
+
+### Retrieve the Current User
+
+```text
+GET /api/v1/users/me
+```
+
+A successful response contains the authenticated user's public profile fields:
+
+```json
+{
+  "id": 1,
+  "firstName": "Example",
+  "lastName": "User",
+  "email": "example@example.com"
+}
+```
+
+The password hash and authentication secrets are never returned.
+
+### Update the Current User
+
+```text
+PATCH /api/v1/users/me
+```
+
+Example request:
+
+```json
+{
+  "firstName": "Updated",
+  "lastName": "User"
+}
+```
+
+Only supported editable profile fields are updated. The email address and
+authentication credentials are not changed through this endpoint.
+
+Submitted values are validated before they are saved.
+
+## User Preferences API
+
+### Retrieve Preferences
+
+```text
+GET /api/v1/users/me/preferences
+```
+
+A successful response contains:
+
+```json
+{
+  "hideBalanceByDefault": false,
+  "compactTransactionList": false,
+  "showBudgetWarnings": true,
+  "budgetWarningThreshold": 70,
+  "dateFormat": "DD_MM_YYYY",
+  "dashboardPeriod": "CURRENT_MONTH",
+  "language": "SYSTEM"
+}
+```
+
+### Update Preferences
+
+```text
+PUT /api/v1/users/me/preferences
+```
+
+Example request:
+
+```json
+{
+  "hideBalanceByDefault": true,
+  "compactTransactionList": true,
+  "showBudgetWarnings": true,
+  "budgetWarningThreshold": 80,
+  "dateFormat": "YYYY_MM_DD",
+  "dashboardPeriod": "LAST_30_DAYS",
+  "language": "ENGLISH"
+}
+```
+
+The complete preference object is submitted when updating preferences.
+
+### Preference Defaults
+
+```text
+hideBalanceByDefault: false
+compactTransactionList: false
+showBudgetWarnings: true
+budgetWarningThreshold: 70
+dateFormat: DD_MM_YYYY
+dashboardPeriod: CURRENT_MONTH
+language: SYSTEM
+```
+
+### Supported Preference Values
+
+Budget warning threshold:
+
+```text
+70
+80
+90
+```
+
+Date format:
+
+```text
+DD_MM_YYYY
+MM_DD_YYYY
+YYYY_MM_DD
+```
+
+Dashboard period:
+
+```text
+CURRENT_MONTH
+LAST_30_DAYS
+```
+
+Application language:
+
+```text
+SYSTEM
+ENGLISH
+ARABIC
+```
+
+`FRENCH` is not a backend language value.
+
+When the mobile application uses `SYSTEM`, it follows Arabic or English when
+supported. For another device language, such as French, the mobile application
+uses English as the fallback.
+
+## Request Validation and Error Responses
+
+Invalid request bodies return a controlled API error response.
+
+Examples include:
+
+- Unsupported enum values such as `FRENCH`
+- Incorrect enum formatting such as `YYYY-MM-DD`
+- Malformed JSON
+- Invalid profile values
+- Missing authentication for protected endpoints
+
+An invalid enum or malformed JSON returns:
+
+```text
+400 Bad Request
+```
+
+with a clean message such as:
+
+```json
+{
+  "timestamp": "2026-08-01T20:39:37.688",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Invalid request value or malformed JSON",
+  "path": "/api/v1/users/me/preferences"
+}
+```
+
+Internal Java stack traces are not returned in the API response.
+
+A protected request without a valid JWT returns:
+
+```text
+401 Unauthorized
 ```
 
 ## Registration and Email Verification Flow
@@ -469,8 +685,8 @@ partially completed password reset.
 
 ## Authentication QA Status
 
-The authentication system has been manually tested using Postman and
-PostgreSQL.
+The authentication system has been manually tested using Postman, Swagger UI,
+and PostgreSQL.
 
 Verified scenarios include:
 
@@ -498,6 +714,14 @@ Verified scenarios include:
 - Rejection of revoked refresh tokens
 - Protected endpoint access using a valid JWT
 - Unauthorized protected endpoint access without a JWT
+- Retrieval of the authenticated user profile
+- Update and persistence of first and last names
+- Retrieval of user preferences
+- Update and persistence of user preferences
+- Rejection of unsupported preference enum values
+- Clean `400` responses without exposed Java stack traces
+- Flyway validation through database schema version 3
+- Successful automated backend test suite
 
 ## Authentication Development Status
 
@@ -509,8 +733,12 @@ Refresh-token support: Complete
 Logout and token revocation: Complete
 Forgot-password flow: Complete
 Password-reset flow: Complete
-Manual Postman authentication QA: Complete
-Flutter authentication integration: Next milestone
+Manual authentication QA: Complete
+Flutter authentication integration: Complete
+Backend profile retrieval and update: Complete
+Backend preference retrieval and update: Complete
+Profile photo upload: Planned
+Flutter profile and preference integration: Current milestone
 ```
 
 ## Secrets and Deployment
@@ -556,7 +784,9 @@ backend/
 │   └── db/migration
 │       └── Flyway database migrations
 ├── src/test
-│   └── Backend tests
+│   ├── Backend tests
+│   └── resources
+│       └── Isolated test-profile configuration
 ├── pom.xml
 └── README.md
 ```
