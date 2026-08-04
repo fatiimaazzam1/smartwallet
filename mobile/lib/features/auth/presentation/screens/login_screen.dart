@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/errors/localized_error_message.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/validation/form_validators.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_status_message.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/smartwallet_logo.dart';
 import '../controllers/login_controller.dart';
@@ -30,34 +32,27 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
 
   Future<void> _submitLogin() async {
     final FormState? formState = _formKey.currentState;
-
     if (formState == null || !formState.validate()) {
       return;
     }
 
     FocusScope.of(context).unfocus();
-
     final LoginController controller = context.read<LoginController>();
-
-    final String normalizedEmail = _emailController.text.trim().toLowerCase();
-
+    final String email = _emailController.text.trim().toLowerCase();
     final LoginSubmissionResult result = await controller.login(
-      email: normalizedEmail,
+      email: email,
       password: _passwordController.text,
     );
 
@@ -67,34 +62,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (result == LoginSubmissionResult.success) {
       widget.onLoginSuccess();
-      return;
-    }
-
-    if (result == LoginSubmissionResult.emailVerificationRequired) {
-      widget.onEmailVerificationRequired(normalizedEmail);
+    } else if (result == LoginSubmissionResult.emailVerificationRequired) {
+      widget.onEmailVerificationRequired(email);
     }
   }
 
   void _openForgotPassword() {
-    final LoginController controller = context.read<LoginController>();
-
     FocusScope.of(context).unfocus();
-    controller.clearError();
+    context.read<LoginController>().clearError();
     _passwordController.clear();
-
     widget.onForgotPassword();
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required.';
-    }
-
-    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
     final LoginController controller = context.watch<LoginController>();
 
     return Scaffold(
@@ -123,24 +105,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             const SmartWalletLogo(size: 88),
                             const SizedBox(height: AppSpacing.xl),
-                            const Text(
-                              'Welcome Back',
+                            Text(
+                              l10n.welcomeBack,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.screenTitle,
                             ),
                             const SizedBox(height: AppSpacing.sm),
-                            const Text(
-                              'Log in to continue managing '
-                              'your money with confidence.',
+                            Text(
+                              l10n.loginSubtitle,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.subtitle,
                             ),
                             const SizedBox(height: AppSpacing.xxl),
                             AppTextField(
-                              label: 'Email Address',
-                              hintText: 'you@example.com',
+                              label: l10n.emailAddress,
+                              hintText: l10n.emailHint,
                               controller: _emailController,
-                              validator: FormValidators.email,
+                              validator: (String? value) =>
+                                  FormValidators.email(value, l10n),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
                               autofillHints: const [AutofillHints.email],
@@ -148,37 +130,46 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const SizedBox(height: AppSpacing.fieldGap),
                             AppTextField(
-                              label: 'Password',
-                              hintText: 'Enter your password',
+                              label: l10n.password,
+                              hintText: l10n.passwordHint,
                               controller: _passwordController,
-                              validator: _validatePassword,
+                              validator: (String? value) =>
+                                  FormValidators.requiredField(
+                                    value,
+                                    fieldName: l10n.password,
+                                    l10n: l10n,
+                                  ),
                               isPassword: true,
                               textInputAction: TextInputAction.done,
                               autofillHints: const [AutofillHints.password],
-                              onFieldSubmitted: (_) {
-                                _submitLogin();
-                              },
+                              onFieldSubmitted: (_) => _submitLogin(),
                               enabled: !controller.isLoading,
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             Align(
-                              alignment: Alignment.centerRight,
+                              alignment: AlignmentDirectional.centerEnd,
                               child: TextButton(
                                 onPressed: controller.isLoading
                                     ? null
                                     : _openForgotPassword,
-                                child: const Text('Forgot Password?'),
+                                child: Text(
+                                  l10n.forgotPasswordQuestion,
+                                ),
                               ),
                             ),
                             if (controller.errorMessage != null) ...[
                               const SizedBox(height: AppSpacing.md),
-                              _LoginErrorMessage(
-                                message: controller.errorMessage!,
+                              AppStatusMessage(
+                                message: LocalizedErrorMessage.fromMessage(
+                                  context,
+                                  controller.errorMessage,
+                                ),
+                                isError: true,
                               ),
                             ],
                             const SizedBox(height: AppSpacing.xl),
                             AppButton(
-                              label: 'Log In',
+                              label: l10n.logInButton,
                               isLoading: controller.isLoading,
                               onPressed: _submitLogin,
                             ),
@@ -188,15 +179,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               crossAxisAlignment: WrapCrossAlignment.center,
                               spacing: AppSpacing.xs,
                               children: [
-                                const Text(
-                                  'Do not have an account?',
+                                Text(
+                                  l10n.noAccount,
                                   style: AppTextStyles.body,
                                 ),
                                 TextButton(
                                   onPressed: controller.isLoading
                                       ? null
                                       : widget.onRegister,
-                                  child: const Text('Register'),
+                                  child: Text(l10n.register),
                                 ),
                               ],
                             ),
@@ -210,36 +201,6 @@ class _LoginScreenState extends State<LoginScreen> {
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class _LoginErrorMessage extends StatelessWidget {
-  const _LoginErrorMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.error.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.error.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.error_outline_rounded,
-            size: 20,
-            color: AppColors.error,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(child: Text(message, style: AppTextStyles.errorText)),
-        ],
       ),
     );
   }

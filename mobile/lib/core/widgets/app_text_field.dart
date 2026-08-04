@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_spacing.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
@@ -88,7 +89,9 @@ class _AppTextFieldState extends State<AppTextField> {
             hintText: widget.hintText,
             suffixIcon: widget.isPassword
                 ? IconButton(
-                    tooltip: _isTextHidden ? 'Show password' : 'Hide password',
+                    tooltip: _isTextHidden
+                        ? context.l10n.showPassword
+                        : context.l10n.hidePassword,
                     onPressed: widget.enabled
                         ? _togglePasswordVisibility
                         : null,

@@ -1,93 +1,117 @@
+import 'package:smartwallet_mobile/l10n/l10n.dart';
+
 abstract final class FormValidators {
   FormValidators._();
 
   static String? requiredField(
     String? value, {
-    String fieldName = 'This field',
+    required String fieldName,
+    required AppLocalizations l10n,
   }) {
     if (value == null || value.trim().isEmpty) {
-      return '$fieldName is required';
+      return l10n.requiredField(fieldName);
     }
 
     return null;
   }
 
-  static String? name(String? value, {required String fieldName}) {
-    final requiredError = requiredField(value, fieldName: fieldName);
+  static String? name(
+    String? value, {
+    required String fieldName,
+    required AppLocalizations l10n,
+  }) {
+    final String? requiredError = requiredField(
+      value,
+      fieldName: fieldName,
+      l10n: l10n,
+    );
 
     if (requiredError != null) {
       return requiredError;
     }
 
     if (value!.trim().length < 2) {
-      return '$fieldName must contain at least 2 characters';
+      return l10n.minimumCharacters(fieldName, 2);
     }
 
     return null;
   }
 
-  static String? email(String? value) {
-    final requiredError = requiredField(value, fieldName: 'Email');
+  static String? email(String? value, AppLocalizations l10n) {
+    final String? requiredError = requiredField(
+      value,
+      fieldName: l10n.emailAddress,
+      l10n: l10n,
+    );
 
     if (requiredError != null) {
       return requiredError;
     }
 
-    final email = value!.trim();
+    final String email = value!.trim();
 
     if (email.length > 150) {
-      return 'Email must not exceed 150 characters';
+      return l10n.emailTooLong;
     }
 
-    final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    final RegExp emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
     if (!emailPattern.hasMatch(email)) {
-      return 'Enter a valid email address';
+      return l10n.invalidEmail;
     }
 
     return null;
   }
 
-  static String? password(String? value) {
-    final requiredError = requiredField(value, fieldName: 'Password');
+  static String? password(String? value, AppLocalizations l10n) {
+    final String? requiredError = requiredField(
+      value,
+      fieldName: l10n.password,
+      l10n: l10n,
+    );
 
     if (requiredError != null) {
       return requiredError;
     }
 
-    final password = value!;
+    final String password = value!;
 
     if (password.length < 8 || password.length > 72) {
-      return 'Password must be between 8 and 72 characters';
+      return l10n.passwordLength;
     }
 
     if (password.contains(RegExp(r'\s'))) {
-      return 'Password must not contain spaces';
+      return l10n.passwordNoSpaces;
     }
 
     if (!password.contains(RegExp(r'[a-z]'))) {
-      return 'Password must contain a lowercase letter';
+      return l10n.passwordLowercase;
     }
 
     if (!password.contains(RegExp(r'[A-Z]'))) {
-      return 'Password must contain an uppercase letter';
+      return l10n.passwordUppercase;
     }
 
     if (!password.contains(RegExp(r'\d'))) {
-      return 'Password must contain a number';
+      return l10n.passwordNumber;
     }
 
     if (!password.contains(RegExp(r'[^A-Za-z0-9]'))) {
-      return 'Password must contain a special character';
+      return l10n.passwordSpecial;
     }
 
     return null;
   }
 
-  static String? confirmPassword(String? value, String password) {
-    final requiredError = requiredField(
+  static String? confirmPassword(
+    String? value,
+    String password,
+    AppLocalizations l10n,
+  ) {
+    final String? requiredError = requiredField(
       value,
-      fieldName: 'Password confirmation',
+      fieldName: l10n.confirmPassword,
+      l10n: l10n,
     );
 
     if (requiredError != null) {
@@ -95,7 +119,7 @@ abstract final class FormValidators {
     }
 
     if (value != password) {
-      return 'Passwords do not match';
+      return l10n.passwordsDoNotMatch;
     }
 
     return null;

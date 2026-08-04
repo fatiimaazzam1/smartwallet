@@ -1,6 +1,6 @@
 {
-    "name": "smartwallet_mobile",
-    "short_name": "smartwallet_mobile",
+    "name": "SWallet",
+    "short_name": "SWallet",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

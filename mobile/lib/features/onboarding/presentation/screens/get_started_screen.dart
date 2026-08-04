@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/smartwallet_logo.dart';
@@ -17,10 +18,12 @@ class GetStartedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
-          builder: (context, constraints) {
+          builder: (BuildContext context, BoxConstraints constraints) {
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.screenHorizontal,
@@ -39,47 +42,37 @@ class GetStartedScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const Spacer(),
-
                           const SmartWalletLogo(size: 92, showName: true),
-
                           const SizedBox(height: AppSpacing.xxl),
-
-                          const Text(
-                            'Take control of your money.',
+                          Text(
+                            l10n.takeControlTitle,
                             textAlign: TextAlign.center,
                             style: AppTextStyles.screenTitle,
                           ),
-
                           const SizedBox(height: AppSpacing.md),
-
-                          const Text(
-                            'Track your spending, plan ahead, and understand '
-                            'what is safe to spend.',
+                          Text(
+                            l10n.takeControlSubtitle,
                             textAlign: TextAlign.center,
                             style: AppTextStyles.subtitle,
                           ),
-
                           const Spacer(),
-
                           AppButton(
-                            label: 'Get Started',
+                            label: l10n.getStarted,
                             onPressed: onGetStarted,
                           ),
-
                           const SizedBox(height: AppSpacing.md),
-
                           Wrap(
                             alignment: WrapAlignment.center,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             spacing: AppSpacing.xs,
                             children: [
-                              const Text(
-                                'Already have an account?',
+                              Text(
+                                l10n.alreadyHaveAccount,
                                 style: AppTextStyles.body,
                               ),
                               TextButton(
                                 onPressed: onLogin,
-                                child: const Text('Log in'),
+                                child: Text(l10n.logIn),
                               ),
                             ],
                           ),

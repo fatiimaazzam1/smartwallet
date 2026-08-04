@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/errors/localized_error_message.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/validation/form_validators.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_status_message.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../data/models/password_reset_token_response_model.dart';
 import '../controllers/reset_password_controller.dart';
@@ -20,7 +23,7 @@ class ResetPasswordScreen extends StatefulWidget {
 
   final PasswordResetTokenResponseModel resetSession;
   final VoidCallback onBack;
-  final ValueChanged<String> onResetSuccess;
+  final VoidCallback onResetSuccess;
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -28,9 +31,7 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   final TextEditingController _newPasswordController = TextEditingController();
-
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
@@ -43,16 +44,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   Future<void> _submitResetPassword() async {
     final FormState? formState = _formKey.currentState;
-
     if (formState == null || !formState.validate()) {
       return;
     }
 
     FocusScope.of(context).unfocus();
-
     final ResetPasswordController controller = context
         .read<ResetPasswordController>();
-
     final response = await controller.resetPassword(
       resetToken: widget.resetSession.resetToken,
       newPassword: _newPasswordController.text,
@@ -65,27 +63,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     _newPasswordController.clear();
     _confirmPasswordController.clear();
-
-    widget.onResetSuccess(response.message);
-  }
-
-  String get _expiryText {
-    final int seconds = widget.resetSession.expiresInSeconds;
-
-    if (seconds < 60) {
-      return 'This secure reset session expires in less than one minute.';
-    }
-
-    final int minutes = (seconds / 60).ceil();
-
-    return 'This secure reset session expires in about '
-        '$minutes ${minutes == 1 ? 'minute' : 'minutes'}.';
+    widget.onResetSuccess();
   }
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
     final ResetPasswordController controller = context
         .watch<ResetPasswordController>();
+    final int expirySeconds = widget.resetSession.expiresInSeconds;
+    final String expiryMessage = expirySeconds < 60
+        ? l10n.resetSessionLessThanMinute
+        : l10n.resetSessionExpiry((expirySeconds / 60).ceil());
 
     return PopScope(
       canPop: !controller.isLoading,
@@ -115,42 +104,42 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Align(
-                                alignment: Alignment.centerLeft,
+                                alignment: AlignmentDirectional.centerStart,
                                 child: IconButton(
                                   onPressed: controller.isLoading
                                       ? null
                                       : widget.onBack,
-                                  tooltip: 'Go back',
-                                  icon: const Icon(Icons.arrow_back_rounded),
+                                  tooltip: l10n.goBack,
+                                  icon: const BackButtonIcon(),
                                 ),
                               ),
                               const SizedBox(height: AppSpacing.xl),
                               const _ResetPasswordIcon(),
                               const SizedBox(height: AppSpacing.xl),
-                              const Text(
-                                'Create New Password',
+                              Text(
+                                l10n.createNewPassword,
                                 textAlign: TextAlign.center,
                                 style: AppTextStyles.screenTitle,
                               ),
                               const SizedBox(height: AppSpacing.sm),
-                              const Text(
-                                'Choose a strong password that you have not '
-                                'shared with anyone.',
+                              Text(
+                                l10n.createNewPasswordSubtitle,
                                 textAlign: TextAlign.center,
                                 style: AppTextStyles.subtitle,
                               ),
                               const SizedBox(height: AppSpacing.md),
                               Text(
-                                _expiryText,
+                                expiryMessage,
                                 textAlign: TextAlign.center,
                                 style: AppTextStyles.helperText,
                               ),
                               const SizedBox(height: AppSpacing.xxl),
                               AppTextField(
-                                label: 'New Password',
-                                hintText: 'Enter your new password',
+                                label: l10n.newPassword,
+                                hintText: l10n.newPasswordHint,
                                 controller: _newPasswordController,
-                                validator: FormValidators.password,
+                                validator: (String? value) =>
+                                    FormValidators.password(value, l10n),
                                 isPassword: true,
                                 textInputAction: TextInputAction.next,
                                 autofillHints: const [
@@ -159,41 +148,42 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 enabled: !controller.isLoading,
                               ),
                               const SizedBox(height: AppSpacing.sm),
-                              const Text(
-                                'Use 8–72 characters with uppercase, '
-                                'lowercase, number, and special character.',
+                              Text(
+                                l10n.passwordRequirements,
                                 style: AppTextStyles.helperText,
                               ),
                               const SizedBox(height: AppSpacing.fieldGap),
                               AppTextField(
-                                label: 'Confirm New Password',
-                                hintText: 'Enter the new password again',
+                                label: l10n.confirmNewPassword,
+                                hintText: l10n.confirmNewPasswordHint,
                                 controller: _confirmPasswordController,
-                                validator: (String? value) {
-                                  return FormValidators.confirmPassword(
-                                    value,
-                                    _newPasswordController.text,
-                                  );
-                                },
+                                validator: (String? value) =>
+                                    FormValidators.confirmPassword(
+                                      value,
+                                      _newPasswordController.text,
+                                      l10n,
+                                    ),
                                 isPassword: true,
                                 textInputAction: TextInputAction.done,
                                 autofillHints: const [
                                   AutofillHints.newPassword,
                                 ],
-                                onFieldSubmitted: (_) {
-                                  _submitResetPassword();
-                                },
+                                onFieldSubmitted: (_) => _submitResetPassword(),
                                 enabled: !controller.isLoading,
                               ),
                               if (controller.errorMessage != null) ...[
                                 const SizedBox(height: AppSpacing.lg),
-                                _ResetPasswordErrorMessage(
-                                  message: controller.errorMessage!,
+                                AppStatusMessage(
+                                  message: LocalizedErrorMessage.fromMessage(
+                                    context,
+                                    controller.errorMessage,
+                                  ),
+                                  isError: true,
                                 ),
                               ],
                               const SizedBox(height: AppSpacing.xl),
                               AppButton(
-                                label: 'Reset Password',
+                                label: l10n.resetPassword,
                                 isLoading: controller.isLoading,
                                 onPressed: _submitResetPassword,
                               ),
@@ -231,36 +221,6 @@ class _ResetPasswordIcon extends StatelessWidget {
           size: 42,
           color: AppColors.primary,
         ),
-      ),
-    );
-  }
-}
-
-class _ResetPasswordErrorMessage extends StatelessWidget {
-  const _ResetPasswordErrorMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.error.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.error.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.error_outline_rounded,
-            size: 20,
-            color: AppColors.error,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(child: Text(message, style: AppTextStyles.errorText)),
-        ],
       ),
     );
   }

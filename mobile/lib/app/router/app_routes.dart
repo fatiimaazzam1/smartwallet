@@ -27,4 +27,10 @@ abstract final class AppRoutes {
 
   static const String homeName = 'home';
   static const String homePath = '/home';
+
+  static const String editProfileName = 'editProfile';
+  static const String editProfilePath = '/profile/edit';
+
+  static const String preferencesName = 'preferences';
+  static const String preferencesPath = '/profile/preferences';
 }

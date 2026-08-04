@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/errors/localized_error_message.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/validation/form_validators.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_status_message.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../controllers/forgot_password_controller.dart';
 
@@ -25,7 +28,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   final TextEditingController _emailController = TextEditingController();
 
   @override
@@ -36,40 +38,36 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   Future<void> _submitForgotPassword() async {
     final FormState? formState = _formKey.currentState;
-
     if (formState == null || !formState.validate()) {
       return;
     }
 
     FocusScope.of(context).unfocus();
-
     final ForgotPasswordController controller = context
         .read<ForgotPasswordController>();
-
-    final String normalizedEmail = _emailController.text.trim().toLowerCase();
-
-    final response = await controller.forgotPassword(email: normalizedEmail);
+    final String email = _emailController.text.trim().toLowerCase();
+    final response = await controller.forgotPassword(email: email);
 
     if (!mounted || response == null) {
       return;
     }
 
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(response.message),
+          content: Text(context.l10n.resetCodeSent),
           behavior: SnackBarBehavior.floating,
         ),
       );
 
-    widget.onRequestSuccess(normalizedEmail);
+    widget.onRequestSuccess(email);
   }
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
     final ForgotPasswordController controller = context
         .watch<ForgotPasswordController>();
 
@@ -98,53 +96,55 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: AlignmentDirectional.centerStart,
                               child: IconButton(
                                 onPressed: controller.isLoading
                                     ? null
                                     : widget.onBack,
-                                tooltip: 'Go back',
-                                icon: const Icon(Icons.arrow_back_rounded),
+                                tooltip: l10n.goBack,
+                                icon: const BackButtonIcon(),
                               ),
                             ),
                             const SizedBox(height: AppSpacing.xl),
                             const _PasswordRecoveryIcon(),
                             const SizedBox(height: AppSpacing.xl),
-                            const Text(
-                              'Forgot Password?',
+                            Text(
+                              l10n.forgotPasswordTitle,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.screenTitle,
                             ),
                             const SizedBox(height: AppSpacing.sm),
-                            const Text(
-                              'Enter your email address. If the account is '
-                              'eligible, we will send a six-digit reset code.',
+                            Text(
+                              l10n.forgotPasswordSubtitle,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.subtitle,
                             ),
                             const SizedBox(height: AppSpacing.xxl),
                             AppTextField(
-                              label: 'Email Address',
-                              hintText: 'you@example.com',
+                              label: l10n.emailAddress,
+                              hintText: l10n.emailHint,
                               controller: _emailController,
-                              validator: FormValidators.email,
+                              validator: (String? value) =>
+                                  FormValidators.email(value, l10n),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.done,
                               autofillHints: const [AutofillHints.email],
-                              onFieldSubmitted: (_) {
-                                _submitForgotPassword();
-                              },
+                              onFieldSubmitted: (_) => _submitForgotPassword(),
                               enabled: !controller.isLoading,
                             ),
                             if (controller.errorMessage != null) ...[
                               const SizedBox(height: AppSpacing.lg),
-                              _ForgotPasswordErrorMessage(
-                                message: controller.errorMessage!,
+                              AppStatusMessage(
+                                message: LocalizedErrorMessage.fromMessage(
+                                  context,
+                                  controller.errorMessage,
+                                ),
+                                isError: true,
                               ),
                             ],
                             const SizedBox(height: AppSpacing.xl),
                             AppButton(
-                              label: 'Send Reset Code',
+                              label: l10n.sendResetCode,
                               isLoading: controller.isLoading,
                               onPressed: _submitForgotPassword,
                             ),
@@ -153,11 +153,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               onPressed: controller.isLoading
                                   ? null
                                   : widget.onBack,
-                              icon: const Icon(
-                                Icons.arrow_back_rounded,
-                                size: 18,
-                              ),
-                              label: const Text('Back to Login'),
+                              icon: const BackButtonIcon(),
+                              label: Text(l10n.backToLogin),
                             ),
                           ],
                         ),
@@ -192,36 +189,6 @@ class _PasswordRecoveryIcon extends StatelessWidget {
           size: 44,
           color: AppColors.primary,
         ),
-      ),
-    );
-  }
-}
-
-class _ForgotPasswordErrorMessage extends StatelessWidget {
-  const _ForgotPasswordErrorMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.error.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.error.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.error_outline_rounded,
-            size: 20,
-            color: AppColors.error,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(child: Text(message, style: AppTextStyles.errorText)),
-        ],
       ),
     );
   }
