@@ -5,9 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/errors/localized_error_message.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_status_message.dart';
 import '../controllers/verify_email_controller.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
@@ -30,9 +33,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   static const int _resendCooldownSeconds = 60;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   final TextEditingController _codeController = TextEditingController();
-
   Timer? _resendTimer;
   int _remainingSeconds = 0;
 
@@ -47,16 +48,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   Future<void> _verifyCode() async {
     final FormState? formState = _formKey.currentState;
-
     if (formState == null || !formState.validate()) {
       return;
     }
 
     FocusScope.of(context).unfocus();
-
     final VerifyEmailController controller = context
         .read<VerifyEmailController>();
-
     final response = await controller.verifyEmail(
       email: widget.email,
       code: _codeController.text,
@@ -75,10 +73,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     }
 
     FocusScope.of(context).unfocus();
-
     final VerifyEmailController controller = context
         .read<VerifyEmailController>();
-
     final response = await controller.resendVerificationCode(
       email: widget.email,
     );
@@ -92,12 +88,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   void _startResendCooldown() {
     _resendTimer?.cancel();
-
     setState(() {
       _remainingSeconds = _resendCooldownSeconds;
     });
 
-    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (!mounted) {
         timer.cancel();
         return;
@@ -105,11 +100,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
       if (_remainingSeconds <= 1) {
         timer.cancel();
-
         setState(() {
           _remainingSeconds = 0;
         });
-
         return;
       }
 
@@ -120,14 +113,15 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   String? _validateCode(String? value) {
+    final AppLocalizations l10n = context.l10n;
     final String code = value?.trim() ?? '';
 
     if (code.isEmpty) {
-      return 'Verification code is required.';
+      return l10n.verificationCodeRequired;
     }
 
     if (!RegExp(r'^\d{6}$').hasMatch(code)) {
-      return 'Enter the six-digit verification code.';
+      return l10n.enterSixDigitVerificationCode;
     }
 
     return null;
@@ -135,6 +129,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
     final VerifyEmailController controller = context
         .watch<VerifyEmailController>();
 
@@ -155,54 +150,41 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: AlignmentDirectional.centerStart,
                       child: IconButton(
                         onPressed: controller.isLoading ? null : widget.onBack,
-                        tooltip: 'Go back',
-                        icon: const Icon(Icons.arrow_back_rounded),
+                        tooltip: l10n.goBack,
+                        icon: const BackButtonIcon(),
                       ),
                     ),
-
                     const SizedBox(height: AppSpacing.xl),
-
                     const _EmailVerificationIcon(),
-
                     const SizedBox(height: AppSpacing.xl),
-
-                    const Text(
-                      'Verify Your Email',
+                    Text(
+                      l10n.verifyYourEmail,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.screenTitle,
                     ),
-
                     const SizedBox(height: AppSpacing.sm),
-
-                    const Text(
-                      'We sent a six-digit verification code to',
+                    Text(
+                      l10n.verificationSentTo,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.subtitle,
                     ),
-
                     const SizedBox(height: AppSpacing.xs),
-
                     Text(
                       widget.email,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.body.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
                       ),
                     ),
-
                     const SizedBox(height: AppSpacing.xxl),
-
-                    const Text(
-                      'Verification Code',
+                    Text(
+                      l10n.verificationCode,
                       style: AppTextStyles.fieldLabel,
                     ),
-
                     const SizedBox(height: AppSpacing.sm),
-
                     TextFormField(
                       controller: _codeController,
                       enabled: !controller.isLoading,
@@ -210,7 +192,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.done,
                       autofillHints: const [AutofillHints.oneTimeCode],
-                      inputFormatters: [
+                      inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(6),
                       ],
@@ -225,56 +207,48 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         counterText: '',
                       ),
                       maxLength: 6,
-                      onFieldSubmitted: (_) {
-                        _verifyCode();
-                      },
+                      onFieldSubmitted: (_) => _verifyCode(),
                     ),
-
                     if (controller.errorMessage != null) ...[
                       const SizedBox(height: AppSpacing.lg),
-                      _StatusMessage(
-                        message: controller.errorMessage!,
+                      AppStatusMessage(
+                        message: LocalizedErrorMessage.fromMessage(
+                          context,
+                          controller.errorMessage,
+                        ),
                         isError: true,
                       ),
                     ],
-
                     if (controller.successMessage != null) ...[
                       const SizedBox(height: AppSpacing.lg),
-                      _StatusMessage(
-                        message: controller.successMessage!,
+                      AppStatusMessage(
+                        message: l10n.verificationCodeResent,
                         isError: false,
                       ),
                     ],
-
                     const SizedBox(height: AppSpacing.xl),
-
                     AppButton(
-                      label: 'Verify Email',
+                      label: l10n.verifyEmail,
                       isLoading: controller.isVerifying,
                       onPressed: controller.isResending ? null : _verifyCode,
                     ),
-
                     const SizedBox(height: AppSpacing.lg),
-
-                    const Text(
-                      'Did not receive the code?',
+                    Text(
+                      l10n.didNotReceiveCode,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.body,
                     ),
-
                     const SizedBox(height: AppSpacing.xs),
-
                     TextButton(
                       onPressed: controller.isLoading || !_canResend
                           ? null
                           : _resendCode,
                       child: Text(
                         controller.isResending
-                            ? 'Sending...'
+                            ? l10n.sending
                             : _canResend
-                            ? 'Resend Code'
-                            : 'Resend in '
-                                  '$_remainingSeconds seconds',
+                            ? l10n.resendCode
+                            : l10n.resendIn(_remainingSeconds),
                       ),
                     ),
                   ],
@@ -306,51 +280,6 @@ class _EmailVerificationIcon extends StatelessWidget {
           size: 42,
           color: AppColors.primary,
         ),
-      ),
-    );
-  }
-}
-
-class _StatusMessage extends StatelessWidget {
-  const _StatusMessage({required this.message, required this.isError});
-
-  final String message;
-  final bool isError;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color statusColor = isError ? AppColors.error : AppColors.accent;
-
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            isError
-                ? Icons.error_outline_rounded
-                : Icons.check_circle_outline_rounded,
-            size: 20,
-            color: statusColor,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              message,
-              style: isError
-                  ? AppTextStyles.errorText
-                  : AppTextStyles.body.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-            ),
-          ),
-        ],
       ),
     );
   }

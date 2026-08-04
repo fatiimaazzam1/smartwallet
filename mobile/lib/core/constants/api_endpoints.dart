@@ -24,4 +24,5 @@ abstract final class ApiEndpoints {
   static const String resetPassword = '$authBase/reset-password';
 
   static const String currentUser = '$usersBase/me';
+  static const String currentUserPreferences = '$currentUser/preferences';
 }

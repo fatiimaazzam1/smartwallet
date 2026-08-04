@@ -162,6 +162,17 @@ final class AuthRemoteDataSource {
     }
   }
 
+  Future<void> logout(RefreshRequestModel request) async {
+    try {
+      await _apiClient.post<void>(
+        ApiEndpoints.logout,
+        data: request.toJson(),
+      );
+    } on DioException catch (exception) {
+      throw ApiErrorMapper.fromDioException(exception);
+    }
+  }
+
   Future<MessageResponseModel> forgotPassword(
     ForgotPasswordRequestModel request,
   ) async {

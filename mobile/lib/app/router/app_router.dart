@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/app_spacing.dart';
 import '../../core/errors/app_exception.dart';
+import '../../core/errors/localized_error_message.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../../core/storage/onboarding_storage.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../features/auth/data/models/password_reset_token_response_model.dart';
@@ -20,25 +22,28 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/auth/presentation/screens/verify_email_screen.dart';
 import '../../features/auth/presentation/screens/verify_password_reset_code_screen.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/navigation/presentation/screens/main_shell_screen.dart';
 import '../../features/onboarding/presentation/screens/get_started_screen.dart';
+import '../../features/profile/presentation/controllers/profile_controller.dart';
+import '../../features/profile/presentation/screens/edit_profile_screen.dart';
+import '../../features/profile/presentation/screens/preferences_screen.dart';
 import 'app_routes.dart';
 
 final class AppRouter {
   AppRouter({
     required OnboardingStorage onboardingStorage,
     required AuthRepository authRepository,
+    required ProfileController profileController,
   }) : _onboardingStorage = onboardingStorage,
-       _authRepository = authRepository {
+       _authRepository = authRepository,
+       _profileController = profileController {
     router = GoRouter(
       initialLocation: AppRoutes.startupPath,
       redirect: _redirect,
       routes: _buildRoutes(),
       errorBuilder: (BuildContext context, GoRouterState state) {
         return _NavigationErrorScreen(
-          onReturnToLogin: () {
-            context.goNamed(AppRoutes.loginName);
-          },
+          onReturnToLogin: () => context.goNamed(AppRoutes.loginName),
         );
       },
     );
@@ -46,13 +51,19 @@ final class AppRouter {
 
   final OnboardingStorage _onboardingStorage;
   final AuthRepository _authRepository;
+  final ProfileController _profileController;
 
   late final GoRouter router;
 
   String? _redirect(BuildContext context, GoRouterState state) {
     final String location = state.matchedLocation;
 
-    if (location == AppRoutes.homePath && !_authRepository.hasAccessToken) {
+    final bool isProtectedRoute =
+        location == AppRoutes.homePath ||
+        location == AppRoutes.editProfilePath ||
+        location == AppRoutes.preferencesPath;
+
+    if (isProtectedRoute && !_authRepository.hasAccessToken) {
       return AppRoutes.loginPath;
     }
 
@@ -91,21 +102,15 @@ final class AppRouter {
           return GetStartedScreen(
             onGetStarted: () async {
               await _onboardingStorage.markOnboardingAsSeen();
-
-              if (!context.mounted) {
-                return;
+              if (context.mounted) {
+                context.pushNamed(AppRoutes.registerName);
               }
-
-              context.pushNamed(AppRoutes.registerName);
             },
             onLogin: () async {
               await _onboardingStorage.markOnboardingAsSeen();
-
-              if (!context.mounted) {
-                return;
+              if (context.mounted) {
+                context.goNamed(AppRoutes.loginName);
               }
-
-              context.goNamed(AppRoutes.loginName);
             },
           );
         },
@@ -115,21 +120,16 @@ final class AppRouter {
         path: AppRoutes.registerPath,
         builder: (BuildContext context, GoRouterState state) {
           return ChangeNotifierProvider<RegisterController>(
-            create: (_) {
-              return RegisterController(authRepository: _authRepository);
-            },
+            create: (_) => RegisterController(authRepository: _authRepository),
             child: RegisterScreen(
               onBack: () {
                 if (context.canPop()) {
                   context.pop();
-                  return;
+                } else {
+                  context.goNamed(AppRoutes.loginName);
                 }
-
-                context.goNamed(AppRoutes.loginName);
               },
-              onLogin: () {
-                context.goNamed(AppRoutes.loginName);
-              },
+              onLogin: () => context.goNamed(AppRoutes.loginName),
               onRegistrationSuccess: (String email) {
                 context.goNamed(AppRoutes.verifyEmailName, extra: email);
               },
@@ -144,27 +144,25 @@ final class AppRouter {
           final Object? extra = state.extra;
 
           if (extra is! String || extra.trim().isEmpty) {
-            return _MissingVerificationEmailScreen(
-              onReturnToLogin: () {
-                context.goNamed(AppRoutes.loginName);
-              },
+            return _MissingDataScreen(
+              title: (AppLocalizations l10n) => l10n.emailMissingTitle,
+              message: (AppLocalizations l10n) =>
+                  l10n.verificationEmailMissingMessage,
+              onReturnToLogin: () =>
+                  context.goNamed(AppRoutes.loginName),
             );
           }
 
           final String email = extra.trim().toLowerCase();
 
           return ChangeNotifierProvider<VerifyEmailController>(
-            create: (_) {
-              return VerifyEmailController(authRepository: _authRepository);
-            },
+            create: (_) =>
+                VerifyEmailController(authRepository: _authRepository),
             child: VerifyEmailScreen(
               email: email,
-              onBack: () {
-                context.goNamed(AppRoutes.loginName);
-              },
-              onVerificationSuccess: () {
-                context.goNamed(AppRoutes.loginName);
-              },
+              onBack: () => context.goNamed(AppRoutes.loginName),
+              onVerificationSuccess: () =>
+                  context.goNamed(AppRoutes.loginName),
             ),
           );
         },
@@ -174,22 +172,16 @@ final class AppRouter {
         path: AppRoutes.loginPath,
         builder: (BuildContext context, GoRouterState state) {
           return ChangeNotifierProvider<LoginController>(
-            create: (_) {
-              return LoginController(authRepository: _authRepository);
-            },
+            create: (_) => LoginController(authRepository: _authRepository),
             child: LoginScreen(
-              onLoginSuccess: () {
-                context.goNamed(AppRoutes.homeName);
-              },
+              onLoginSuccess: () => context.goNamed(AppRoutes.homeName),
               onEmailVerificationRequired: (String email) {
                 context.goNamed(AppRoutes.verifyEmailName, extra: email);
               },
               onForgotPassword: () {
                 context.pushNamed(AppRoutes.forgotPasswordName);
               },
-              onRegister: () {
-                context.pushNamed(AppRoutes.registerName);
-              },
+              onRegister: () => context.pushNamed(AppRoutes.registerName),
             ),
           );
         },
@@ -199,17 +191,15 @@ final class AppRouter {
         path: AppRoutes.forgotPasswordPath,
         builder: (BuildContext context, GoRouterState state) {
           return ChangeNotifierProvider<ForgotPasswordController>(
-            create: (_) {
-              return ForgotPasswordController(authRepository: _authRepository);
-            },
+            create: (_) =>
+                ForgotPasswordController(authRepository: _authRepository),
             child: ForgotPasswordScreen(
               onBack: () {
                 if (context.canPop()) {
                   context.pop();
-                  return;
+                } else {
+                  context.goNamed(AppRoutes.loginName);
                 }
-
-                context.goNamed(AppRoutes.loginName);
               },
               onRequestSuccess: (String email) {
                 context.pushNamed(AppRoutes.verifyResetCodeName, extra: email);
@@ -225,32 +215,29 @@ final class AppRouter {
           final Object? extra = state.extra;
 
           if (extra is! String || extra.trim().isEmpty) {
-            return _MissingPasswordRecoveryDataScreen(
-              title: 'Email Address Missing',
-              message: 'Return to Login and start password recovery again.',
-              onReturnToLogin: () {
-                context.goNamed(AppRoutes.loginName);
-              },
+            return _MissingDataScreen(
+              title: (AppLocalizations l10n) => l10n.emailMissingTitle,
+              message: (AppLocalizations l10n) =>
+                  l10n.passwordRecoveryEmailMissingMessage,
+              onReturnToLogin: () =>
+                  context.goNamed(AppRoutes.loginName),
             );
           }
 
           final String email = extra.trim().toLowerCase();
 
           return ChangeNotifierProvider<VerifyPasswordResetCodeController>(
-            create: (_) {
-              return VerifyPasswordResetCodeController(
-                authRepository: _authRepository,
-              );
-            },
+            create: (_) => VerifyPasswordResetCodeController(
+              authRepository: _authRepository,
+            ),
             child: VerifyPasswordResetCodeScreen(
               email: email,
               onBack: () {
                 if (context.canPop()) {
                   context.pop();
-                  return;
+                } else {
+                  context.goNamed(AppRoutes.loginName);
                 }
-
-                context.goNamed(AppRoutes.loginName);
               },
               onVerificationSuccess:
                   (PasswordResetTokenResponseModel resetSession) {
@@ -272,45 +259,41 @@ final class AppRouter {
           if (extra is! PasswordResetTokenResponseModel ||
               extra.resetToken.isEmpty ||
               extra.expiresInSeconds <= 0) {
-            return _MissingPasswordRecoveryDataScreen(
-              title: 'Reset Session Missing',
-              message:
-                  'For your security, return to Login and request a new '
-                  'password reset code.',
-              onReturnToLogin: () {
-                context.goNamed(AppRoutes.loginName);
-              },
+            return _MissingDataScreen(
+              title: (AppLocalizations l10n) =>
+                  l10n.resetSessionMissingTitle,
+              message: (AppLocalizations l10n) =>
+                  l10n.resetSessionMissingMessage,
+              onReturnToLogin: () =>
+                  context.goNamed(AppRoutes.loginName),
             );
           }
 
           return ChangeNotifierProvider<ResetPasswordController>(
-            create: (_) {
-              return ResetPasswordController(authRepository: _authRepository);
-            },
+            create: (_) =>
+                ResetPasswordController(authRepository: _authRepository),
             child: ResetPasswordScreen(
               resetSession: extra,
               onBack: () {
                 if (context.canPop()) {
                   context.pop();
-                  return;
+                } else {
+                  context.goNamed(AppRoutes.loginName);
                 }
-
-                context.goNamed(AppRoutes.loginName);
               },
-              onResetSuccess: (String message) {
-                final ScaffoldMessengerState messenger = ScaffoldMessenger.of(
-                  context,
-                );
-
+              onResetSuccess: () {
+                final ScaffoldMessengerState messenger =
+                    ScaffoldMessenger.of(context);
                 messenger
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                     SnackBar(
-                      content: Text(message),
+                      content: Text(
+                        context.l10n.passwordResetSuccess,
+                      ),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
-
                 context.goNamed(AppRoutes.loginName);
               },
             ),
@@ -321,7 +304,53 @@ final class AppRouter {
         name: AppRoutes.homeName,
         path: AppRoutes.homePath,
         builder: (BuildContext context, GoRouterState state) {
-          return const HomeScreen();
+          return ChangeNotifierProvider<ProfileController>.value(
+            value: _profileController,
+            child: MainShellScreen(
+              onEditProfile: () =>
+                  context.pushNamed(AppRoutes.editProfileName),
+              onOpenPreferences: () =>
+                  context.pushNamed(AppRoutes.preferencesName),
+              onLogoutSuccess: () =>
+                  context.goNamed(AppRoutes.loginName),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.editProfileName,
+        path: AppRoutes.editProfilePath,
+        builder: (BuildContext context, GoRouterState state) {
+          return ChangeNotifierProvider<ProfileController>.value(
+            value: _profileController,
+            child: EditProfileScreen(
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.goNamed(AppRoutes.homeName);
+                }
+              },
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.preferencesName,
+        path: AppRoutes.preferencesPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return ChangeNotifierProvider<ProfileController>.value(
+            value: _profileController,
+            child: PreferencesScreen(
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.goNamed(AppRoutes.homeName);
+                }
+              },
+            ),
+          );
         },
       ),
     ];
@@ -338,22 +367,17 @@ class _StartupScreen extends StatefulWidget {
   final AuthRepository authRepository;
 
   @override
-  State<_StartupScreen> createState() {
-    return _StartupScreenState();
-  }
+  State<_StartupScreen> createState() => _StartupScreenState();
 }
 
 class _StartupScreenState extends State<_StartupScreen> {
   bool _isResolving = false;
-  String? _errorMessage;
+  AppException? _error;
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _resolveStartup();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _resolveStartup());
   }
 
   Future<void> _resolveStartup() async {
@@ -363,52 +387,43 @@ class _StartupScreenState extends State<_StartupScreen> {
 
     setState(() {
       _isResolving = true;
-      _errorMessage = null;
+      _error = null;
     });
 
     try {
-      final bool sessionRestored = await widget.authRepository.restoreSession();
-
+      final bool restored = await widget.authRepository.restoreSession();
       if (!mounted) {
         return;
       }
 
-      if (sessionRestored) {
+      if (restored) {
         context.goNamed(AppRoutes.homeName);
         return;
       }
 
-      final bool hasSeenOnboarding = await widget.onboardingStorage
-          .hasSeenOnboarding();
-
+      final bool seen = await widget.onboardingStorage.hasSeenOnboarding();
       if (!mounted) {
         return;
       }
 
-      if (hasSeenOnboarding) {
-        context.goNamed(AppRoutes.loginName);
-        return;
-      }
-
-      context.goNamed(AppRoutes.getStartedName);
+      context.goNamed(
+        seen ? AppRoutes.loginName : AppRoutes.getStartedName,
+      );
     } on AppException catch (exception) {
-      if (!mounted) {
-        return;
+      if (mounted) {
+        setState(() {
+          _error = exception;
+        });
       }
-
-      setState(() {
-        _errorMessage = exception.message;
-      });
     } catch (_) {
-      if (!mounted) {
-        return;
+      if (mounted) {
+        setState(() {
+          _error = const AppException(
+            message: 'SmartWallet could not restore your session. Please try again.',
+            type: AppExceptionType.unknown,
+          );
+        });
       }
-
-      setState(() {
-        _errorMessage =
-            'SmartWallet could not restore your session. '
-            'Please try again.';
-      });
     } finally {
       if (mounted) {
         setState(() {
@@ -420,7 +435,7 @@ class _StartupScreenState extends State<_StartupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String? errorMessage = _errorMessage;
+    final AppLocalizations l10n = context.l10n;
 
     return Scaffold(
       body: SafeArea(
@@ -429,14 +444,14 @@ class _StartupScreenState extends State<_StartupScreen> {
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 360),
-              child: errorMessage == null
-                  ? const Column(
+              child: _error == null
+                  ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: AppSpacing.lg),
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: AppSpacing.lg),
                         Text(
-                          'Preparing SmartWallet...',
+                          l10n.preparingSmartWallet,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.body,
                         ),
@@ -447,25 +462,21 @@ class _StartupScreenState extends State<_StartupScreen> {
                       children: [
                         const Icon(Icons.cloud_off_outlined, size: 48),
                         const SizedBox(height: AppSpacing.lg),
-                        const Text(
-                          'Unable to Restore Session',
+                        Text(
+                          l10n.unableRestoreSession,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.screenTitle,
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
-                          errorMessage,
+                          LocalizedErrorMessage.fromException(context, _error),
                           textAlign: TextAlign.center,
                           style: AppTextStyles.body,
                         ),
                         const SizedBox(height: AppSpacing.xl),
                         FilledButton(
-                          onPressed: _isResolving
-                              ? null
-                              : () {
-                                  _resolveStartup();
-                                },
-                          child: const Text('Try Again'),
+                          onPressed: _isResolving ? null : _resolveStartup,
+                          child: Text(l10n.tryAgain),
                         ),
                       ],
                     ),
@@ -477,62 +488,21 @@ class _StartupScreenState extends State<_StartupScreen> {
   }
 }
 
-class _MissingVerificationEmailScreen extends StatelessWidget {
-  const _MissingVerificationEmailScreen({required this.onReturnToLogin});
-
-  final VoidCallback onReturnToLogin;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.email_outlined, size: 48),
-                const SizedBox(height: AppSpacing.lg),
-                const Text(
-                  'Email Address Missing',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.screenTitle,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                const Text(
-                  'Return to Login and enter your account '
-                  'email again.',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.body,
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                FilledButton(
-                  onPressed: onReturnToLogin,
-                  child: const Text('Return to Login'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MissingPasswordRecoveryDataScreen extends StatelessWidget {
-  const _MissingPasswordRecoveryDataScreen({
+class _MissingDataScreen extends StatelessWidget {
+  const _MissingDataScreen({
     required this.title,
     required this.message,
     required this.onReturnToLogin,
   });
 
-  final String title;
-  final String message;
+  final String Function(AppLocalizations l10n) title;
+  final String Function(AppLocalizations l10n) message;
   final VoidCallback onReturnToLogin;
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -546,20 +516,20 @@ class _MissingPasswordRecoveryDataScreen extends StatelessWidget {
                   const Icon(Icons.shield_outlined, size: 48),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
-                    title,
+                    title(l10n),
                     textAlign: TextAlign.center,
                     style: AppTextStyles.screenTitle,
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
-                    message,
+                    message(l10n),
                     textAlign: TextAlign.center,
                     style: AppTextStyles.body,
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   FilledButton(
                     onPressed: onReturnToLogin,
-                    child: const Text('Return to Login'),
+                    child: Text(l10n.returnToLogin),
                   ),
                 ],
               ),
@@ -578,6 +548,8 @@ class _NavigationErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -588,15 +560,15 @@ class _NavigationErrorScreen extends StatelessWidget {
               children: [
                 const Icon(Icons.error_outline_rounded, size: 48),
                 const SizedBox(height: AppSpacing.lg),
-                const Text(
-                  'This page could not be opened.',
+                Text(
+                  l10n.navigationError,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.screenTitle,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 FilledButton(
                   onPressed: onReturnToLogin,
-                  child: const Text('Return to Login'),
+                  child: Text(l10n.returnToLogin),
                 ),
               ],
             ),

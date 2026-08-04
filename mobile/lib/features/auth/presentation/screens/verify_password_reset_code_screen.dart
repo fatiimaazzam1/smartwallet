@@ -5,9 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/errors/localized_error_message.dart';
+import 'package:smartwallet_mobile/l10n/l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_status_message.dart';
 import '../../data/models/password_reset_token_response_model.dart';
 import '../controllers/verify_password_reset_code_controller.dart';
 
@@ -34,7 +37,6 @@ class _VerifyPasswordResetCodeScreenState
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _codeController = TextEditingController();
-
   Timer? _resendTimer;
   int _remainingSeconds = _resendCooldownSeconds;
 
@@ -55,16 +57,13 @@ class _VerifyPasswordResetCodeScreenState
 
   Future<void> _verifyCode() async {
     final FormState? formState = _formKey.currentState;
-
     if (formState == null || !formState.validate()) {
       return;
     }
 
     FocusScope.of(context).unfocus();
-
     final VerifyPasswordResetCodeController controller = context
         .read<VerifyPasswordResetCodeController>();
-
     final PasswordResetTokenResponseModel? response = await controller
         .verifyPasswordResetCode(
           email: widget.email,
@@ -84,10 +83,8 @@ class _VerifyPasswordResetCodeScreenState
     }
 
     FocusScope.of(context).unfocus();
-
     final VerifyPasswordResetCodeController controller = context
         .read<VerifyPasswordResetCodeController>();
-
     final response = await controller.resendPasswordResetCode(
       email: widget.email,
     );
@@ -103,17 +100,14 @@ class _VerifyPasswordResetCodeScreenState
 
   void _restartResendCooldown() {
     _resendTimer?.cancel();
-
     setState(() {
       _remainingSeconds = _resendCooldownSeconds;
     });
-
     _startResendTimer();
   }
 
   void _startResendTimer() {
     _resendTimer?.cancel();
-
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (!mounted) {
         timer.cancel();
@@ -122,11 +116,9 @@ class _VerifyPasswordResetCodeScreenState
 
       if (_remainingSeconds <= 1) {
         timer.cancel();
-
         setState(() {
           _remainingSeconds = 0;
         });
-
         return;
       }
 
@@ -137,14 +129,15 @@ class _VerifyPasswordResetCodeScreenState
   }
 
   String? _validateCode(String? value) {
+    final AppLocalizations l10n = context.l10n;
     final String code = value?.trim() ?? '';
 
     if (code.isEmpty) {
-      return 'Reset code is required.';
+      return l10n.resetCodeRequired;
     }
 
     if (!RegExp(r'^\d{6}$').hasMatch(code)) {
-      return 'Enter the six-digit reset code.';
+      return l10n.enterSixDigitResetCode;
     }
 
     return null;
@@ -152,6 +145,7 @@ class _VerifyPasswordResetCodeScreenState
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
     final VerifyPasswordResetCodeController controller = context
         .watch<VerifyPasswordResetCodeController>();
 
@@ -174,26 +168,26 @@ class _VerifyPasswordResetCodeScreenState
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         child: IconButton(
                           onPressed: controller.isLoading
                               ? null
                               : widget.onBack,
-                          tooltip: 'Go back',
-                          icon: const Icon(Icons.arrow_back_rounded),
+                          tooltip: l10n.goBack,
+                          icon: const BackButtonIcon(),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
                       const _ResetCodeIcon(),
                       const SizedBox(height: AppSpacing.xl),
-                      const Text(
-                        'Verify Reset Code',
+                      Text(
+                        l10n.verifyResetCode,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.screenTitle,
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      const Text(
-                        'Enter the six-digit reset code if one was sent for',
+                      Text(
+                        l10n.resetCodeSubtitle,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.subtitle,
                       ),
@@ -203,11 +197,13 @@ class _VerifyPasswordResetCodeScreenState
                         textAlign: TextAlign.center,
                         style: AppTextStyles.body.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xxl),
-                      const Text('Reset Code', style: AppTextStyles.fieldLabel),
+                      Text(
+                        l10n.resetCode,
+                        style: AppTextStyles.fieldLabel,
+                      ),
                       const SizedBox(height: AppSpacing.sm),
                       TextFormField(
                         controller: _codeController,
@@ -216,7 +212,7 @@ class _VerifyPasswordResetCodeScreenState
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.done,
                         autofillHints: const [AutofillHints.oneTimeCode],
-                        inputFormatters: [
+                        inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(6),
                         ],
@@ -231,33 +227,34 @@ class _VerifyPasswordResetCodeScreenState
                           counterText: '',
                         ),
                         maxLength: 6,
-                        onFieldSubmitted: (_) {
-                          _verifyCode();
-                        },
+                        onFieldSubmitted: (_) => _verifyCode(),
                       ),
                       if (controller.errorMessage != null) ...[
                         const SizedBox(height: AppSpacing.lg),
-                        _StatusMessage(
-                          message: controller.errorMessage!,
+                        AppStatusMessage(
+                          message: LocalizedErrorMessage.fromMessage(
+                            context,
+                            controller.errorMessage,
+                          ),
                           isError: true,
                         ),
                       ],
                       if (controller.successMessage != null) ...[
                         const SizedBox(height: AppSpacing.lg),
-                        _StatusMessage(
-                          message: controller.successMessage!,
+                        AppStatusMessage(
+                          message: l10n.resetCodeResent,
                           isError: false,
                         ),
                       ],
                       const SizedBox(height: AppSpacing.xl),
                       AppButton(
-                        label: 'Verify Code',
+                        label: l10n.verifyCode,
                         isLoading: controller.isVerifying,
                         onPressed: controller.isResending ? null : _verifyCode,
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      const Text(
-                        'Did not receive the code?',
+                      Text(
+                        l10n.didNotReceiveCode,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.body,
                       ),
@@ -268,10 +265,10 @@ class _VerifyPasswordResetCodeScreenState
                             : _resendCode,
                         child: Text(
                           controller.isResending
-                              ? 'Sending...'
+                              ? l10n.sending
                               : _canResend
-                              ? 'Resend Code'
-                              : 'Resend in $_remainingSeconds seconds',
+                              ? l10n.resendCode
+                              : l10n.resendIn(_remainingSeconds),
                         ),
                       ),
                     ],
@@ -304,51 +301,6 @@ class _ResetCodeIcon extends StatelessWidget {
           size: 42,
           color: AppColors.primary,
         ),
-      ),
-    );
-  }
-}
-
-class _StatusMessage extends StatelessWidget {
-  const _StatusMessage({required this.message, required this.isError});
-
-  final String message;
-  final bool isError;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color statusColor = isError ? AppColors.error : AppColors.accent;
-
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            isError
-                ? Icons.error_outline_rounded
-                : Icons.check_circle_outline_rounded,
-            size: 20,
-            color: statusColor,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              message,
-              style: isError
-                  ? AppTextStyles.errorText
-                  : AppTextStyles.body.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-            ),
-          ),
-        ],
       ),
     );
   }

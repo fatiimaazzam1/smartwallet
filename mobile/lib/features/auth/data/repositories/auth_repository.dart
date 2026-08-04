@@ -61,6 +61,24 @@ final class AuthRepository {
     return response;
   }
 
+  Future<void> logout() async {
+    final String? refreshToken = await _localDataSource.readRefreshToken();
+
+    try {
+      if (refreshToken != null) {
+        await _remoteDataSource.logout(
+          RefreshRequestModel(refreshToken: refreshToken),
+        );
+      }
+    } on AppException {
+      // Local logout must still complete if remote revocation is temporarily
+      // unavailable. The raw refresh token is removed from this device below.
+    } finally {
+      _accessToken = null;
+      await _localDataSource.deleteRefreshToken();
+    }
+  }
+
   Future<MessageResponseModel> forgotPassword(
     ForgotPasswordRequestModel request,
   ) async {
