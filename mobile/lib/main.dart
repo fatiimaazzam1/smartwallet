@@ -15,9 +15,14 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/data/datasources/auth_local_data_source.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/categories/data/datasources/category_remote_data_source.dart';
+import 'features/categories/data/repositories/category_repository.dart';
 import 'features/profile/data/datasources/profile_remote_data_source.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
+import 'features/wallet/data/datasources/wallet_remote_data_source.dart';
+import 'features/wallet/data/repositories/wallet_repository.dart';
+import 'features/wallet/presentation/controllers/wallet_controller.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,10 +52,22 @@ void main() {
     localeController: localeController,
   );
 
+
+  final CategoryRepository categoryRepository = CategoryRepository(
+    remoteDataSource: CategoryRemoteDataSource(apiClient: apiClient),
+  );
+  final WalletController walletController = WalletController(
+    walletRepository: WalletRepository(
+      remoteDataSource: WalletRemoteDataSource(apiClient: apiClient),
+    ),
+  );
+
   final AppRouter appRouter = AppRouter(
     onboardingStorage: OnboardingStorage(),
     authRepository: authRepository,
     profileController: profileController,
+    walletController: walletController,
+    categoryRepository: categoryRepository,
   );
 
   runApp(

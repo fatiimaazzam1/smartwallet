@@ -33,4 +33,7 @@ abstract final class AppRoutes {
 
   static const String preferencesName = 'preferences';
   static const String preferencesPath = '/profile/preferences';
+
+  static const String categoriesName = 'categories';
+  static const String categoriesPath = '/profile/categories';
 }

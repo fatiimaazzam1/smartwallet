@@ -349,7 +349,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoriesComing =>
-      'Category management will be available with the Income and Expense feature.';
+      'Category management is available from Profile.';
 
   @override
   String get logout => 'Log Out';
@@ -541,4 +541,119 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get invalidServerResponseError =>
       'SmartWallet received an invalid server response.';
+
+  @override
+  String get manageCategoriesSubtitle =>
+      'Use default categories or add your own for future income and expense transactions.';
+
+  @override
+  String get addCategory => 'Add Category';
+
+  @override
+  String get createCategory => 'Create Category';
+
+  @override
+  String get createCategorySubtitle =>
+      'Create a category that will appear in the matching income or expense list.';
+
+  @override
+  String get categoryType => 'Category Type';
+
+  @override
+  String get categoryName => 'Category Name';
+
+  @override
+  String get categoryNameHint => 'e.g. Pet Care';
+
+  @override
+  String get categoryNameRequired => 'Category name is required.';
+
+  @override
+  String get saveCategory => 'Save Category';
+
+  @override
+  String get income => 'Income';
+
+  @override
+  String get expense => 'Expense';
+
+  @override
+  String get defaultCategory => 'Default';
+
+  @override
+  String get customCategory => 'Custom';
+
+  @override
+  String get categoryActions => 'Category actions';
+
+  @override
+  String get deleteCategory => 'Delete Category';
+
+  @override
+  String get deleteCategoryTitle => 'Delete category?';
+
+  @override
+  String deleteCategoryBody(String categoryName) {
+    return '$categoryName will no longer be available for new transactions. Existing transaction history will stay unchanged.';
+  }
+
+  @override
+  String get categoryCreated => 'Category created successfully.';
+
+  @override
+  String get categoryDeleted => 'Category deleted successfully.';
+
+  @override
+  String get searchCategories => 'Search categories';
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String get noCategoriesAvailable => 'No categories are available right now.';
+
+  @override
+  String get noCategorySearchResults => 'No categories match your search.';
+
+  @override
+  String get selectIncomeCategory => 'Select Income Category';
+
+  @override
+  String get selectExpenseCategory => 'Select Expense Category';
+
+  @override
+  String get addNewCategory => 'Add New Category';
+
+  @override
+  String get categoryAlreadyExistsError =>
+      'A category with this name already exists for this type.';
+
+  @override
+  String get defaultCategoryDeleteError =>
+      'Default categories cannot be deleted.';
+
+  @override
+  String get categoryNotFoundError => 'This category is no longer available.';
+
+  @override
+  String get walletNotFoundError => 'Your wallet could not be found.';
+
+  @override
+  String get walletOverviewSubtitle => 'Your wallet overview';
+
+  @override
+  String get totalBalance => 'Total Balance';
+
+  @override
+  String get showBalance => 'Show balance';
+
+  @override
+  String get balanceHidden => 'Balance hidden';
+
+  @override
+  String get walletReadyTitle => 'Wallet and categories are ready';
+
+  @override
+  String get walletReadyBody =>
+      'Your balance is connected to the backend. Income, expenses, and Safe to Spend will update from real transactions in the next phase.';
 }

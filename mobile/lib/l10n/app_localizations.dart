@@ -731,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @categoriesComing.
   ///
   /// In en, this message translates to:
-  /// **'Category management will be available with the Income and Expense feature.'**
+  /// **'Category management is available from Profile.'**
   String get categoriesComing;
 
   /// No description provided for @logout.
@@ -1057,6 +1057,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SmartWallet received an invalid server response.'**
   String get invalidServerResponseError;
+
+  /// No description provided for @manageCategoriesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use default categories or add your own for future income and expense transactions.'**
+  String get manageCategoriesSubtitle;
+
+  /// No description provided for @addCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Category'**
+  String get addCategory;
+
+  /// No description provided for @createCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Category'**
+  String get createCategory;
+
+  /// No description provided for @createCategorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a category that will appear in the matching income or expense list.'**
+  String get createCategorySubtitle;
+
+  /// No description provided for @categoryType.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Type'**
+  String get categoryType;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Name'**
+  String get categoryName;
+
+  /// No description provided for @categoryNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Pet Care'**
+  String get categoryNameHint;
+
+  /// No description provided for @categoryNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name is required.'**
+  String get categoryNameRequired;
+
+  /// No description provided for @saveCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Category'**
+  String get saveCategory;
+
+  /// No description provided for @income.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get income;
+
+  /// No description provided for @expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get expense;
+
+  /// No description provided for @defaultCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultCategory;
+
+  /// No description provided for @customCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get customCategory;
+
+  /// No description provided for @categoryActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Category actions'**
+  String get categoryActions;
+
+  /// No description provided for @deleteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Category'**
+  String get deleteCategory;
+
+  /// No description provided for @deleteCategoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category?'**
+  String get deleteCategoryTitle;
+
+  /// Confirmation before archiving a custom category.
+  ///
+  /// In en, this message translates to:
+  /// **'{categoryName} will no longer be available for new transactions. Existing transaction history will stay unchanged.'**
+  String deleteCategoryBody(String categoryName);
+
+  /// No description provided for @categoryCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Category created successfully.'**
+  String get categoryCreated;
+
+  /// No description provided for @categoryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Category deleted successfully.'**
+  String get categoryDeleted;
+
+  /// No description provided for @searchCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Search categories'**
+  String get searchCategories;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @noCategoriesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories are available right now.'**
+  String get noCategoriesAvailable;
+
+  /// No description provided for @noCategorySearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories match your search.'**
+  String get noCategorySearchResults;
+
+  /// No description provided for @selectIncomeCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Income Category'**
+  String get selectIncomeCategory;
+
+  /// No description provided for @selectExpenseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Expense Category'**
+  String get selectExpenseCategory;
+
+  /// No description provided for @addNewCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Category'**
+  String get addNewCategory;
+
+  /// No description provided for @categoryAlreadyExistsError.
+  ///
+  /// In en, this message translates to:
+  /// **'A category with this name already exists for this type.'**
+  String get categoryAlreadyExistsError;
+
+  /// No description provided for @defaultCategoryDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Default categories cannot be deleted.'**
+  String get defaultCategoryDeleteError;
+
+  /// No description provided for @categoryNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'This category is no longer available.'**
+  String get categoryNotFoundError;
+
+  /// No description provided for @walletNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet could not be found.'**
+  String get walletNotFoundError;
+
+  /// No description provided for @walletOverviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet overview'**
+  String get walletOverviewSubtitle;
+
+  /// No description provided for @totalBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Balance'**
+  String get totalBalance;
+
+  /// No description provided for @showBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Show balance'**
+  String get showBalance;
+
+  /// No description provided for @balanceHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance hidden'**
+  String get balanceHidden;
+
+  /// No description provided for @walletReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet and categories are ready'**
+  String get walletReadyTitle;
+
+  /// No description provided for @walletReadyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your balance is connected to the backend. Income, expenses, and Safe to Spend will update from real transactions in the next phase.'**
+  String get walletReadyBody;
 }
 
 class _AppLocalizationsDelegate

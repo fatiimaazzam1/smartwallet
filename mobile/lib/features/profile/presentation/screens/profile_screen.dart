@@ -14,12 +14,14 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
     required this.onEditProfile,
     required this.onOpenPreferences,
+    required this.onOpenCategories,
     required this.onLogoutSuccess,
     super.key,
   });
 
   final VoidCallback onEditProfile;
   final VoidCallback onOpenPreferences;
+  final VoidCallback onOpenCategories;
   final VoidCallback onLogoutSuccess;
 
   Future<void> _confirmLogout(BuildContext context) async {
@@ -120,18 +122,6 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
-  void _showCategoriesInfo(BuildContext context) {
-    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.categoriesComing),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-  }
-
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
@@ -226,7 +216,7 @@ class ProfileScreen extends StatelessWidget {
                 _ProfileActionTile(
                   icon: Icons.category_outlined,
                   title: l10n.manageCategories,
-                  onTap: () => _showCategoriesInfo(context),
+                  onTap: onOpenCategories,
                 ),
               ],
             ),
