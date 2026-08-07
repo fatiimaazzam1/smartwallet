@@ -22,11 +22,15 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/auth/presentation/screens/verify_email_screen.dart';
 import '../../features/auth/presentation/screens/verify_password_reset_code_screen.dart';
+import '../../features/categories/data/repositories/category_repository.dart';
+import '../../features/categories/presentation/controllers/category_controller.dart';
+import '../../features/categories/presentation/screens/manage_categories_screen.dart';
 import '../../features/navigation/presentation/screens/main_shell_screen.dart';
 import '../../features/onboarding/presentation/screens/get_started_screen.dart';
 import '../../features/profile/presentation/controllers/profile_controller.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/preferences_screen.dart';
+import '../../features/wallet/presentation/controllers/wallet_controller.dart';
 import 'app_routes.dart';
 
 final class AppRouter {
@@ -34,9 +38,13 @@ final class AppRouter {
     required OnboardingStorage onboardingStorage,
     required AuthRepository authRepository,
     required ProfileController profileController,
+    required WalletController walletController,
+    required CategoryRepository categoryRepository,
   }) : _onboardingStorage = onboardingStorage,
        _authRepository = authRepository,
-       _profileController = profileController {
+       _profileController = profileController,
+       _walletController = walletController,
+       _categoryRepository = categoryRepository {
     router = GoRouter(
       initialLocation: AppRoutes.startupPath,
       redirect: _redirect,
@@ -52,6 +60,8 @@ final class AppRouter {
   final OnboardingStorage _onboardingStorage;
   final AuthRepository _authRepository;
   final ProfileController _profileController;
+  final WalletController _walletController;
+  final CategoryRepository _categoryRepository;
 
   late final GoRouter router;
 
@@ -61,7 +71,8 @@ final class AppRouter {
     final bool isProtectedRoute =
         location == AppRoutes.homePath ||
         location == AppRoutes.editProfilePath ||
-        location == AppRoutes.preferencesPath;
+        location == AppRoutes.preferencesPath ||
+        location == AppRoutes.categoriesPath;
 
     if (isProtectedRoute && !_authRepository.hasAccessToken) {
       return AppRoutes.loginPath;
@@ -304,15 +315,26 @@ final class AppRouter {
         name: AppRoutes.homeName,
         path: AppRoutes.homePath,
         builder: (BuildContext context, GoRouterState state) {
-          return ChangeNotifierProvider<ProfileController>.value(
-            value: _profileController,
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<ProfileController>.value(
+                value: _profileController,
+              ),
+              ChangeNotifierProvider<WalletController>.value(
+                value: _walletController,
+              ),
+            ],
             child: MainShellScreen(
               onEditProfile: () =>
                   context.pushNamed(AppRoutes.editProfileName),
               onOpenPreferences: () =>
                   context.pushNamed(AppRoutes.preferencesName),
-              onLogoutSuccess: () =>
-                  context.goNamed(AppRoutes.loginName),
+              onOpenCategories: () =>
+                  context.pushNamed(AppRoutes.categoriesName),
+              onLogoutSuccess: () {
+                _walletController.clear();
+                context.goNamed(AppRoutes.loginName);
+              },
             ),
           );
         },
@@ -342,6 +364,26 @@ final class AppRouter {
           return ChangeNotifierProvider<ProfileController>.value(
             value: _profileController,
             child: PreferencesScreen(
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.goNamed(AppRoutes.homeName);
+                }
+              },
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.categoriesName,
+        path: AppRoutes.categoriesPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return ChangeNotifierProvider<CategoryController>(
+            create: (_) => CategoryController(
+              categoryRepository: _categoryRepository,
+            ),
+            child: ManageCategoriesScreen(
               onBack: () {
                 if (context.canPop()) {
                   context.pop();

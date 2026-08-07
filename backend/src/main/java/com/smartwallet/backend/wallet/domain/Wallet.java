@@ -20,6 +20,9 @@ import lombok.Setter;
 @Table(name = "wallets")
 public class Wallet extends BaseEntity {
 
+    public static final String DEFAULT_NAME = "Personal Wallet";
+    public static final String DEFAULT_CURRENCY_CODE = "USD";
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "user_id",
@@ -29,10 +32,14 @@ public class Wallet extends BaseEntity {
     private User user;
 
     @Column(nullable = false, length = 80)
-    private String name = "Personal Wallet";
+    private String name = DEFAULT_NAME;
+
+    @Column(name = "currency_code", nullable = false, length = 3)
+    private String currencyCode = DEFAULT_CURRENCY_CODE;
 
     public Wallet(User user) {
         this.user = user;
-        this.name = "Personal Wallet";
+        this.name = DEFAULT_NAME;
+        this.currencyCode = DEFAULT_CURRENCY_CODE;
     }
 }

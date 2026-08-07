@@ -7,18 +7,21 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../../../profile/presentation/controllers/profile_controller.dart';
+import '../../../wallet/presentation/controllers/wallet_controller.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 
 class MainShellScreen extends StatefulWidget {
   const MainShellScreen({
     required this.onEditProfile,
     required this.onOpenPreferences,
+    required this.onOpenCategories,
     required this.onLogoutSuccess,
     super.key,
   });
 
   final VoidCallback onEditProfile;
   final VoidCallback onOpenPreferences;
+  final VoidCallback onOpenCategories;
   final VoidCallback onLogoutSuccess;
 
   @override
@@ -34,6 +37,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<ProfileController>().load();
+        context.read<WalletController>().load();
       }
     });
   }
@@ -115,6 +119,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
       ProfileScreen(
         onEditProfile: widget.onEditProfile,
         onOpenPreferences: widget.onOpenPreferences,
+        onOpenCategories: widget.onOpenCategories,
         onLogoutSuccess: widget.onLogoutSuccess,
       ),
     ];

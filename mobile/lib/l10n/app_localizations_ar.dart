@@ -344,7 +344,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get manageCategories => 'إدارة الفئات';
 
   @override
-  String get categoriesComing => 'ستتوفر إدارة الفئات مع ميزة الدخل والمصروف.';
+  String get categoriesComing => 'إدارة الفئات متاحة من الملف الشخصي.';
 
   @override
   String get logout => 'تسجيل الخروج';
@@ -535,4 +535,118 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get invalidServerResponseError =>
       'استلم سمارت ووليت استجابة غير صالحة من الخادم.';
+
+  @override
+  String get manageCategoriesSubtitle =>
+      'استخدم الفئات الافتراضية أو أضف فئاتك الخاصة لمعاملات الدخل والمصروف القادمة.';
+
+  @override
+  String get addCategory => 'إضافة فئة';
+
+  @override
+  String get createCategory => 'إنشاء فئة';
+
+  @override
+  String get createCategorySubtitle =>
+      'أنشئ فئة تظهر ضمن قائمة الدخل أو المصروف المناسبة.';
+
+  @override
+  String get categoryType => 'نوع الفئة';
+
+  @override
+  String get categoryName => 'اسم الفئة';
+
+  @override
+  String get categoryNameHint => 'مثال: رعاية الحيوانات';
+
+  @override
+  String get categoryNameRequired => 'اسم الفئة مطلوب.';
+
+  @override
+  String get saveCategory => 'حفظ الفئة';
+
+  @override
+  String get income => 'الدخل';
+
+  @override
+  String get expense => 'المصروف';
+
+  @override
+  String get defaultCategory => 'افتراضية';
+
+  @override
+  String get customCategory => 'مخصصة';
+
+  @override
+  String get categoryActions => 'إجراءات الفئة';
+
+  @override
+  String get deleteCategory => 'حذف الفئة';
+
+  @override
+  String get deleteCategoryTitle => 'حذف الفئة؟';
+
+  @override
+  String deleteCategoryBody(String categoryName) {
+    return 'لن تعود فئة $categoryName متاحة للمعاملات الجديدة، وستبقى المعاملات السابقة محفوظة دون تغيير.';
+  }
+
+  @override
+  String get categoryCreated => 'تم إنشاء الفئة بنجاح.';
+
+  @override
+  String get categoryDeleted => 'تم حذف الفئة بنجاح.';
+
+  @override
+  String get searchCategories => 'البحث في الفئات';
+
+  @override
+  String get clearSearch => 'مسح البحث';
+
+  @override
+  String get noCategoriesAvailable => 'لا توجد فئات متاحة حالياً.';
+
+  @override
+  String get noCategorySearchResults => 'لا توجد فئات مطابقة للبحث.';
+
+  @override
+  String get selectIncomeCategory => 'اختر فئة الدخل';
+
+  @override
+  String get selectExpenseCategory => 'اختر فئة المصروف';
+
+  @override
+  String get addNewCategory => 'إضافة فئة جديدة';
+
+  @override
+  String get categoryAlreadyExistsError =>
+      'توجد فئة بهذا الاسم ضمن النوع نفسه.';
+
+  @override
+  String get defaultCategoryDeleteError => 'لا يمكن حذف الفئات الافتراضية.';
+
+  @override
+  String get categoryNotFoundError => 'لم تعد هذه الفئة متاحة.';
+
+  @override
+  String get walletNotFoundError => 'تعذر العثور على محفظتك.';
+
+  @override
+  String get walletOverviewSubtitle => 'نظرة عامة على محفظتك';
+
+  @override
+  String get totalBalance => 'الرصيد الإجمالي';
+
+  @override
+  String get showBalance => 'إظهار الرصيد';
+
+  @override
+  String get balanceHidden => 'الرصيد مخفي';
+
+  @override
+  String get walletReadyTitle => 'المحفظة والفئات جاهزة';
+
+  @override
+  String get walletReadyBody =>
+      'رصيدك متصل بالخادم. سيتم تحديث الدخل والمصروف والمبلغ الآمن للصرف من معاملات حقيقية في المرحلة القادمة.';
 }

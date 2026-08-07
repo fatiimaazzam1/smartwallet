@@ -85,6 +85,23 @@ final class ApiClient {
     );
   }
 
+
+  Future<Response<T>> delete<T>(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
+    return _dio.delete<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    );
+  }
+
   Future<Response<T>> fetch<T>(RequestOptions requestOptions) {
     return _dio.fetch<T>(requestOptions);
   }

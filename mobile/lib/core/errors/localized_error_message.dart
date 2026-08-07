@@ -56,6 +56,23 @@ abstract final class LocalizedErrorMessage {
     AppLocalizations l10n,
     String normalized,
   ) {
+    if (normalized.contains('default categories cannot be deleted')) {
+      return l10n.defaultCategoryDeleteError;
+    }
+
+    if (normalized.contains('default category with this name') ||
+        normalized.contains('category with this name and type already exists')) {
+      return l10n.categoryAlreadyExistsError;
+    }
+
+    if (normalized.contains('category not found')) {
+      return l10n.categoryNotFoundError;
+    }
+
+    if (normalized.contains('wallet not found')) {
+      return l10n.walletNotFoundError;
+    }
+
     if (normalized.contains('invalid credentials') ||
         normalized.contains('incorrect email') ||
         normalized.contains('invalid email or password') ||
