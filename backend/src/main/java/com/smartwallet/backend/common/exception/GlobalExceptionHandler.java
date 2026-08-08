@@ -6,15 +6,19 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.smartwallet.backend.category.exception.CategoryConflictException;
 import com.smartwallet.backend.category.exception.CategoryNotFoundException;
+import com.smartwallet.backend.transaction.exception.TransactionConflictException;
+import com.smartwallet.backend.transaction.exception.TransactionNotFoundException;
 import com.smartwallet.backend.wallet.exception.WalletNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -77,6 +81,55 @@ public class GlobalExceptionHandler {
         return buildResponse(
                 HttpStatus.CONFLICT,
                 exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(
+            ConstraintViolationException exception,
+            HttpServletRequest request
+    ) {
+        String message = exception.getConstraintViolations()
+                .stream()
+                .map(violation -> violation.getMessage())
+                .distinct()
+                .collect(Collectors.joining(", "));
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                message,
+                request
+        );
+    }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleTransactionNotFoundException(
+            TransactionNotFoundException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler({
+            TransactionConflictException.class,
+            ObjectOptimisticLockingFailureException.class
+    })
+    public ResponseEntity<ApiErrorResponse> handleTransactionConflictException(
+            Exception exception,
+            HttpServletRequest request
+    ) {
+        String message = exception instanceof TransactionConflictException
+                ? exception.getMessage()
+                : "Transaction changed. Refresh and try again";
+
+        return buildResponse(
+                HttpStatus.CONFLICT,
+                message,
                 request
         );
     }
