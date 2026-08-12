@@ -5,6 +5,7 @@ abstract final class ApiEndpoints {
   static const String usersBase = '/api/v1/users';
   static const String walletsBase = '/api/v1/wallets';
   static const String categoriesBase = '/api/v1/categories';
+  static const String transactionsBase = '/api/v1/transactions';
 
   static const String register = '$authBase/register';
   static const String verifyEmail = '$authBase/verify-email';
@@ -29,6 +30,9 @@ abstract final class ApiEndpoints {
   static const String currentUserPreferences = '$currentUser/preferences';
   static const String currentWallet = '$walletsBase/me';
   static const String categories = categoriesBase;
+  static const String transactions = transactionsBase;
 
   static String categoryById(int categoryId) => '$categoriesBase/$categoryId';
+  static String transactionById(int transactionId) =>
+      '$transactionsBase/$transactionId';
 }

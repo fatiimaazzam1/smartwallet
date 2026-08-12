@@ -27,6 +27,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
                     )
                     from transactions
                     where wallet_id = :walletId
+                      and status = 'ACTIVE'
                     """,
             nativeQuery = true
     )

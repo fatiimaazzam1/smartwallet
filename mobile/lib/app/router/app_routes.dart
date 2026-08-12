@@ -36,4 +36,17 @@ abstract final class AppRoutes {
 
   static const String categoriesName = 'categories';
   static const String categoriesPath = '/profile/categories';
+
+  static const String addIncomeTransactionName = 'addIncomeTransaction';
+  static const String addIncomeTransactionPath = '/transactions/income/add';
+
+  static const String addExpenseTransactionName = 'addExpenseTransaction';
+  static const String addExpenseTransactionPath = '/transactions/expense/add';
+
+  static const String transactionDetailsName = 'transactionDetails';
+  static const String transactionDetailsPath = '/transactions/:transactionId';
+
+  static const String editTransactionName = 'editTransaction';
+  static const String editTransactionPath =
+      '/transactions/:transactionId/edit';
 }

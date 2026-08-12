@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -11,11 +13,24 @@ import '../../../../core/widgets/app_status_message.dart';
 import '../../../profile/data/models/user_preferences_model.dart';
 import '../../../profile/data/models/user_profile_model.dart';
 import '../../../profile/presentation/controllers/profile_controller.dart';
+import '../../../transactions/presentation/controllers/transaction_history_controller.dart';
+import '../../../transactions/presentation/widgets/transaction_card.dart';
 import '../../../wallet/data/models/wallet_model.dart';
 import '../../../wallet/presentation/controllers/wallet_controller.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    required this.onAddIncome,
+    required this.onAddExpense,
+    required this.onViewAllTransactions,
+    required this.onOpenTransaction,
+    super.key,
+  });
+
+  final VoidCallback onAddIncome;
+  final VoidCallback onAddExpense;
+  final VoidCallback onViewAllTransactions;
+  final ValueChanged<int> onOpenTransaction;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -28,26 +43,28 @@ class _HomeScreenState extends State<HomeScreen> {
     await Future.wait<void>(<Future<void>>[
       context.read<ProfileController>().load(force: true),
       context.read<WalletController>().load(force: true),
+      context.read<TransactionHistoryController>().loadRecent(force: true),
     ]);
   }
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations l10n = context.l10n;
-    final ProfileController profileController = context
-        .watch<ProfileController>();
-    final WalletController walletController = context
-        .watch<WalletController>();
+    final ProfileController profileController = context.watch<ProfileController>();
+    final WalletController walletController = context.watch<WalletController>();
+    final TransactionHistoryController transactionController = context
+        .watch<TransactionHistoryController>();
     final UserProfileModel? profile = profileController.profile;
-    final UserPreferencesModel? preferences = profileController.preferences;
+    final UserPreferencesModel preferences =
+        profileController.preferences ?? UserPreferencesModel.defaults;
     final WalletModel? wallet = walletController.wallet;
     final bool showBalance =
-        _manualShowBalance ?? !(preferences?.hideBalanceByDefault ?? false);
+        _manualShowBalance ?? !preferences.hideBalanceByDefault;
 
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _refresh,
         child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.screenHorizontal,
             AppSpacing.xl,
@@ -77,6 +94,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
               ),
+            if (wallet != null && walletController.error != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              AppStatusMessage(
+                message: LocalizedErrorMessage.fromException(
+                  context,
+                  walletController.error,
+                ),
+                isError: true,
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(
+                  onPressed: () => walletController.load(force: true),
+                  child: Text(context.l10n.retry),
+                ),
+              ),
+            ],
             if (profileController.error != null) ...[
               const SizedBox(height: AppSpacing.lg),
               AppStatusMessage(
@@ -88,9 +122,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
             const SizedBox(height: AppSpacing.xl),
-            _PhaseFoundationCard(
-              title: l10n.walletReadyTitle,
-              body: l10n.walletReadyBody,
+            _QuickActions(
+              onAddIncome: widget.onAddIncome,
+              onAddExpense: widget.onAddExpense,
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            _RecentTransactionsSection(
+              controller: transactionController,
+              preferences: preferences,
+              onViewAll: widget.onViewAllTransactions,
+              onOpenTransaction: widget.onOpenTransaction,
             ),
           ],
         ),
@@ -209,11 +250,18 @@ class _WalletBalanceCard extends StatelessWidget {
             value: showBalance
                 ? formatter.format(wallet.balance)
                 : context.l10n.balanceHidden,
-            child: Text(
-              showBalance ? formatter.format(wallet.balance) : '••••••',
-              style: AppTextStyles.brandTitle.copyWith(
-                color: AppColors.surface,
-                fontSize: 34,
+            child: Directionality(
+              textDirection: ui.TextDirection.ltr,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  showBalance ? formatter.format(wallet.balance) : '••••••',
+                  style: AppTextStyles.brandTitle.copyWith(
+                    color: AppColors.surface,
+                    fontSize: 34,
+                  ),
+                ),
               ),
             ),
           ),
@@ -256,6 +304,257 @@ class _WalletBalanceCard extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickActions extends StatelessWidget {
+  const _QuickActions({required this.onAddIncome, required this.onAddExpense});
+
+  final VoidCallback onAddIncome;
+  final VoidCallback onAddExpense;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _QuickActionCard(
+            label: context.l10n.addIncome,
+            icon: Icons.add_rounded,
+            color: AppColors.accent,
+            onTap: onAddIncome,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: _QuickActionCard(
+            label: context.l10n.addExpense,
+            icon: Icons.remove_rounded,
+            color: AppColors.error,
+            onTap: onAddExpense,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickActionCard extends StatelessWidget {
+  const _QuickActionCard({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 72),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.10),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RecentTransactionsSection extends StatelessWidget {
+  const _RecentTransactionsSection({
+    required this.controller,
+    required this.preferences,
+    required this.onViewAll,
+    required this.onOpenTransaction,
+  });
+
+  final TransactionHistoryController controller;
+  final UserPreferencesModel preferences;
+  final VoidCallback onViewAll;
+  final ValueChanged<int> onOpenTransaction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                context.l10n.recentTransactions,
+                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w800),
+              ),
+            ),
+            TextButton(onPressed: onViewAll, child: Text(context.l10n.viewAll)),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (controller.isRecentLoading && controller.recent.isEmpty)
+          const _RecentLoading()
+        else if (controller.recent.isEmpty && controller.recentError != null)
+          _RecentError(
+            message: LocalizedErrorMessage.fromException(
+              context,
+              controller.recentError,
+            ),
+            onRetry: () => controller.loadRecent(force: true),
+          )
+        else if (controller.recent.isEmpty)
+          const _RecentEmpty()
+        else ...[
+          for (int index = 0; index < controller.recent.length; index++) ...[
+            TransactionCard(
+              transaction: controller.recent[index],
+              dateFormat: preferences.dateFormat,
+              compact: true,
+              onTap: () => onOpenTransaction(controller.recent[index].id),
+            ),
+            if (index != controller.recent.length - 1)
+              const SizedBox(height: AppSpacing.sm),
+          ],
+          if (controller.recentError != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    LocalizedErrorMessage.fromException(
+                      context,
+                      controller.recentError,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.helperText,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => controller.loadRecent(force: true),
+                  child: Text(context.l10n.retry),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ],
+    );
+  }
+}
+
+class _RecentLoading extends StatelessWidget {
+  const _RecentLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 82,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: const Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2.4),
+        ),
+      ),
+    );
+  }
+}
+
+class _RecentEmpty extends StatelessWidget {
+  const _RecentEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.receipt_long_outlined,
+            color: AppColors.textSecondary,
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              context.l10n.noRecentTransactions,
+              style: AppTextStyles.body,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecentError extends StatelessWidget {
+  const _RecentError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          Text(message, textAlign: TextAlign.center, style: AppTextStyles.body),
+          const SizedBox(height: AppSpacing.sm),
+          TextButton(onPressed: onRetry, child: Text(context.l10n.retry)),
         ],
       ),
     );
@@ -310,57 +609,6 @@ class _WalletErrorCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: onRetry, child: Text(context.l10n.retryLoad)),
-        ],
-      ),
-    );
-  }
-}
-
-class _PhaseFoundationCard extends StatelessWidget {
-  const _PhaseFoundationCard({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: AppColors.successBackground,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.verified_outlined,
-              color: AppColors.accent,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.body.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(body, style: AppTextStyles.subtitle),
-              ],
-            ),
-          ),
         ],
       ),
     );

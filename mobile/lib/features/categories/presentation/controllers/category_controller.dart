@@ -16,6 +16,7 @@ final class CategoryController extends ChangeNotifier {
   bool _isLoading = false;
   bool _isCreating = false;
   int? _archivingCategoryId;
+  int _generation = 0;
 
   List<CategoryModel> get categories => _categories;
   AppException? get error => _error;
@@ -35,22 +36,34 @@ final class CategoryController extends ChangeNotifier {
       return;
     }
 
+    final int generation = _generation;
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _categories = await _categoryRepository.getCategories();
+      final List<CategoryModel> categories =
+          await _categoryRepository.getCategories();
+      if (generation != _generation) {
+        return;
+      }
+      _categories = categories;
     } on AppException catch (exception) {
-      _error = exception;
+      if (generation == _generation) {
+        _error = exception;
+      }
     } catch (_) {
-      _error = const AppException(
-        message: 'Something unexpected happened. Please try again.',
-        type: AppExceptionType.unknown,
-      );
+      if (generation == _generation) {
+        _error = const AppException(
+          message: 'Something unexpected happened. Please try again.',
+          type: AppExceptionType.unknown,
+        );
+      }
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      if (generation == _generation) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -62,6 +75,7 @@ final class CategoryController extends ChangeNotifier {
       return null;
     }
 
+    final int generation = _generation;
     _isCreating = true;
     _error = null;
     notifyListeners();
@@ -71,20 +85,31 @@ final class CategoryController extends ChangeNotifier {
         name: name,
         type: type,
       );
-      await _reloadAfterMutation();
+      final List<CategoryModel> categories =
+          await _categoryRepository.getCategories();
+      if (generation != _generation) {
+        return null;
+      }
+      _categories = categories;
       return created;
     } on AppException catch (exception) {
-      _error = exception;
+      if (generation == _generation) {
+        _error = exception;
+      }
       return null;
     } catch (_) {
-      _error = const AppException(
-        message: 'Something unexpected happened. Please try again.',
-        type: AppExceptionType.unknown,
-      );
+      if (generation == _generation) {
+        _error = const AppException(
+          message: 'Something unexpected happened. Please try again.',
+          type: AppExceptionType.unknown,
+        );
+      }
       return null;
     } finally {
-      _isCreating = false;
-      notifyListeners();
+      if (generation == _generation) {
+        _isCreating = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -93,33 +118,39 @@ final class CategoryController extends ChangeNotifier {
       return false;
     }
 
+    final int generation = _generation;
     _archivingCategoryId = category.id;
     _error = null;
     notifyListeners();
 
     try {
       await _categoryRepository.archiveCategory(category.id);
+      if (generation != _generation) {
+        return false;
+      }
       _categories = _categories
           .where((CategoryModel item) => item.id != category.id)
           .toList(growable: false);
       return true;
     } on AppException catch (exception) {
-      _error = exception;
+      if (generation == _generation) {
+        _error = exception;
+      }
       return false;
     } catch (_) {
-      _error = const AppException(
-        message: 'Something unexpected happened. Please try again.',
-        type: AppExceptionType.unknown,
-      );
+      if (generation == _generation) {
+        _error = const AppException(
+          message: 'Something unexpected happened. Please try again.',
+          type: AppExceptionType.unknown,
+        );
+      }
       return false;
     } finally {
-      _archivingCategoryId = null;
-      notifyListeners();
+      if (generation == _generation) {
+        _archivingCategoryId = null;
+        notifyListeners();
+      }
     }
-  }
-
-  Future<void> _reloadAfterMutation() async {
-    _categories = await _categoryRepository.getCategories();
   }
 
   void clearError() {
@@ -127,6 +158,16 @@ final class CategoryController extends ChangeNotifier {
       return;
     }
     _error = null;
+    notifyListeners();
+  }
+
+  void clear() {
+    _generation++;
+    _categories = const <CategoryModel>[];
+    _error = null;
+    _isLoading = false;
+    _isCreating = false;
+    _archivingCategoryId = null;
     notifyListeners();
   }
 }

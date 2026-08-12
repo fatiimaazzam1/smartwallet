@@ -32,6 +32,17 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             @Param("type") CategoryType type
     );
 
+    @Query("""
+            select category
+            from Category category
+            where category.id = :categoryId
+              and (category.user is null or category.user.id = :userId)
+            """)
+    Optional<Category> findVisibleCategoryById(
+            @Param("categoryId") Long categoryId,
+            @Param("userId") Long userId
+    );
+
     Optional<Category> findByUserIdAndTypeAndNameIgnoreCase(
             Long userId,
             CategoryType type,
