@@ -656,4 +656,239 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get walletReadyBody =>
       'Your balance is connected to the backend. Income, expenses, and Safe to Spend will update from real transactions in the next phase.';
+
+  @override
+  String get resourceUnavailableError =>
+      'The requested information is unavailable.';
+
+  @override
+  String get addNew => 'Add New';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
+  String get searchTransactions => 'Search transactions...';
+
+  @override
+  String get filterTransactions => 'Filter Transactions';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get allCategories => 'All Categories';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get selectDate => 'Select date';
+
+  @override
+  String get applyFilters => 'Apply Filters';
+
+  @override
+  String get clearSelection => 'Clear selection';
+
+  @override
+  String get selectCategory => 'Select Category';
+
+  @override
+  String get transactionType => 'Transaction Type';
+
+  @override
+  String activeFiltersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count active filters',
+      one: '1 active filter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noTransactionsYet => 'No transactions yet.';
+
+  @override
+  String get noTransactionsYetBody =>
+      'Add income or an expense to start building your history.';
+
+  @override
+  String get noMatchingTransactions => 'No matching transactions.';
+
+  @override
+  String get adjustSearchOrFilters =>
+      'Try a different search or adjust your filters.';
+
+  @override
+  String get resetFilters => 'Reset Filters';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get recentTransactions => 'Recent Transactions';
+
+  @override
+  String get noRecentTransactions => 'No recent transactions yet.';
+
+  @override
+  String get addIncome => 'Add Income';
+
+  @override
+  String get addExpense => 'Add Expense';
+
+  @override
+  String get saveIncome => 'Save Income';
+
+  @override
+  String get saveExpense => 'Save Expense';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get incomeCategory => 'Income Category';
+
+  @override
+  String get expenseCategory => 'Expense Category';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get descriptionOptional => 'Description (Optional)';
+
+  @override
+  String get addNote => 'Add a note';
+
+  @override
+  String get loadingWallet => 'Loading your wallet...';
+
+  @override
+  String get transactionAmountRequired => 'Amount is required.';
+
+  @override
+  String get transactionAmountInvalid =>
+      'Enter an amount with up to 17 digits and 2 decimal places.';
+
+  @override
+  String get transactionAmountMustBePositive =>
+      'Amount must be greater than zero.';
+
+  @override
+  String get transactionDescriptionTooLong =>
+      'Description must not exceed 255 characters.';
+
+  @override
+  String get transactionDescriptionUnsupported =>
+      'Description contains unsupported characters.';
+
+  @override
+  String get transactionCategoryRequired => 'Select a category.';
+
+  @override
+  String get transactionDateRangeInvalid =>
+      'Start date cannot be after end date.';
+
+  @override
+  String get incomeAddedSuccessfully => 'Income added successfully.';
+
+  @override
+  String get expenseAddedSuccessfully => 'Expense added successfully.';
+
+  @override
+  String get discardChangesTitle => 'Discard changes?';
+
+  @override
+  String get discardChangesBody => 'Your unsaved changes will be lost.';
+
+  @override
+  String get keepEditing => 'Keep Editing';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
+  String get transactionDetails => 'Transaction Details';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get recorded => 'Recorded';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get noDescription => 'No description';
+
+  @override
+  String get deleteTransaction => 'Delete Transaction';
+
+  @override
+  String get deleteTransactionTitle => 'Delete transaction?';
+
+  @override
+  String get deleteTransactionBody =>
+      'This transaction will be removed from normal history and wallet calculations.';
+
+  @override
+  String get transactionDeletedSuccessfully =>
+      'Transaction deleted successfully.';
+
+  @override
+  String get transactionUnavailable => 'Transaction unavailable';
+
+  @override
+  String get transactionUnavailableBody =>
+      'This transaction is unavailable or has been deleted.';
+
+  @override
+  String get unableToLoadTransaction => 'Unable to load transaction';
+
+  @override
+  String get editTransaction => 'Edit Transaction';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get transactionTypeLocked => 'Type cannot be changed';
+
+  @override
+  String get transactionUpdatedSuccessfully =>
+      'Transaction updated successfully.';
+
+  @override
+  String get transactionEditConflict =>
+      'This transaction was updated elsewhere. Reload the latest version before editing again.';
+
+  @override
+  String get reloadLatest => 'Reload Latest';
+
+  @override
+  String get transactionRequestConflict =>
+      'This transaction request conflicts with a previous submission. Review the form before trying again.';
 }

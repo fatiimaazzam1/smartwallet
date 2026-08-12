@@ -1273,6 +1273,432 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your balance is connected to the backend. Income, expenses, and Safe to Spend will update from real transactions in the next phase.'**
   String get walletReadyBody;
+
+  /// No description provided for @resourceUnavailableError.
+  ///
+  /// In en, this message translates to:
+  /// **'The requested information is unavailable.'**
+  String get resourceUnavailableError;
+
+  /// No description provided for @addNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New'**
+  String get addNew;
+
+  /// No description provided for @transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactions;
+
+  /// No description provided for @searchTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Search transactions...'**
+  String get searchTransactions;
+
+  /// No description provided for @filterTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Transactions'**
+  String get filterTransactions;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get allCategories;
+
+  /// No description provided for @startDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get selectDate;
+
+  /// No description provided for @applyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get applyFilters;
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear selection'**
+  String get clearSelection;
+
+  /// No description provided for @selectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Category'**
+  String get selectCategory;
+
+  /// No description provided for @transactionType.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Type'**
+  String get transactionType;
+
+  /// No description provided for @activeFiltersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 active filter} other{{count} active filters}}'**
+  String activeFiltersCount(int count);
+
+  /// No description provided for @noTransactionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet.'**
+  String get noTransactionsYet;
+
+  /// No description provided for @noTransactionsYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add income or an expense to start building your history.'**
+  String get noTransactionsYetBody;
+
+  /// No description provided for @noMatchingTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching transactions.'**
+  String get noMatchingTransactions;
+
+  /// No description provided for @adjustSearchOrFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search or adjust your filters.'**
+  String get adjustSearchOrFilters;
+
+  /// No description provided for @resetFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Filters'**
+  String get resetFilters;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// No description provided for @recentTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Transactions'**
+  String get recentTransactions;
+
+  /// No description provided for @noRecentTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent transactions yet.'**
+  String get noRecentTransactions;
+
+  /// No description provided for @addIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Income'**
+  String get addIncome;
+
+  /// No description provided for @addExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense'**
+  String get addExpense;
+
+  /// No description provided for @saveIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Income'**
+  String get saveIncome;
+
+  /// No description provided for @saveExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Expense'**
+  String get saveExpense;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// No description provided for @incomeCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Category'**
+  String get incomeCategory;
+
+  /// No description provided for @expenseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Category'**
+  String get expenseCategory;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @descriptionOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (Optional)'**
+  String get descriptionOptional;
+
+  /// No description provided for @addNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note'**
+  String get addNote;
+
+  /// No description provided for @loadingWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading your wallet...'**
+  String get loadingWallet;
+
+  /// No description provided for @transactionAmountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount is required.'**
+  String get transactionAmountRequired;
+
+  /// No description provided for @transactionAmountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount with up to 17 digits and 2 decimal places.'**
+  String get transactionAmountInvalid;
+
+  /// No description provided for @transactionAmountMustBePositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount must be greater than zero.'**
+  String get transactionAmountMustBePositive;
+
+  /// No description provided for @transactionDescriptionTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Description must not exceed 255 characters.'**
+  String get transactionDescriptionTooLong;
+
+  /// No description provided for @transactionDescriptionUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Description contains unsupported characters.'**
+  String get transactionDescriptionUnsupported;
+
+  /// No description provided for @transactionCategoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category.'**
+  String get transactionCategoryRequired;
+
+  /// No description provided for @transactionDateRangeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date cannot be after end date.'**
+  String get transactionDateRangeInvalid;
+
+  /// No description provided for @incomeAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Income added successfully.'**
+  String get incomeAddedSuccessfully;
+
+  /// No description provided for @expenseAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense added successfully.'**
+  String get expenseAddedSuccessfully;
+
+  /// No description provided for @discardChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get discardChangesTitle;
+
+  /// No description provided for @discardChangesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your unsaved changes will be lost.'**
+  String get discardChangesBody;
+
+  /// No description provided for @keepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Editing'**
+  String get keepEditing;
+
+  /// No description provided for @discard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get discard;
+
+  /// No description provided for @transactionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Details'**
+  String get transactionDetails;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @recorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded'**
+  String get recorded;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @noDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No description'**
+  String get noDescription;
+
+  /// No description provided for @deleteTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Transaction'**
+  String get deleteTransaction;
+
+  /// No description provided for @deleteTransactionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete transaction?'**
+  String get deleteTransactionTitle;
+
+  /// No description provided for @deleteTransactionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This transaction will be removed from normal history and wallet calculations.'**
+  String get deleteTransactionBody;
+
+  /// No description provided for @transactionDeletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction deleted successfully.'**
+  String get transactionDeletedSuccessfully;
+
+  /// No description provided for @transactionUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction unavailable'**
+  String get transactionUnavailable;
+
+  /// No description provided for @transactionUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This transaction is unavailable or has been deleted.'**
+  String get transactionUnavailableBody;
+
+  /// No description provided for @unableToLoadTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load transaction'**
+  String get unableToLoadTransaction;
+
+  /// No description provided for @editTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Transaction'**
+  String get editTransaction;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @transactionTypeLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Type cannot be changed'**
+  String get transactionTypeLocked;
+
+  /// No description provided for @transactionUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction updated successfully.'**
+  String get transactionUpdatedSuccessfully;
+
+  /// No description provided for @transactionEditConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This transaction was updated elsewhere. Reload the latest version before editing again.'**
+  String get transactionEditConflict;
+
+  /// No description provided for @reloadLatest.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload Latest'**
+  String get reloadLatest;
+
+  /// No description provided for @transactionRequestConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This transaction request conflicts with a previous submission. Review the form before trying again.'**
+  String get transactionRequestConflict;
 }
 
 class _AppLocalizationsDelegate

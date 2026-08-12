@@ -28,6 +28,7 @@ final class ProfileController extends ChangeNotifier {
   bool _isSavingProfile = false;
   bool _isSavingPreferences = false;
   bool _isLoggingOut = false;
+  int _sessionGeneration = 0;
 
   UserProfileModel? get profile => _profile;
   UserPreferencesModel? get preferences => _preferences;
@@ -43,6 +44,7 @@ final class ProfileController extends ChangeNotifier {
       return;
     }
 
+    final int generation = _sessionGeneration;
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -53,20 +55,29 @@ final class ProfileController extends ChangeNotifier {
         _profileRepository.getPreferences(),
       ]);
 
+      if (generation != _sessionGeneration) {
+        return;
+      }
       _profile = results[0] as UserProfileModel;
       _preferences = results[1] as UserPreferencesModel;
 
       await _localeController.setPreference(_preferences!.language);
     } on AppException catch (exception) {
-      _error = exception;
+      if (generation == _sessionGeneration) {
+        _error = exception;
+      }
     } catch (_) {
-      _error = const AppException(
-        message: 'Something unexpected happened. Please try again.',
-        type: AppExceptionType.unknown,
-      );
+      if (generation == _sessionGeneration) {
+        _error = const AppException(
+          message: 'Something unexpected happened. Please try again.',
+          type: AppExceptionType.unknown,
+        );
+      }
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      if (generation == _sessionGeneration) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -148,8 +159,10 @@ final class ProfileController extends ChangeNotifier {
 
     try {
       await _authRepository.logout();
+      _sessionGeneration++;
       _profile = null;
       _preferences = null;
+      _isLoading = false;
       return true;
     } on AppException catch (exception) {
       _error = exception;

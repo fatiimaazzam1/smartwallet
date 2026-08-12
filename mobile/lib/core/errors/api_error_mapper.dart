@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import 'app_exception.dart';
@@ -84,6 +86,14 @@ abstract final class ApiErrorMapper {
       );
     }
 
+    if (statusCode == 404) {
+      return AppException(
+        message: backendMessage ?? 'The requested information is unavailable.',
+        type: AppExceptionType.notFound,
+        statusCode: statusCode,
+      );
+    }
+
     if (statusCode == 409) {
       return AppException(
         message:
@@ -112,11 +122,21 @@ abstract final class ApiErrorMapper {
   }
 
   static String? _extractMessage(dynamic responseData) {
-    if (responseData is! Map) {
+    Object? normalized = responseData;
+
+    if (normalized is String) {
+      try {
+        normalized = jsonDecode(normalized);
+      } on FormatException {
+        return null;
+      }
+    }
+
+    if (normalized is! Map) {
       return null;
     }
 
-    final dynamic message = responseData['message'];
+    final dynamic message = normalized['message'];
 
     if (message is! String || message.trim().isEmpty) {
       return null;

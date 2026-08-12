@@ -3,6 +3,7 @@ enum AppExceptionType {
   unauthorized,
   forbidden,
   conflict,
+  notFound,
   network,
   timeout,
   server,

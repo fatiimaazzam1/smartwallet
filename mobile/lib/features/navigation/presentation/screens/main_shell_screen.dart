@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartwallet_mobile/l10n/l10n.dart';
@@ -7,14 +9,21 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../../../profile/presentation/controllers/profile_controller.dart';
-import '../../../wallet/presentation/controllers/wallet_controller.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
+import '../../../transactions/data/models/transaction_type.dart';
+import '../../../transactions/presentation/controllers/transaction_history_controller.dart';
+import '../../../transactions/presentation/screens/transaction_history_screen.dart';
+import '../../../transactions/presentation/widgets/add_new_transaction_sheet.dart';
+import '../../../wallet/presentation/controllers/wallet_controller.dart';
 
 class MainShellScreen extends StatefulWidget {
   const MainShellScreen({
     required this.onEditProfile,
     required this.onOpenPreferences,
     required this.onOpenCategories,
+    required this.onAddIncome,
+    required this.onAddExpense,
+    required this.onOpenTransaction,
     required this.onLogoutSuccess,
     super.key,
   });
@@ -22,6 +31,9 @@ class MainShellScreen extends StatefulWidget {
   final VoidCallback onEditProfile;
   final VoidCallback onOpenPreferences;
   final VoidCallback onOpenCategories;
+  final VoidCallback onAddIncome;
+  final VoidCallback onAddExpense;
+  final ValueChanged<int> onOpenTransaction;
   final VoidCallback onLogoutSuccess;
 
   @override
@@ -30,6 +42,7 @@ class MainShellScreen extends StatefulWidget {
 
 class _MainShellScreenState extends State<MainShellScreen> {
   int _selectedIndex = 0;
+  bool _isAddSheetOpen = false;
 
   @override
   void initState() {
@@ -38,6 +51,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
       if (mounted) {
         context.read<ProfileController>().load();
         context.read<WalletController>().load();
+        context.read<TransactionHistoryController>().loadRecent();
       }
     });
   }
@@ -52,52 +66,35 @@ class _MainShellScreenState extends State<MainShellScreen> {
     });
   }
 
-  void _showAddInformation() {
-    final AppLocalizations l10n = context.l10n;
+  Future<void> _showAddNew() async {
+    if (_isAddSheetOpen) {
+      return;
+    }
 
-    showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (BuildContext sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.screenHorizontal,
-              0,
-              AppSpacing.screenHorizontal,
-              AppSpacing.xl,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.add_card_rounded,
-                  size: 48,
-                  color: AppColors.primary,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  l10n.addTransactionTitle,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.screenTitle,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  l10n.addTransactionBody,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.body,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                FilledButton(
-                  onPressed: () => Navigator.of(sheetContext).pop(),
-                  child: Text(l10n.close),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    setState(() {
+      _isAddSheetOpen = true;
+    });
+
+    TransactionType? type;
+    try {
+      type = await showAddNewTransactionSheet(context: context);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAddSheetOpen = false;
+        });
+      }
+    }
+
+    if (!mounted || type == null) {
+      return;
+    }
+
+    if (type == TransactionType.income) {
+      widget.onAddIncome();
+    } else {
+      widget.onAddExpense();
+    }
   }
 
   @override
@@ -105,11 +102,14 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final AppLocalizations l10n = context.l10n;
 
     final List<Widget> pages = <Widget>[
-      const HomeScreen(),
-      _ComingSoonScreen(
-        icon: Icons.receipt_long_outlined,
-        title: l10n.historyComingTitle,
-        body: l10n.historyComingBody,
+      HomeScreen(
+        onAddIncome: widget.onAddIncome,
+        onAddExpense: widget.onAddExpense,
+        onViewAllTransactions: () => _selectIndex(1),
+        onOpenTransaction: widget.onOpenTransaction,
+      ),
+      TransactionHistoryScreen(
+        onOpenTransaction: widget.onOpenTransaction,
       ),
       _ComingSoonScreen(
         icon: Icons.flag_outlined,
@@ -136,7 +136,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         addLabel: l10n.add,
         onHomeTap: () => _selectIndex(0),
         onHistoryTap: () => _selectIndex(1),
-        onAddTap: _showAddInformation,
+        onAddTap: () => unawaited(_showAddNew()),
         onPlansTap: () => _selectIndex(2),
         onProfileTap: () => _selectIndex(3),
       ),

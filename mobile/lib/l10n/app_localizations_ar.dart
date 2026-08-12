@@ -649,4 +649,234 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get walletReadyBody =>
       'رصيدك متصل بالخادم. سيتم تحديث الدخل والمصروف والمبلغ الآمن للصرف من معاملات حقيقية في المرحلة القادمة.';
+
+  @override
+  String get resourceUnavailableError => 'المعلومات المطلوبة غير متاحة.';
+
+  @override
+  String get addNew => 'إضافة جديد';
+
+  @override
+  String get transactions => 'المعاملات';
+
+  @override
+  String get searchTransactions => 'البحث في المعاملات...';
+
+  @override
+  String get filterTransactions => 'تصفية المعاملات';
+
+  @override
+  String get reset => 'إعادة تعيين';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get allCategories => 'كل الفئات';
+
+  @override
+  String get startDate => 'تاريخ البدء';
+
+  @override
+  String get endDate => 'تاريخ الانتهاء';
+
+  @override
+  String get selectDate => 'اختر التاريخ';
+
+  @override
+  String get applyFilters => 'تطبيق عوامل التصفية';
+
+  @override
+  String get clearSelection => 'مسح الاختيار';
+
+  @override
+  String get selectCategory => 'اختر الفئة';
+
+  @override
+  String get transactionType => 'نوع المعاملة';
+
+  @override
+  String activeFiltersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عوامل تصفية نشطة',
+      one: 'عامل تصفية نشط واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noTransactionsYet => 'لا توجد معاملات بعد.';
+
+  @override
+  String get noTransactionsYetBody => 'أضف دخلاً أو مصروفاً لبدء سجل معاملاتك.';
+
+  @override
+  String get noMatchingTransactions => 'لا توجد معاملات مطابقة.';
+
+  @override
+  String get adjustSearchOrFilters =>
+      'جرّب بحثاً مختلفاً أو عدّل عوامل التصفية.';
+
+  @override
+  String get resetFilters => 'إعادة تعيين عوامل التصفية';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get viewAll => 'عرض الكل';
+
+  @override
+  String get recentTransactions => 'المعاملات الأخيرة';
+
+  @override
+  String get noRecentTransactions => 'لا توجد معاملات حديثة بعد.';
+
+  @override
+  String get addIncome => 'إضافة دخل';
+
+  @override
+  String get addExpense => 'إضافة مصروف';
+
+  @override
+  String get saveIncome => 'حفظ الدخل';
+
+  @override
+  String get saveExpense => 'حفظ المصروف';
+
+  @override
+  String get amount => 'المبلغ';
+
+  @override
+  String get incomeCategory => 'فئة الدخل';
+
+  @override
+  String get expenseCategory => 'فئة المصروف';
+
+  @override
+  String get date => 'التاريخ';
+
+  @override
+  String get description => 'الوصف';
+
+  @override
+  String get descriptionOptional => 'الوصف (اختياري)';
+
+  @override
+  String get addNote => 'أضف ملاحظة';
+
+  @override
+  String get loadingWallet => 'جارٍ تحميل محفظتك...';
+
+  @override
+  String get transactionAmountRequired => 'المبلغ مطلوب.';
+
+  @override
+  String get transactionAmountInvalid =>
+      'أدخل مبلغاً بحد أقصى 17 رقماً ورقمين عشريين.';
+
+  @override
+  String get transactionAmountMustBePositive =>
+      'يجب أن يكون المبلغ أكبر من صفر.';
+
+  @override
+  String get transactionDescriptionTooLong => 'يجب ألا يتجاوز الوصف 255 حرفاً.';
+
+  @override
+  String get transactionDescriptionUnsupported =>
+      'يحتوي الوصف على أحرف غير مدعومة.';
+
+  @override
+  String get transactionCategoryRequired => 'اختر فئة.';
+
+  @override
+  String get transactionDateRangeInvalid =>
+      'لا يمكن أن يكون تاريخ البدء بعد تاريخ الانتهاء.';
+
+  @override
+  String get incomeAddedSuccessfully => 'تمت إضافة الدخل بنجاح.';
+
+  @override
+  String get expenseAddedSuccessfully => 'تمت إضافة المصروف بنجاح.';
+
+  @override
+  String get discardChangesTitle => 'تجاهل التغييرات؟';
+
+  @override
+  String get discardChangesBody => 'ستفقد التغييرات غير المحفوظة.';
+
+  @override
+  String get keepEditing => 'متابعة التعديل';
+
+  @override
+  String get discard => 'تجاهل';
+
+  @override
+  String get transactionDetails => 'تفاصيل المعاملة';
+
+  @override
+  String get edit => 'تعديل';
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String get status => 'الحالة';
+
+  @override
+  String get recorded => 'مسجلة';
+
+  @override
+  String get type => 'النوع';
+
+  @override
+  String get noDescription => 'لا يوجد وصف';
+
+  @override
+  String get deleteTransaction => 'حذف المعاملة';
+
+  @override
+  String get deleteTransactionTitle => 'حذف المعاملة؟';
+
+  @override
+  String get deleteTransactionBody =>
+      'ستُزال هذه المعاملة من السجل العادي ومن حسابات المحفظة.';
+
+  @override
+  String get transactionDeletedSuccessfully => 'تم حذف المعاملة بنجاح.';
+
+  @override
+  String get transactionUnavailable => 'المعاملة غير متاحة';
+
+  @override
+  String get transactionUnavailableBody =>
+      'هذه المعاملة غير متاحة أو تم حذفها.';
+
+  @override
+  String get unableToLoadTransaction => 'تعذر تحميل المعاملة';
+
+  @override
+  String get editTransaction => 'تعديل المعاملة';
+
+  @override
+  String get saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get transactionTypeLocked => 'لا يمكن تغيير النوع';
+
+  @override
+  String get transactionUpdatedSuccessfully => 'تم تحديث المعاملة بنجاح.';
+
+  @override
+  String get transactionEditConflict =>
+      'تم تحديث هذه المعاملة في مكان آخر. أعد تحميل أحدث نسخة قبل التعديل مجدداً.';
+
+  @override
+  String get reloadLatest => 'إعادة تحميل الأحدث';
+
+  @override
+  String get transactionRequestConflict =>
+      'يتعارض طلب هذه المعاملة مع إرسال سابق. راجع النموذج قبل المحاولة مجدداً.';
 }

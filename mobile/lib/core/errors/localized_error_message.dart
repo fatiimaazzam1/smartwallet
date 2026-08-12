@@ -41,6 +41,8 @@ abstract final class LocalizedErrorMessage {
         return l10n.forbiddenError;
       case AppExceptionType.conflict:
         return l10n.conflictError;
+      case AppExceptionType.notFound:
+        return l10n.resourceUnavailableError;
       case AppExceptionType.network:
         return l10n.networkError;
       case AppExceptionType.timeout:
@@ -71,6 +73,19 @@ abstract final class LocalizedErrorMessage {
 
     if (normalized.contains('wallet not found')) {
       return l10n.walletNotFoundError;
+    }
+
+    if (normalized.contains('transaction not found')) {
+      return l10n.transactionUnavailableBody;
+    }
+
+    if (normalized.contains('transaction changed') ||
+        normalized.contains('refresh and try again')) {
+      return l10n.transactionEditConflict;
+    }
+
+    if (normalized.contains('client request id has already been used')) {
+      return l10n.transactionRequestConflict;
     }
 
     if (normalized.contains('invalid credentials') ||
