@@ -6,6 +6,9 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/errors/localized_error_message.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/app_confirmation_dialog.dart';
+import '../../../budgets/presentation/controllers/budget_controller.dart';
+import '../../../dashboard/presentation/controllers/dashboard_controller.dart';
 import '../../../categories/presentation/widgets/category_icon.dart';
 import '../../../profile/data/models/user_preferences_model.dart';
 import '../../../profile/presentation/controllers/profile_controller.dart';
@@ -63,49 +66,16 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   }
 
   Future<void> _delete() async {
-    final bool? confirmed = await showDialog<bool>(
+    final bool confirmed = await showAppConfirmationDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(context.l10n.deleteTransactionTitle),
-          content: Text(context.l10n.deleteTransactionBody),
-          actionsPadding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            0,
-            AppSpacing.lg,
-            AppSpacing.lg,
-          ),
-          actions: [
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(false),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.background,
-                      foregroundColor: AppColors.textPrimary,
-                    ),
-                    child: Text(context.l10n.cancel),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(true),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.error,
-                    ),
-                    child: Text(context.l10n.delete),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
+      title: context.l10n.deleteTransactionTitle,
+      message: context.l10n.deleteTransactionBody,
+      cancelLabel: context.l10n.cancel,
+      confirmLabel: context.l10n.delete,
+      destructive: true,
     );
 
-    if (!mounted || confirmed != true) {
+    if (!mounted || !confirmed) {
       return;
     }
 
@@ -130,6 +100,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     await Future.wait<void>(<Future<void>>[
       context.read<WalletController>().load(force: true),
       historyController.refreshAfterMutation(),
+      context.read<BudgetController>().refresh(),
+      context.read<DashboardController>().load(force: true),
     ]);
 
     if (!mounted) {

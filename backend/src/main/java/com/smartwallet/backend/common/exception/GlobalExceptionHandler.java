@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.smartwallet.backend.category.exception.CategoryConflictException;
+import com.smartwallet.backend.budget.exception.BudgetConflictException;
+import com.smartwallet.backend.budget.exception.BudgetNotFoundException;
+import com.smartwallet.backend.plannedexpense.exception.PlannedExpenseConflictException;
+import com.smartwallet.backend.plannedexpense.exception.PlannedExpenseNotFoundException;
 import com.smartwallet.backend.category.exception.CategoryNotFoundException;
 import com.smartwallet.backend.transaction.exception.TransactionConflictException;
 import com.smartwallet.backend.transaction.exception.TransactionNotFoundException;
@@ -103,6 +107,30 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BudgetNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleBudgetNotFoundException(
+            BudgetNotFoundException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(PlannedExpenseNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handlePlannedExpenseNotFoundException(
+            PlannedExpenseNotFoundException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler({BudgetConflictException.class, PlannedExpenseConflictException.class})
+    public ResponseEntity<ApiErrorResponse> handlePlanningConflictException(
+            RuntimeException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
     @ExceptionHandler(TransactionNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleTransactionNotFoundException(
             TransactionNotFoundException exception,
@@ -115,21 +143,26 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler({
-            TransactionConflictException.class,
-            ObjectOptimisticLockingFailureException.class
-    })
+    @ExceptionHandler(TransactionConflictException.class)
     public ResponseEntity<ApiErrorResponse> handleTransactionConflictException(
-            Exception exception,
+            TransactionConflictException exception,
             HttpServletRequest request
     ) {
-        String message = exception instanceof TransactionConflictException
-                ? exception.getMessage()
-                : "Transaction changed. Refresh and try again";
-
         return buildResponse(
                 HttpStatus.CONFLICT,
-                message,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiErrorResponse> handleOptimisticLockingFailure(
+            ObjectOptimisticLockingFailureException exception,
+            HttpServletRequest request
+    ) {
+        return buildResponse(
+                HttpStatus.CONFLICT,
+                "The item was updated elsewhere",
                 request
         );
     }

@@ -6,6 +6,9 @@ abstract final class ApiEndpoints {
   static const String walletsBase = '/api/v1/wallets';
   static const String categoriesBase = '/api/v1/categories';
   static const String transactionsBase = '/api/v1/transactions';
+  static const String budgetsBase = '/api/v1/budgets';
+  static const String plannedExpensesBase = '/api/v1/planned-expenses';
+  static const String dashboardBase = '/api/v1/dashboard';
 
   static const String register = '$authBase/register';
   static const String verifyEmail = '$authBase/verify-email';
@@ -31,8 +34,16 @@ abstract final class ApiEndpoints {
   static const String currentWallet = '$walletsBase/me';
   static const String categories = categoriesBase;
   static const String transactions = transactionsBase;
+  static const String budgets = budgetsBase;
+  static const String plannedExpenses = plannedExpensesBase;
+  static const String dashboard = dashboardBase;
 
   static String categoryById(int categoryId) => '$categoriesBase/$categoryId';
   static String transactionById(int transactionId) =>
       '$transactionsBase/$transactionId';
+  static String budgetById(int budgetId) => '$budgetsBase/$budgetId';
+  static String budgetExpenses(int budgetId) => '$budgetsBase/$budgetId/expenses';
+  static String plannedExpenseById(int id) => '$plannedExpensesBase/$id';
+  static String cancelPlannedExpense(int id) => '$plannedExpensesBase/$id/cancel';
+  static String markPlannedExpensePaid(int id) => '$plannedExpensesBase/$id/mark-paid';
 }

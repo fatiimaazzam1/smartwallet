@@ -80,4 +80,15 @@ public interface TransactionRepository
             @Param("searchPattern") String searchPattern,
             Pageable pageable
     );
+
+    @EntityGraph(attributePaths = {"wallet", "category"})
+    java.util.List<WalletTransaction> findByWalletIdAndStatusAndTypeAndCategoryIdAndOccurredOnBetween(
+            Long walletId,
+            TransactionStatus status,
+            TransactionType type,
+            Long categoryId,
+            LocalDate startDate,
+            LocalDate endDate,
+            Pageable pageable
+    );
 }

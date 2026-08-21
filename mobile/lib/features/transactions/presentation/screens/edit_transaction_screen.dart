@@ -10,7 +10,10 @@ import '../../../../core/errors/localized_error_message.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_confirmation_dialog.dart';
 import '../../../../core/widgets/app_status_message.dart';
+import '../../../budgets/presentation/controllers/budget_controller.dart';
+import '../../../dashboard/presentation/controllers/dashboard_controller.dart';
 import '../../../categories/data/models/category_model.dart';
 import '../../../categories/presentation/controllers/category_controller.dart';
 import '../../../categories/presentation/widgets/category_picker_sheet.dart';
@@ -284,6 +287,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     await Future.wait<void>(<Future<void>>[
       context.read<WalletController>().load(force: true),
       context.read<TransactionHistoryController>().refreshAfterMutation(),
+      context.read<BudgetController>().refresh(),
+      context.read<DashboardController>().load(force: true),
     ]);
 
     if (!mounted) {
@@ -316,50 +321,14 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     Navigator.of(context).pop();
   }
 
-  Future<bool> _confirmDiscard() async {
-    final bool? result = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(context.l10n.discardChangesTitle),
-          content: Text(context.l10n.discardChangesBody),
-          actionsPadding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            0,
-            AppSpacing.lg,
-            AppSpacing.lg,
-          ),
-          actions: [
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(false),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.background,
-                      foregroundColor: AppColors.textPrimary,
-                    ),
-                    child: Text(context.l10n.keepEditing),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(true),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.error,
-                    ),
-                    child: Text(context.l10n.discard),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-    return result == true;
-  }
+  Future<bool> _confirmDiscard() => showAppConfirmationDialog(
+    context: context,
+    title: context.l10n.discardChangesTitle,
+    message: context.l10n.discardChangesBody,
+    cancelLabel: context.l10n.keepEditing,
+    confirmLabel: context.l10n.discard,
+    destructive: true,
+  );
 
   void _showMessage(String message) {
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);

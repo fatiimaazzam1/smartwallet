@@ -1,0 +1,5 @@
+import 'package:flutter/foundation.dart';
+import '../../../../core/errors/app_exception.dart';
+import '../../data/models/dashboard_model.dart';
+import '../../data/repositories/dashboard_repository.dart';
+final class DashboardController extends ChangeNotifier{DashboardController({required DashboardRepository repository}):_repository=repository;final DashboardRepository _repository;DashboardModel? _data;AppException? _error;bool _loading=false;int _generation=0;DashboardModel? get data=>_data;AppException? get error=>_error;bool get isLoading=>_loading;Future<void> load({bool force=false})async{if(_loading){if(!force)return;_generation++;_loading=false;}if(_data!=null&&!force)return;final int g=_generation;_loading=true;_error=null;notifyListeners();try{final d=await _repository.get();if(g==_generation)_data=d;}on AppException catch(e){if(g==_generation)_error=e;}catch(_){if(g==_generation)_error=const AppException(message:'Something unexpected happened. Please try again.',type:AppExceptionType.unknown);}finally{if(g==_generation){_loading=false;notifyListeners();}}}void clear(){_generation++;_data=null;_error=null;_loading=false;notifyListeners();}}

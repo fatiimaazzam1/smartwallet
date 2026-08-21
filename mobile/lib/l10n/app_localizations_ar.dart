@@ -879,4 +879,259 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get transactionRequestConflict =>
       'يتعارض طلب هذه المعاملة مع إرسال سابق. راجع النموذج قبل المحاولة مجدداً.';
+
+  @override
+  String get budgets => 'الميزانيات';
+
+  @override
+  String get planned => 'المخطط';
+
+  @override
+  String get createBudget => 'إنشاء ميزانية';
+
+  @override
+  String get editBudget => 'تعديل الميزانية';
+
+  @override
+  String get budgetDetails => 'تفاصيل الميزانية';
+
+  @override
+  String get noBudgetsYet => 'لا توجد ميزانيات بعد';
+
+  @override
+  String get noBudgetsBody =>
+      'أنشئ ميزانية شهرية لفئة المصروفات لمتابعة الإنفاق مقابل حد فعلي.';
+
+  @override
+  String get totalPlannedBudget => 'إجمالي الميزانية المخططة';
+
+  @override
+  String get monthlyLimit => 'الحد الشهري';
+
+  @override
+  String get budgetMonth => 'شهر الميزانية';
+
+  @override
+  String get selectBudgetMonth => 'اختر شهر الميزانية';
+
+  @override
+  String get budgetCreated => 'تم إنشاء الميزانية بنجاح.';
+
+  @override
+  String get budgetUpdated => 'تم تحديث الميزانية بنجاح.';
+
+  @override
+  String get deleteBudget => 'حذف الميزانية';
+
+  @override
+  String get deleteBudgetBody =>
+      'يؤدي هذا إلى إزالة الميزانية من التخطيط النشط. لن يتم حذف المعاملات الحالية.';
+
+  @override
+  String get budgetDeleted => 'تم حذف الميزانية بنجاح.';
+
+  @override
+  String get remaining => 'المتبقي';
+
+  @override
+  String get daysRemaining => 'الأيام المتبقية';
+
+  @override
+  String get used => 'مستخدم';
+
+  @override
+  String get noteOptional => 'ملاحظة (اختياري)';
+
+  @override
+  String get note => 'ملاحظة';
+
+  @override
+  String get createPlannedExpense => 'إنشاء مصروف مخطط';
+
+  @override
+  String get editPlannedExpense => 'تعديل المصروف المخطط';
+
+  @override
+  String get plannedExpenseDetails => 'تفاصيل المصروف المخطط';
+
+  @override
+  String get noPlannedExpenses => 'لا توجد مصروفات مخططة';
+
+  @override
+  String get noPlannedExpensesBody =>
+      'أضف مصروفاً قادماً ليتم احتسابه ضمن التخطيط.';
+
+  @override
+  String get plannedExpenseCreated => 'تم إنشاء المصروف المخطط بنجاح.';
+
+  @override
+  String get plannedExpenseUpdated => 'تم تحديث المصروف المخطط بنجاح.';
+
+  @override
+  String get plannedTitleHint => 'مثال: فاتورة الإنترنت';
+
+  @override
+  String get dueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get recurrence => 'التكرار';
+
+  @override
+  String get recurrenceNone => 'بدون تكرار';
+
+  @override
+  String get weekly => 'أسبوعي';
+
+  @override
+  String get monthly => 'شهري';
+
+  @override
+  String get yearly => 'سنوي';
+
+  @override
+  String get markAsPaid => 'تحديد كمدفوع';
+
+  @override
+  String get confirmPaymentDate => 'تأكيد تاريخ الدفع';
+
+  @override
+  String get plannedMarkedPaid =>
+      'تم تحديد المصروف المخطط كمدفوع وإنشاء معاملة مصروف فعلية.';
+
+  @override
+  String get cancelPlannedExpense => 'إلغاء المصروف المخطط';
+
+  @override
+  String get cancelPlannedExpenseBody =>
+      'الاحتفاظ بهذا العنصر في سجل الملغاة من دون إنشاء معاملة؟';
+
+  @override
+  String get keepPlanned => 'الإبقاء عليه';
+
+  @override
+  String get plannedCancelled => 'تم إلغاء المصروف المخطط.';
+
+  @override
+  String get deletePlannedExpense => 'حذف المصروف المخطط';
+
+  @override
+  String get deletePlannedExpenseBody =>
+      'يؤدي هذا إلى إزالة العنصر المخطط من قائمة التخطيط الظاهرة.';
+
+  @override
+  String get plannedDeleted => 'تم حذف المصروف المخطط.';
+
+  @override
+  String get fieldRequired => 'هذا الحقل مطلوب.';
+
+  @override
+  String get title => 'العنوان';
+
+  @override
+  String get safeToSpend => 'المتاح الآمن للإنفاق';
+
+  @override
+  String get budgetWarning => 'تنبيه الميزانية';
+
+  @override
+  String get total => 'الإجمالي';
+
+  @override
+  String upcomingExpenseCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مصروفات قادمة',
+      one: 'مصروف قادم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get upcomingExpenses => 'المصروفات القادمة';
+
+  @override
+  String get noUpcomingExpenses => 'لا توجد مصروفات مخططة قادمة.';
+
+  @override
+  String get increased => 'زاد';
+
+  @override
+  String get decreased => 'انخفض';
+
+  @override
+  String get unchanged => 'لم يتغير';
+
+  @override
+  String get budgetUnavailable => 'الميزانية غير متاحة.';
+
+  @override
+  String get plannedExpenseUnavailable => 'المصروف المخطط غير متاح.';
+
+  @override
+  String get budgetConflict =>
+      'تم تعديل هذه الميزانية في مكان آخر. أعد تحميل أحدث نسخة قبل التعديل.';
+
+  @override
+  String get plannedExpenseConflict =>
+      'تم تعديل هذا المصروف المخطط في مكان آخر. أعد تحميل أحدث نسخة قبل المتابعة.';
+
+  @override
+  String budgetWarningMessage(String category, String percentage) {
+    return 'فئة $category وصلت إلى $percentage% من حدها الشهري.';
+  }
+
+  @override
+  String weeklyComparisonMessage(String percentage, String direction) {
+    return 'الإنفاق $direction بنسبة $percentage% مقارنة بنفس الأيام من الأسبوع الماضي.';
+  }
+
+  @override
+  String topSpendingCategoryMessage(String category, String amount) {
+    return 'أعلى فئة: $category ($amount)';
+  }
+
+  @override
+  String get upcoming => 'القادمة';
+
+  @override
+  String get paid => 'المدفوعة';
+
+  @override
+  String get cancelled => 'الملغاة';
+
+  @override
+  String get spent => 'المصروف';
+
+  @override
+  String get category => 'الفئة';
+
+  @override
+  String get relatedExpenses => 'المصروفات المرتبطة';
+
+  @override
+  String get noRelatedExpenses =>
+      'لا توجد مصروفات مسجلة لهذه الميزانية حتى الآن.';
+
+  @override
+  String get relatedExpensesHelper =>
+      'تظهر هنا المصروفات النشطة في هذه الفئة خلال شهر الميزانية.';
+
+  @override
+  String get relatedExpensesLoadError =>
+      'تعذر تحميل المصروفات المرتبطة. ما زالت إجماليات الميزانية متاحة.';
+
+  @override
+  String get noRelatedExpensesForMonth =>
+      'لا توجد مصروفات مسجلة في هذه الفئة خلال شهر الميزانية حتى الآن.';
+
+  @override
+  String budgetPerformanceMessage(int safe, int warning, int exceeded) {
+    return 'الميزانيات: $safe آمنة، $warning تحذير، $exceeded تجاوزت الحد.';
+  }
+
+  @override
+  String upcomingWeekMessage(int count, String amount) {
+    return 'الأيام السبعة القادمة: $count مصروفات مخططة بإجمالي $amount.';
+  }
 }

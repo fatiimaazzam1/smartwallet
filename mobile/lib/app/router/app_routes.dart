@@ -49,4 +49,22 @@ abstract final class AppRoutes {
   static const String editTransactionName = 'editTransaction';
   static const String editTransactionPath =
       '/transactions/:transactionId/edit';
+
+  static const String createBudgetName = 'createBudget';
+  static const String createBudgetPath = '/budgets/add';
+
+  static const String budgetDetailsName = 'budgetDetails';
+  static const String budgetDetailsPath = '/budgets/:budgetId';
+
+  static const String editBudgetName = 'editBudget';
+  static const String editBudgetPath = '/budgets/:budgetId/edit';
+
+  static const String createPlannedExpenseName = 'createPlannedExpense';
+  static const String createPlannedExpensePath = '/planned-expenses/add';
+
+  static const String plannedExpenseDetailsName = 'plannedExpenseDetails';
+  static const String plannedExpenseDetailsPath = '/planned-expenses/:plannedExpenseId';
+
+  static const String editPlannedExpenseName = 'editPlannedExpense';
+  static const String editPlannedExpensePath = '/planned-expenses/:plannedExpenseId/edit';
 }

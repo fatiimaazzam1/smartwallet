@@ -324,5 +324,133 @@
         "type": "int"
       }
     }
+  },
+  "budgets": "Budgets",
+  "planned": "Planned",
+  "createBudget": "Create Budget",
+  "editBudget": "Edit Budget",
+  "budgetDetails": "Budget Details",
+  "noBudgetsYet": "No budgets yet",
+  "noBudgetsBody": "Create a monthly category budget to track spending against a real limit.",
+  "totalPlannedBudget": "Total planned budget",
+  "monthlyLimit": "Monthly limit",
+  "budgetMonth": "Budget month",
+  "selectBudgetMonth": "Select budget month",
+  "budgetCreated": "Budget created successfully.",
+  "budgetUpdated": "Budget updated successfully.",
+  "deleteBudget": "Delete Budget",
+  "deleteBudgetBody": "This removes the budget from active planning. Existing transactions are not deleted.",
+  "budgetDeleted": "Budget deleted successfully.",
+  "remaining": "Remaining",
+  "daysRemaining": "Days remaining",
+  "used": "used",
+  "noteOptional": "Note (optional)",
+  "note": "Note",
+  "createPlannedExpense": "Create Planned Expense",
+  "editPlannedExpense": "Edit Planned Expense",
+  "plannedExpenseDetails": "Planned Expense Details",
+  "noPlannedExpenses": "No planned expenses",
+  "noPlannedExpensesBody": "Add an upcoming expense so SmartWallet can include it in your planning.",
+  "plannedExpenseCreated": "Planned expense created successfully.",
+  "plannedExpenseUpdated": "Planned expense updated successfully.",
+  "plannedTitleHint": "e.g. Internet bill",
+  "dueDate": "Due date",
+  "recurrence": "Recurrence",
+  "recurrenceNone": "None",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "markAsPaid": "Mark as Paid",
+  "confirmPaymentDate": "Confirm payment date",
+  "plannedMarkedPaid": "Planned expense marked as paid. A real expense transaction was created.",
+  "cancelPlannedExpense": "Cancel Planned Expense",
+  "cancelPlannedExpenseBody": "Keep this item in cancelled history without creating a transaction?",
+  "keepPlanned": "Keep Planned",
+  "plannedCancelled": "Planned expense cancelled.",
+  "deletePlannedExpense": "Delete Planned Expense",
+  "deletePlannedExpenseBody": "This removes the planned item from your visible planning list.",
+  "plannedDeleted": "Planned expense deleted.",
+  "fieldRequired": "This field is required.",
+  "title": "Title",
+  "safeToSpend": "Safe to Spend",
+  "budgetWarning": "Budget warning",
+  "total": "Total",
+  "upcomingExpenseCount": "{count, plural, =1{1 upcoming expense} other{{count} upcoming expenses}}",
+  "upcomingExpenses": "Upcoming Expenses",
+  "noUpcomingExpenses": "No upcoming planned expenses.",
+  "increased": "increased",
+  "decreased": "decreased",
+  "unchanged": "unchanged",
+  "budgetUnavailable": "Budget unavailable.",
+  "plannedExpenseUnavailable": "Planned expense unavailable.",
+  "budgetConflict": "This budget changed elsewhere. Reload the latest version before editing again.",
+  "plannedExpenseConflict": "This planned expense changed elsewhere. Reload the latest version before continuing.",
+  "budgetWarningMessage": "{category} is at {percentage}% of its monthly limit.",
+  "@budgetWarningMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklyComparisonMessage": "Spending {direction} by {percentage}% versus the same days last week.",
+  "@weeklyComparisonMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "direction": {
+        "type": "String"
+      }
+    }
+  },
+  "topSpendingCategoryMessage": "Top category: {category} ({amount})",
+  "@topSpendingCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "upcoming": "Upcoming",
+  "paid": "Paid",
+  "cancelled": "Cancelled",
+  "spent": "Spent",
+  "category": "Category",
+  "relatedExpenses": "Related expenses",
+  "noRelatedExpenses": "No expenses have been recorded for this budget yet.",
+  "relatedExpensesHelper": "Active expenses in this category during this budget month are counted here.",
+  "relatedExpensesLoadError": "Related expenses could not be loaded. Your budget totals are still available.",
+  "noRelatedExpensesForMonth": "No expenses in this category have been recorded for this budget month yet.",
+  "budgetPerformanceMessage": "Budgets: {safe} safe, {warning} warning, {exceeded} over limit.",
+  "@budgetPerformanceMessage": {
+    "placeholders": {
+      "safe": {
+        "type": "int"
+      },
+      "warning": {
+        "type": "int"
+      },
+      "exceeded": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingWeekMessage": "Next 7 days: {count} planned expenses totaling {amount}.",
+  "@upcomingWeekMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }
