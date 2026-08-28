@@ -1,0 +1,132 @@
+digraph SmartWalletERD {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    pad="0.35",
+    nodesep="0.55",
+    ranksep="0.85",
+    splines=polyline,
+    overlap=false,
+    fontname="Arial",
+    label="SmartWallet ERD v3 — Planning (Flyway V1–V7)",
+    labelloc="t",
+    fontsize=20
+  ];
+  node [shape=plain, fontname="Arial"];
+  edge [fontname="Arial", fontsize=9, color="#64748B", fontcolor="#475569", arrowsize=0.7];
+
+  users [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#0D1B2A"><FONT COLOR="white"><B>users</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">first_name / last_name</TD></TR>
+    <TR><TD ALIGN="LEFT">email (unique)</TD></TR>
+    <TR><TD ALIGN="LEFT">password_hash</TD></TR>
+    <TR><TD ALIGN="LEFT">account_status</TD></TR>
+    <TR><TD ALIGN="LEFT">email_verified_at</TD></TR>
+  </TABLE>>];
+
+  wallets [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#0D1B2A"><FONT COLOR="white"><B>wallets</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK/UK user_id</TD></TR>
+    <TR><TD ALIGN="LEFT">name</TD></TR>
+    <TR><TD ALIGN="LEFT">currency_code</TD></TR>
+  </TABLE>>];
+
+  prefs [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#0D1B2A"><FONT COLOR="white"><B>user_preferences</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK/UK user_id</TD></TR>
+    <TR><TD ALIGN="LEFT">hide_balance_by_default</TD></TR>
+    <TR><TD ALIGN="LEFT">compact_transaction_list</TD></TR>
+    <TR><TD ALIGN="LEFT">show_budget_warnings</TD></TR>
+    <TR><TD ALIGN="LEFT">budget_warning_threshold</TD></TR>
+    <TR><TD ALIGN="LEFT">date_format / dashboard_period</TD></TR>
+    <TR><TD ALIGN="LEFT">language</TD></TR>
+  </TABLE>>];
+
+  refresh [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#0D1B2A"><FONT COLOR="white"><B>refresh_tokens</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK user_id</TD></TR>
+    <TR><TD ALIGN="LEFT">token_hash (unique)</TD></TR>
+    <TR><TD ALIGN="LEFT">expires_at / revoked</TD></TR>
+  </TABLE>>];
+
+  codes [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#0D1B2A"><FONT COLOR="white"><B>email_action_codes</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK user_id</TD></TR>
+    <TR><TD ALIGN="LEFT">purpose / code_hash</TD></TR>
+    <TR><TD ALIGN="LEFT">expires / resend / attempts</TD></TR>
+    <TR><TD ALIGN="LEFT">action_token_hash</TD></TR>
+    <TR><TD ALIGN="LEFT">verified / invalidated / used</TD></TR>
+  </TABLE>>];
+
+  categories [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#22C55E"><FONT COLOR="white"><B>categories</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK user_id (nullable)</TD></TR>
+    <TR><TD ALIGN="LEFT">name / category_type</TD></TR>
+    <TR><TD ALIGN="LEFT">icon_key / display_order</TD></TR>
+    <TR><TD ALIGN="LEFT">is_system / status</TD></TR>
+  </TABLE>>];
+
+  transactions [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#22C55E"><FONT COLOR="white"><B>transactions</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK wallet_id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK category_id</TD></TR>
+    <TR><TD ALIGN="LEFT">transaction_type / amount</TD></TR>
+    <TR><TD ALIGN="LEFT">description / occurred_on</TD></TR>
+    <TR><TD ALIGN="LEFT">status / version</TD></TR>
+    <TR><TD ALIGN="LEFT">client_request_id</TD></TR>
+  </TABLE>>];
+
+  budgets [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#22C55E"><FONT COLOR="white"><B>budgets</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK wallet_id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK category_id</TD></TR>
+    <TR><TD ALIGN="LEFT">limit_amount / budget_month</TD></TR>
+    <TR><TD ALIGN="LEFT">note / status / version</TD></TR>
+  </TABLE>>];
+
+  planned [label=<
+  <TABLE BORDER="1" COLOR="#CBD5E1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+    <TR><TD BGCOLOR="#22C55E"><FONT COLOR="white"><B>planned_expenses</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK wallet_id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK category_id</TD></TR>
+    <TR><TD ALIGN="LEFT">title / amount / due_on</TD></TR>
+    <TR><TD ALIGN="LEFT">recurrence / status / note</TD></TR>
+    <TR><TD ALIGN="LEFT">FK paid_transaction_id (nullable)</TD></TR>
+    <TR><TD ALIGN="LEFT">create_client_request_id</TD></TR>
+    <TR><TD ALIGN="LEFT">payment_client_request_id</TD></TR>
+    <TR><TD ALIGN="LEFT">paid_on / version</TD></TR>
+  </TABLE>>];
+
+  users -> wallets [label="1 : 1", arrowhead=none];
+  users -> prefs [label="1 : 1", arrowhead=none];
+  users -> refresh [label="1 : N", arrowhead=none];
+  users -> codes [label="1 : N", arrowhead=none];
+  users -> categories [label="1 : N custom", arrowhead=none];
+
+  wallets -> transactions [label="1 : N", arrowhead=none];
+  wallets -> budgets [label="1 : N", arrowhead=none];
+  wallets -> planned [label="1 : N", arrowhead=none];
+
+  categories -> transactions [label="1 : N", arrowhead=none];
+  categories -> budgets [label="1 : N", arrowhead=none];
+  categories -> planned [label="1 : N", arrowhead=none];
+
+  transactions -> planned [label="0..1 paid_transaction", arrowhead=none];
+}
