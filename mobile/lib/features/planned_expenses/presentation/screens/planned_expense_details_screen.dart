@@ -173,9 +173,18 @@ class _State extends State<PlannedExpenseDetailsScreen> {
         context.watch<ProfileController>().preferences?.dateFormat ??
         UserPreferencesModel.defaults.dateFormat;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.plannedExpenseDetails),
+    return PopScope<bool>(
+      canPop: !controller.isBusy,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 72,
+          title: Text(
+            context.l10n.plannedExpenseDetails,
+            maxLines: 2,
+            softWrap: true,
+            overflow: TextOverflow.visible,
+            style: AppTextStyles.screenTitle.copyWith(fontSize: 20),
+          ),
         actions: <Widget>[
           if (item?.status == PlannedExpenseStatus.upcoming)
             TextButton(
@@ -254,7 +263,7 @@ class _State extends State<PlannedExpenseDetailsScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _statusLabel(context, item.status),
+                          _statusLabel(context, item),
                           style: AppTextStyles.body.copyWith(
                             color: Colors.white70,
                           ),
@@ -313,16 +322,25 @@ class _State extends State<PlannedExpenseDetailsScreen> {
                     ),
                 ],
               ),
+        ),
       ),
     );
   }
 
-  String _statusLabel(BuildContext context, PlannedExpenseStatus status) =>
-      switch (status) {
-        PlannedExpenseStatus.upcoming => context.l10n.upcoming,
-        PlannedExpenseStatus.paid => context.l10n.paid,
-        PlannedExpenseStatus.cancelled => context.l10n.cancelled,
-      };
+  String _statusLabel(BuildContext context, PlannedExpenseModel item) {
+    if (item.status == PlannedExpenseStatus.upcoming) {
+      final DateTime now = DateTime.now();
+      final DateTime today = DateTime(now.year, now.month, now.day);
+      if (item.dueOn.isBefore(today)) {
+        return context.l10n.overdue;
+      }
+    }
+    return switch (item.status) {
+      PlannedExpenseStatus.upcoming => context.l10n.upcoming,
+      PlannedExpenseStatus.paid => context.l10n.paid,
+      PlannedExpenseStatus.cancelled => context.l10n.cancelled,
+    };
+  }
 
   String _recurrenceLabel(
     BuildContext context,

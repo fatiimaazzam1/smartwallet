@@ -11,6 +11,7 @@ final class PlannedExpenseFormController extends ChangeNotifier {
 
   final PlannedExpenseRepository _repository;
   final String _createClientRequestId = TransactionRequestId.generate();
+  bool _disposed = false;
   AppException? _error;
   bool _submitting = false;
   bool _loading = false;
@@ -25,7 +26,7 @@ final class PlannedExpenseFormController extends ChangeNotifier {
     if (_loading || _existing?.id == id) return;
     _loading = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       _existing = await _repository.get(id);
     } on AppException catch (e) {
@@ -37,7 +38,7 @@ final class PlannedExpenseFormController extends ChangeNotifier {
       );
     } finally {
       _loading = false;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -52,7 +53,7 @@ final class PlannedExpenseFormController extends ChangeNotifier {
     if (_submitting) return null;
     _submitting = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       return await _repository.create(
         clientRequestId: _createClientRequestId,
@@ -66,9 +67,15 @@ final class PlannedExpenseFormController extends ChangeNotifier {
     } on AppException catch (e) {
       _error = e;
       return null;
+    } catch (_) {
+      _error = const AppException(
+        message: 'Something unexpected happened. Please try again.',
+        type: AppExceptionType.unknown,
+      );
+      return null;
     } finally {
       _submitting = false;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -84,7 +91,7 @@ final class PlannedExpenseFormController extends ChangeNotifier {
     if (item == null || _submitting) return null;
     _submitting = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       final PlannedExpenseModel updated = await _repository.update(
         id: item.id,
@@ -101,9 +108,27 @@ final class PlannedExpenseFormController extends ChangeNotifier {
     } on AppException catch (e) {
       _error = e;
       return null;
+    } catch (_) {
+      _error = const AppException(
+        message: 'Something unexpected happened. Please try again.',
+        type: AppExceptionType.unknown,
+      );
+      return null;
     } finally {
       _submitting = false;
+      _notifyListeners();
+    }
+  }
+
+  void _notifyListeners() {
+    if (!_disposed) {
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }

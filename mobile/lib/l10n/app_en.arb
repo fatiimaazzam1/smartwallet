@@ -354,6 +354,8 @@
   "plannedExpenseCreated": "Planned expense created successfully.",
   "plannedExpenseUpdated": "Planned expense updated successfully.",
   "plannedTitleHint": "e.g. Internet bill",
+  "dueDateCannotBePast": "Due date cannot be in the past.",
+  "overdue": "Overdue",
   "dueDate": "Due date",
   "recurrence": "Recurrence",
   "recurrenceNone": "None",

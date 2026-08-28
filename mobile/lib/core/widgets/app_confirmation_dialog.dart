@@ -46,13 +46,12 @@ Future<bool> showAppConfirmationDialog({
                 Text(message, style: AppTextStyles.subtitle),
                 const SizedBox(height: AppSpacing.xl),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Expanded(
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: FilledButton.styleFrom(
-                          minimumSize: const Size(0, 50),
+                          minimumSize: const Size(0, 48),
                           backgroundColor: const Color(0xFFF1F5F9),
                           foregroundColor: AppColors.textPrimary,
                           elevation: 0,
@@ -76,7 +75,7 @@ Future<bool> showAppConfirmationDialog({
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          minimumSize: const Size(0, 50),
+                          minimumSize: const Size(0, 48),
                           backgroundColor: destructive
                               ? AppColors.error
                               : AppColors.primary,

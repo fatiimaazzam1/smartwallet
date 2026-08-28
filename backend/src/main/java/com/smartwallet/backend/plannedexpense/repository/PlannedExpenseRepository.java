@@ -86,6 +86,8 @@ public interface PlannedExpenseRepository extends JpaRepository<PlannedExpense, 
             @Param("endDate") LocalDate endDate
     );
 
+    long countByWalletIdAndStatus(Long walletId, PlannedExpenseStatus status);
+
     long countByWalletIdAndStatusAndDueOnBetween(
             Long walletId,
             PlannedExpenseStatus status,

@@ -1874,6 +1874,18 @@ abstract class AppLocalizations {
   /// **'e.g. Internet bill'**
   String get plannedTitleHint;
 
+  /// No description provided for @dueDateCannotBePast.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date cannot be in the past.'**
+  String get dueDateCannotBePast;
+
+  /// No description provided for @overdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get overdue;
+
   /// No description provided for @dueDate.
   ///
   /// In en, this message translates to:

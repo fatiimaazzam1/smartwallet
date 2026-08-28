@@ -74,6 +74,7 @@ public class PlannedExpenseService {
             return resolveIdempotentCreate(existing, request, title, amount, dueOn, recurrence, note);
         }
 
+        requireNotPastDueDate(dueOn);
         Category category = findExpenseCategory(currentUserId, request.categoryId());
         PlannedExpense entity = new PlannedExpense(
                 wallet, category, title, amount, dueOn, recurrence, note, request.clientRequestId());
@@ -131,12 +132,14 @@ public class PlannedExpenseService {
             throw new PlannedExpenseConflictException("Only upcoming planned expenses can be edited");
         }
         requireVersion(entity, request.version());
+        LocalDate dueOn = Objects.requireNonNull(request.dueOn(), "dueOn must not be null");
+        requireValidUpdatedDueDate(entity, dueOn);
         Category category = findExpenseCategory(currentUserId, request.categoryId());
         entity.update(
                 category,
                 normalizeText(request.title(), "Title", 100, true),
                 normalizeAmount(request.amount()),
-                request.dueOn(),
+                dueOn,
                 request.recurrence(),
                 normalizeText(request.note(), "Note", 255, false)
         );
@@ -315,6 +318,19 @@ public class PlannedExpenseService {
     private UUID scopedTransactionRequestId(Long walletId, Long plannedExpenseId, UUID requestId) {
         String value = "planned-payment:" + walletId + ":" + plannedExpenseId + ":" + requestId;
         return UUID.nameUUIDFromBytes(value.getBytes(StandardCharsets.UTF_8));
+    }
+
+
+    private void requireNotPastDueDate(LocalDate dueOn) {
+        if (dueOn.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Due date cannot be in the past");
+        }
+    }
+
+    private void requireValidUpdatedDueDate(PlannedExpense entity, LocalDate dueOn) {
+        if (dueOn.isBefore(LocalDate.now()) && !dueOn.equals(entity.getDueOn())) {
+            throw new IllegalArgumentException("Due date cannot be in the past");
+        }
     }
 
     private LocalDate nextDueDate(LocalDate dueOn, PlannedExpenseRecurrence recurrence) {

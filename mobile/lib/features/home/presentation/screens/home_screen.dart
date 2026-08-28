@@ -546,13 +546,49 @@ class _PlanningSnapshotSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
         ],
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Text(
-                context.l10n.upcomingExpenses,
-                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w800),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    context.l10n.upcomingExpenses,
+                    style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    context.l10n.upcomingExpenseCount(
+                      dashboard.upcomingExpenseCount,
+                    ),
+                    style: AppTextStyles.helperText,
+                  ),
+                ],
               ),
             ),
+            if (dashboard.upcomingExpenseCount > 0)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Text(context.l10n.total, style: AppTextStyles.helperText),
+                  const SizedBox(height: 2),
+                  Directionality(
+                    textDirection: ui.TextDirection.ltr,
+                    child: Text(
+                      showBalance
+                          ? TransactionFormatters.formatCurrencyAmount(
+                              context: context,
+                              currencyCode: dashboard.currencyCode,
+                              amount: dashboard.upcomingExpenseTotal,
+                            )
+                          : '••••',
+                      style: AppTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
         const SizedBox(height: AppSpacing.sm),

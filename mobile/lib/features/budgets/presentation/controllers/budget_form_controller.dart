@@ -9,6 +9,7 @@ final class BudgetFormController extends ChangeNotifier {
     : _repository = repository;
 
   final BudgetRepository _repository;
+  bool _disposed = false;
   AppException? _error;
   bool _submitting = false;
   bool _loading = false;
@@ -23,7 +24,7 @@ final class BudgetFormController extends ChangeNotifier {
     if (_loading || _existing?.id == id) return;
     _loading = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       _existing = await _repository.getBudget(id);
     } on AppException catch (e) {
@@ -35,7 +36,7 @@ final class BudgetFormController extends ChangeNotifier {
       );
     } finally {
       _loading = false;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -48,7 +49,7 @@ final class BudgetFormController extends ChangeNotifier {
     if (_submitting) return null;
     _submitting = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       return await _repository.create(
         categoryId: categoryId,
@@ -59,9 +60,15 @@ final class BudgetFormController extends ChangeNotifier {
     } on AppException catch (e) {
       _error = e;
       return null;
+    } catch (_) {
+      _error = const AppException(
+        message: 'Something unexpected happened. Please try again.',
+        type: AppExceptionType.unknown,
+      );
+      return null;
     } finally {
       _submitting = false;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -70,7 +77,7 @@ final class BudgetFormController extends ChangeNotifier {
     if (budget == null || _submitting) return null;
     _submitting = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       final BudgetModel updated = await _repository.update(
         id: budget.id,
@@ -83,9 +90,27 @@ final class BudgetFormController extends ChangeNotifier {
     } on AppException catch (e) {
       _error = e;
       return null;
+    } catch (_) {
+      _error = const AppException(
+        message: 'Something unexpected happened. Please try again.',
+        type: AppExceptionType.unknown,
+      );
+      return null;
     } finally {
       _submitting = false;
+      _notifyListeners();
+    }
+  }
+
+  void _notifyListeners() {
+    if (!_disposed) {
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }

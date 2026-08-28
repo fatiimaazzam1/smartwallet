@@ -13,6 +13,7 @@ final class BudgetDetailsController extends ChangeNotifier {
 
   final BudgetRepository _repository;
   final int budgetId;
+  bool _disposed = false;
 
   BudgetModel? _budget;
   List<BudgetRelatedExpenseModel> _relatedExpenses =
@@ -36,7 +37,7 @@ final class BudgetDetailsController extends ChangeNotifier {
     if (_loading || (_budget != null && !force)) return;
     _loading = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       _budget = await _repository.getBudget(budgetId);
     } on AppException catch (exception) {
@@ -50,7 +51,7 @@ final class BudgetDetailsController extends ChangeNotifier {
       return;
     } finally {
       _loading = false;
-      notifyListeners();
+      _notifyListeners();
     }
 
     await loadRelatedExpenses(force: true);
@@ -61,7 +62,7 @@ final class BudgetDetailsController extends ChangeNotifier {
     if (!force && _relatedExpenses.isNotEmpty) return;
     _loadingRelated = true;
     _relatedError = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       _relatedExpenses = await _repository.getRelatedExpenses(budgetId);
     } on AppException catch (exception) {
@@ -73,7 +74,7 @@ final class BudgetDetailsController extends ChangeNotifier {
       );
     } finally {
       _loadingRelated = false;
-      notifyListeners();
+      _notifyListeners();
     }
   }
 
@@ -82,16 +83,34 @@ final class BudgetDetailsController extends ChangeNotifier {
     if (budget == null || _deleting) return false;
     _deleting = true;
     _error = null;
-    notifyListeners();
+    _notifyListeners();
     try {
       await _repository.archive(id: budget.id, version: budget.version);
       return true;
     } on AppException catch (exception) {
       _error = exception;
       return false;
+    } catch (_) {
+      _error = const AppException(
+        message: 'Something unexpected happened. Please try again.',
+        type: AppExceptionType.unknown,
+      );
+      return false;
     } finally {
       _deleting = false;
+      _notifyListeners();
+    }
+  }
+
+  void _notifyListeners() {
+    if (!_disposed) {
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }

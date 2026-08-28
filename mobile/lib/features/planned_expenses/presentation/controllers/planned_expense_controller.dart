@@ -38,6 +38,7 @@ final class PlannedExpenseController extends ChangeNotifier {
 
   Future<void> selectStatus(PlannedExpenseStatus value) async {
     if (_status == value) return;
+    _invalidateInFlightRequests();
     _status = value;
     _error = null;
     notifyListeners();
@@ -49,8 +50,7 @@ final class PlannedExpenseController extends ChangeNotifier {
   Future<void> load({bool force = false}) async {
     if (_loading) {
       if (!force) return;
-      _generation++;
-      _loading = false;
+      _invalidateInFlightRequests();
     }
     if (!force && _items.containsKey(_status)) return;
 
@@ -95,6 +95,7 @@ final class PlannedExpenseController extends ChangeNotifier {
 
     final int generation = _generation;
     _loadingMore = true;
+    _error = null;
     notifyListeners();
 
     try {
@@ -120,6 +121,13 @@ final class PlannedExpenseController extends ChangeNotifier {
       }
     } on AppException catch (error) {
       if (generation == _generation) _error = error;
+    } catch (_) {
+      if (generation == _generation) {
+        _error = const AppException(
+          message: 'Something unexpected happened. Please try again.',
+          type: AppExceptionType.unknown,
+        );
+      }
     } finally {
       if (generation == _generation) {
         _loadingMore = false;
@@ -128,9 +136,13 @@ final class PlannedExpenseController extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshCurrent() => load(force: true);
+  Future<void> refreshCurrent() async {
+    _invalidateInFlightRequests();
+    await load(force: true);
+  }
 
   Future<void> refreshAll() async {
+    _invalidateInFlightRequests();
     _items.clear();
     _last.clear();
     _nextPage.clear();
@@ -140,7 +152,7 @@ final class PlannedExpenseController extends ChangeNotifier {
   }
 
   void clear() {
-    _generation++;
+    _invalidateInFlightRequests();
     _items.clear();
     _last.clear();
     _nextPage.clear();
@@ -148,8 +160,12 @@ final class PlannedExpenseController extends ChangeNotifier {
     _totalAmounts.clear();
     _status = PlannedExpenseStatus.upcoming;
     _error = null;
+    notifyListeners();
+  }
+
+  void _invalidateInFlightRequests() {
+    _generation++;
     _loading = false;
     _loadingMore = false;
-    notifyListeners();
   }
 }

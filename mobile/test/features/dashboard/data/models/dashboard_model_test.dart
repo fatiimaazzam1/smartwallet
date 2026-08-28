@@ -9,6 +9,8 @@ void main() {
         'safeToSpend': '800.00',
         'outstandingPlannedThroughMonthEnd': '100.00',
         'currencyCode': 'USD',
+        'upcomingExpenseCount': 2,
+        'upcomingExpenseTotal': '100.00',
         'upcomingExpenses': <dynamic>[],
         'budgetWarning': <String, dynamic>{
           'budgetId': 3,
@@ -21,6 +23,8 @@ void main() {
 
     expect(model.currentBalance, '900.00');
     expect(model.safeToSpend, '800.00');
+    expect(model.upcomingExpenseCount, 2);
+    expect(model.upcomingExpenseTotal, '100.00');
     expect(model.budgetWarning?.percentageUsed, '82.50');
   });
 }

@@ -971,6 +971,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get plannedTitleHint => 'مثال: فاتورة الإنترنت';
 
   @override
+  String get dueDateCannotBePast =>
+      'لا يمكن أن يكون تاريخ الاستحقاق في الماضي.';
+
+  @override
+  String get overdue => 'متأخر';
+
+  @override
   String get dueDate => 'تاريخ الاستحقاق';
 
   @override

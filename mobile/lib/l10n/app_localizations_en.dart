@@ -983,6 +983,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plannedTitleHint => 'e.g. Internet bill';
 
   @override
+  String get dueDateCannotBePast => 'Due date cannot be in the past.';
+
+  @override
+  String get overdue => 'Overdue';
+
+  @override
   String get dueDate => 'Due date';
 
   @override

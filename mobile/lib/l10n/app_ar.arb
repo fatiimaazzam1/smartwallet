@@ -354,6 +354,8 @@
   "plannedExpenseCreated": "تم إنشاء المصروف المخطط بنجاح.",
   "plannedExpenseUpdated": "تم تحديث المصروف المخطط بنجاح.",
   "plannedTitleHint": "مثال: فاتورة الإنترنت",
+  "dueDateCannotBePast": "لا يمكن أن يكون تاريخ الاستحقاق في الماضي.",
+  "overdue": "متأخر",
   "dueDate": "تاريخ الاستحقاق",
   "recurrence": "التكرار",
   "recurrenceNone": "بدون تكرار",

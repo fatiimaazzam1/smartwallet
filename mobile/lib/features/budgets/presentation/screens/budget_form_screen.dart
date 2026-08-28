@@ -51,6 +51,7 @@ class _BudgetFormScreenState extends State<BudgetFormScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       await context.read<CategoryController>().load();
+      if (!mounted) return;
       if (widget.budgetId != null) {
         await _loadExistingAndInitialize();
       } else {

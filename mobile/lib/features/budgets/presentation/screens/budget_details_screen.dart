@@ -99,8 +99,10 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
         context.watch<BudgetDetailsController>();
     final BudgetModel? budget = controller.budget;
 
-    return Scaffold(
-      appBar: AppBar(
+    return PopScope<bool>(
+      canPop: !controller.isDeleting,
+      child: Scaffold(
+        appBar: AppBar(
         title: Text(context.l10n.budgetDetails),
         actions: <Widget>[
           if (budget != null)
@@ -130,6 +132,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                 deleting: controller.isDeleting,
                 onDelete: _delete,
               ),
+        ),
       ),
     );
   }

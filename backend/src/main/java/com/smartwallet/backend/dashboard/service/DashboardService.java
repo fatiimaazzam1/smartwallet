@@ -50,12 +50,20 @@ public class DashboardService {
         BigDecimal outstanding = plannedExpenseRepository.sumOutstandingThrough(wallet.getId(), monthEnd)
                 .setScale(2, RoundingMode.HALF_UP);
         BigDecimal safeToSpend = balance.subtract(outstanding).setScale(2, RoundingMode.HALF_UP);
+        long upcomingExpenseCount = plannedExpenseRepository
+                .countByWalletIdAndStatus(wallet.getId(), PlannedExpenseStatus.UPCOMING);
+        BigDecimal upcomingExpenseTotal = plannedExpenseRepository
+                .sumByWalletIdAndStatus(wallet.getId(), PlannedExpenseStatus.UPCOMING)
+                .setScale(2, RoundingMode.HALF_UP);
         List<PlannedExpenseResponse> upcoming = plannedExpenseRepository
                 .findTop3ByWalletIdAndStatusOrderByDueOnAscIdAsc(wallet.getId(), PlannedExpenseStatus.UPCOMING)
                 .stream().map(plannedExpenseService::toResponse).toList();
 
         DashboardBudgetWarningResponse warning = buildBudgetWarning(currentUserId, wallet.getId(), month);
-        return new DashboardResponse(balance, safeToSpend, outstanding, wallet.getCurrencyCode(), upcoming, warning);
+        return new DashboardResponse(
+                balance, safeToSpend, outstanding, wallet.getCurrencyCode(),
+                upcomingExpenseCount, upcomingExpenseTotal, upcoming, warning
+        );
     }
 
     private DashboardBudgetWarningResponse buildBudgetWarning(Long userId, Long walletId, LocalDate month) {
