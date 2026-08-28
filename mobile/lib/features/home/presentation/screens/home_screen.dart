@@ -30,6 +30,7 @@ class HomeScreen extends StatefulWidget {
     required this.onOpenTransaction,
     required this.onOpenPlannedExpense,
     required this.onOpenBudget,
+    required this.onOpenWeeklyInsights,
     super.key,
   });
 
@@ -39,6 +40,7 @@ class HomeScreen extends StatefulWidget {
   final ValueChanged<int> onOpenTransaction;
   final ValueChanged<int> onOpenPlannedExpense;
   final ValueChanged<int> onOpenBudget;
+  final VoidCallback onOpenWeeklyInsights;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -155,6 +157,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 showBalance: showBalance,
                 onOpenPlannedExpense: widget.onOpenPlannedExpense,
                 onOpenBudget: widget.onOpenBudget,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              _WeeklyInsightsSection(
+                insights: dashboardController.data!.weeklyInsights,
+                onViewDetails: widget.onOpenWeeklyInsights,
               ),
             ],
             const SizedBox(height: AppSpacing.xl),
@@ -616,6 +623,132 @@ class _PlanningSnapshotSection extends StatelessWidget {
             if (index != dashboard.upcomingExpenses.length - 1)
               const SizedBox(height: AppSpacing.sm),
           ],
+      ],
+    );
+  }
+}
+
+class _WeeklyInsightsSection extends StatelessWidget {
+  const _WeeklyInsightsSection({
+    required this.insights,
+    required this.onViewDetails,
+  });
+
+  final DashboardWeeklyInsightsModel insights;
+  final VoidCallback onViewDetails;
+
+  String _comparisonSummary(BuildContext context) {
+    if (!insights.comparisonAvailable) {
+      return context.l10n.weeklySummaryComparisonUnavailable;
+    }
+
+    final String percentage = insights.comparisonPercentage ?? '0.00';
+    return switch (insights.comparisonDirection) {
+      'INCREASED' => context.l10n.weeklySummaryComparisonIncreased(percentage),
+      'DECREASED' => context.l10n.weeklySummaryComparisonDecreased(percentage),
+      _ => context.l10n.weeklySummaryComparisonUnchanged,
+    };
+  }
+
+  String _categorySummary(BuildContext context) {
+    final DashboardTopSpendingCategoryModel? top =
+        insights.topSpendingCategory;
+    if (top == null) {
+      return context.l10n.weeklySummaryNoSpending;
+    }
+    return context.l10n.weeklySummaryTopCategory(top.categoryName);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE9EDF2),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.border),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x0D0F172A),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  context.l10n.weeklyInsights,
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: onViewDetails,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                    vertical: 4,
+                  ),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  foregroundColor: AppColors.textPrimary,
+                ),
+                child: Text(
+                  context.l10n.viewDetails,
+                  style: AppTextStyles.smallLink.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _WeeklySummaryBullet(text: _comparisonSummary(context)),
+          const SizedBox(height: AppSpacing.xs),
+          _WeeklySummaryBullet(text: _categorySummary(context)),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeeklySummaryBullet extends StatelessWidget {
+  const _WeeklySummaryBullet({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 7),
+          child: Container(
+            width: 4,
+            height: 4,
+            decoration: const BoxDecoration(
+              color: AppColors.textPrimary,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Text(
+            text,
+            style: AppTextStyles.helperText.copyWith(
+              color: AppColors.textPrimary,
+              height: 1.45,
+            ),
+          ),
+        ),
       ],
     );
   }

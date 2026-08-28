@@ -454,5 +454,113 @@
         "type": "String"
       }
     }
+  },
+  "weeklyInsights": "Weekly Insights",
+  "weeklyInsightsSubtitle": "A live summary from your real spending and plans.",
+  "spentThisWeek": "Spent this week",
+  "weeklyComparisonUnavailable": "Not enough previous-week spending yet for a meaningful comparison.",
+  "noWeeklySpending": "No expenses recorded this week yet.",
+  "noActiveBudgetsThisMonth": "No active budgets for this month yet.",
+  "viewDetails": "View Details",
+  "weeklySummaryComparisonIncreased": "Your spending increased by {percentage}% compared with last week.",
+  "@weeklySummaryComparisonIncreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonDecreased": "Your spending decreased by {percentage}% compared with last week.",
+  "@weeklySummaryComparisonDecreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonUnchanged": "Your spending was unchanged compared with last week.",
+  "weeklySummaryComparisonUnavailable": "Not enough previous-week spending yet to compare.",
+  "weeklySummaryTopCategory": "{category} was your highest spending category.",
+  "@weeklySummaryTopCategory": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryNoSpending": "No expenses recorded this week yet.",
+  "weeklyInsightsUnavailable": "Weekly insights are temporarily unavailable.",
+  "spendingComparison": "Spending Comparison",
+  "spendingIncreased": "Spending increased",
+  "spendingDecreased": "Spending decreased",
+  "spendingUnchanged": "Spending unchanged",
+  "spendingIncreasedMessage": "Your spending increased by {percentage}% compared with last week.",
+  "@spendingIncreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingIncreasedCategoryMessage": "Your spending increased by {percentage}% compared with last week. {category} was your highest spending category this week.",
+  "@spendingIncreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedMessage": "Your spending decreased by {percentage}% compared with last week.",
+  "@spendingDecreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedCategoryMessage": "Your spending decreased by {percentage}% compared with last week. {category} was your highest spending category this week.",
+  "@spendingDecreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingUnchangedMessage": "Your spending was unchanged compared with the same days last week.",
+  "highestCategory": "Highest Category",
+  "highestCategoryMessage": "{category} was your highest spending category this week.",
+  "@highestCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "highestCategoryUnavailable": "No spending category is available for this week yet.",
+  "budgetPerformance": "Budget Performance",
+  "budgetWithinLimitsMessage": "You stayed within your limits for {within} out of {total} active budgets.",
+  "@budgetWithinLimitsMessage": {
+    "placeholders": {
+      "within": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingFourteenDaysMessage": "{count, plural, =0{You have no upcoming planned expenses in the next 14 days.} =1{You have 1 upcoming planned expense in the next 14 days.} other{You have {count} upcoming planned expenses in the next 14 days.}}",
+  "@upcomingFourteenDaysMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

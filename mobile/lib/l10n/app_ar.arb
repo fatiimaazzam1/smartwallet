@@ -454,5 +454,113 @@
         "type": "String"
       }
     }
+  },
+  "weeklyInsights": "رؤى أسبوعية",
+  "weeklyInsightsSubtitle": "ملخص مباشر مبني على إنفاقك وخططك الفعلية.",
+  "spentThisWeek": "المصروف هذا الأسبوع",
+  "weeklyComparisonUnavailable": "لا توجد بيانات كافية من الأسبوع الماضي لإجراء مقارنة مفيدة بعد.",
+  "noWeeklySpending": "لا توجد مصروفات مسجلة هذا الأسبوع حتى الآن.",
+  "noActiveBudgetsThisMonth": "لا توجد ميزانيات نشطة لهذا الشهر حتى الآن.",
+  "viewDetails": "عرض التفاصيل",
+  "weeklySummaryComparisonIncreased": "زاد إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@weeklySummaryComparisonIncreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonDecreased": "انخفض إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@weeklySummaryComparisonDecreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonUnchanged": "لم يتغير إنفاقك مقارنة بالأسبوع الماضي.",
+  "weeklySummaryComparisonUnavailable": "لا توجد بيانات كافية من الأسبوع الماضي للمقارنة بعد.",
+  "weeklySummaryTopCategory": "كانت {category} أعلى فئة إنفاق لديك.",
+  "@weeklySummaryTopCategory": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryNoSpending": "لا توجد مصروفات مسجلة هذا الأسبوع حتى الآن.",
+  "weeklyInsightsUnavailable": "الرؤى الأسبوعية غير متاحة مؤقتًا.",
+  "spendingComparison": "مقارنة الإنفاق",
+  "spendingIncreased": "زاد الإنفاق",
+  "spendingDecreased": "انخفض الإنفاق",
+  "spendingUnchanged": "لم يتغير الإنفاق",
+  "spendingIncreasedMessage": "زاد إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@spendingIncreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingIncreasedCategoryMessage": "زاد إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي. كانت {category} أعلى فئة إنفاق لديك هذا الأسبوع.",
+  "@spendingIncreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedMessage": "انخفض إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@spendingDecreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedCategoryMessage": "انخفض إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي. كانت {category} أعلى فئة إنفاق لديك هذا الأسبوع.",
+  "@spendingDecreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingUnchangedMessage": "لم يتغير إنفاقك مقارنة بنفس الأيام من الأسبوع الماضي.",
+  "highestCategory": "أعلى فئة",
+  "highestCategoryMessage": "كانت {category} أعلى فئة إنفاق لديك هذا الأسبوع.",
+  "@highestCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "highestCategoryUnavailable": "لا توجد فئة إنفاق متاحة لهذا الأسبوع حتى الآن.",
+  "budgetPerformance": "أداء الميزانية",
+  "budgetWithinLimitsMessage": "بقيت ضمن الحدود في {within} من أصل {total} ميزانيات نشطة.",
+  "@budgetWithinLimitsMessage": {
+    "placeholders": {
+      "within": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingFourteenDaysMessage": "{count, plural, =0{لا توجد مصروفات مخططة قادمة خلال الأيام الـ14 القادمة.} =1{لديك مصروف مخطط قادم واحد خلال الأيام الـ14 القادمة.} other{لديك {count} مصروفات مخططة قادمة خلال الأيام الـ14 القادمة.}}",
+  "@upcomingFourteenDaysMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -29,6 +29,7 @@ import '../../features/budgets/presentation/controllers/budget_form_controller.d
 import '../../features/budgets/presentation/screens/budget_details_screen.dart';
 import '../../features/budgets/presentation/screens/budget_form_screen.dart';
 import '../../features/dashboard/presentation/controllers/dashboard_controller.dart';
+import '../../features/dashboard/presentation/screens/weekly_insights_screen.dart';
 import '../../features/planned_expenses/data/repositories/planned_expense_repository.dart';
 import '../../features/planned_expenses/presentation/controllers/planned_expense_controller.dart';
 import '../../features/planned_expenses/presentation/controllers/planned_expense_details_controller.dart';
@@ -112,6 +113,7 @@ final class AppRouter {
 
     final bool isProtectedRoute =
         location == AppRoutes.homePath ||
+        location == AppRoutes.weeklyInsightsPath ||
         location == AppRoutes.editProfilePath ||
         location == AppRoutes.preferencesPath ||
         location == AppRoutes.categoriesPath ||
@@ -425,6 +427,9 @@ final class AppRouter {
                   },
                 );
               },
+              onOpenWeeklyInsights: () {
+                context.pushNamed(AppRoutes.weeklyInsightsName);
+              },
               onLogoutSuccess: () {
                 _transactionHistoryController.clear();
                 _budgetController.clear();
@@ -433,6 +438,24 @@ final class AppRouter {
                 _walletController.clear();
                 _categoryController.clear();
                 context.goNamed(AppRoutes.loginName);
+              },
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.weeklyInsightsName,
+        path: AppRoutes.weeklyInsightsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return ChangeNotifierProvider<DashboardController>.value(
+            value: _dashboardController,
+            child: WeeklyInsightsScreen(
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.goNamed(AppRoutes.homeName);
+                }
               },
             ),
           );
@@ -460,8 +483,15 @@ final class AppRouter {
         name: AppRoutes.preferencesName,
         path: AppRoutes.preferencesPath,
         builder: (BuildContext context, GoRouterState state) {
-          return ChangeNotifierProvider<ProfileController>.value(
-            value: _profileController,
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<ProfileController>.value(
+                value: _profileController,
+              ),
+              ChangeNotifierProvider<DashboardController>.value(
+                value: _dashboardController,
+              ),
+            ],
             child: PreferencesScreen(
               onBack: () {
                 if (context.canPop()) {

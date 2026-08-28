@@ -1152,4 +1152,126 @@ class AppLocalizationsEn extends AppLocalizations {
   String upcomingWeekMessage(int count, String amount) {
     return 'Next 7 days: $count planned expenses totaling $amount.';
   }
+
+  @override
+  String get weeklyInsights => 'Weekly Insights';
+
+  @override
+  String get weeklyInsightsSubtitle =>
+      'A live summary from your real spending and plans.';
+
+  @override
+  String get spentThisWeek => 'Spent this week';
+
+  @override
+  String get weeklyComparisonUnavailable =>
+      'Not enough previous-week spending yet for a meaningful comparison.';
+
+  @override
+  String get noWeeklySpending => 'No expenses recorded this week yet.';
+
+  @override
+  String get noActiveBudgetsThisMonth =>
+      'No active budgets for this month yet.';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String weeklySummaryComparisonIncreased(String percentage) {
+    return 'Your spending increased by $percentage% compared with last week.';
+  }
+
+  @override
+  String weeklySummaryComparisonDecreased(String percentage) {
+    return 'Your spending decreased by $percentage% compared with last week.';
+  }
+
+  @override
+  String get weeklySummaryComparisonUnchanged =>
+      'Your spending was unchanged compared with last week.';
+
+  @override
+  String get weeklySummaryComparisonUnavailable =>
+      'Not enough previous-week spending yet to compare.';
+
+  @override
+  String weeklySummaryTopCategory(String category) {
+    return '$category was your highest spending category.';
+  }
+
+  @override
+  String get weeklySummaryNoSpending => 'No expenses recorded this week yet.';
+
+  @override
+  String get weeklyInsightsUnavailable =>
+      'Weekly insights are temporarily unavailable.';
+
+  @override
+  String get spendingComparison => 'Spending Comparison';
+
+  @override
+  String get spendingIncreased => 'Spending increased';
+
+  @override
+  String get spendingDecreased => 'Spending decreased';
+
+  @override
+  String get spendingUnchanged => 'Spending unchanged';
+
+  @override
+  String spendingIncreasedMessage(String percentage) {
+    return 'Your spending increased by $percentage% compared with last week.';
+  }
+
+  @override
+  String spendingIncreasedCategoryMessage(String percentage, String category) {
+    return 'Your spending increased by $percentage% compared with last week. $category was your highest spending category this week.';
+  }
+
+  @override
+  String spendingDecreasedMessage(String percentage) {
+    return 'Your spending decreased by $percentage% compared with last week.';
+  }
+
+  @override
+  String spendingDecreasedCategoryMessage(String percentage, String category) {
+    return 'Your spending decreased by $percentage% compared with last week. $category was your highest spending category this week.';
+  }
+
+  @override
+  String get spendingUnchangedMessage =>
+      'Your spending was unchanged compared with the same days last week.';
+
+  @override
+  String get highestCategory => 'Highest Category';
+
+  @override
+  String highestCategoryMessage(String category) {
+    return '$category was your highest spending category this week.';
+  }
+
+  @override
+  String get highestCategoryUnavailable =>
+      'No spending category is available for this week yet.';
+
+  @override
+  String get budgetPerformance => 'Budget Performance';
+
+  @override
+  String budgetWithinLimitsMessage(int within, int total) {
+    return 'You stayed within your limits for $within out of $total active budgets.';
+  }
+
+  @override
+  String upcomingFourteenDaysMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You have $count upcoming planned expenses in the next 14 days.',
+      one: 'You have 1 upcoming planned expense in the next 14 days.',
+      zero: 'You have no upcoming planned expenses in the next 14 days.',
+    );
+    return '$_temp0';
+  }
 }

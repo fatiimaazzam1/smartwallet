@@ -19,6 +19,7 @@ public record DashboardResponse(
         @JsonFormat(shape = JsonFormat.Shape.STRING)
         BigDecimal upcomingExpenseTotal,
         List<PlannedExpenseResponse> upcomingExpenses,
-        DashboardBudgetWarningResponse budgetWarning
+        DashboardBudgetWarningResponse budgetWarning,
+        DashboardWeeklyInsightsResponse weeklyInsights
 ) {
 }

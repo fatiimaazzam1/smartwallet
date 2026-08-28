@@ -2161,6 +2161,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next 7 days: {count} planned expenses totaling {amount}.'**
   String upcomingWeekMessage(int count, String amount);
+
+  /// No description provided for @weeklyInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Insights'**
+  String get weeklyInsights;
+
+  /// No description provided for @weeklyInsightsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A live summary from your real spending and plans.'**
+  String get weeklyInsightsSubtitle;
+
+  /// No description provided for @spentThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this week'**
+  String get spentThisWeek;
+
+  /// No description provided for @weeklyComparisonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough previous-week spending yet for a meaningful comparison.'**
+  String get weeklyComparisonUnavailable;
+
+  /// No description provided for @noWeeklySpending.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses recorded this week yet.'**
+  String get noWeeklySpending;
+
+  /// No description provided for @noActiveBudgetsThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'No active budgets for this month yet.'**
+  String get noActiveBudgetsThisMonth;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @weeklySummaryComparisonIncreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending increased by {percentage}% compared with last week.'**
+  String weeklySummaryComparisonIncreased(String percentage);
+
+  /// No description provided for @weeklySummaryComparisonDecreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending decreased by {percentage}% compared with last week.'**
+  String weeklySummaryComparisonDecreased(String percentage);
+
+  /// No description provided for @weeklySummaryComparisonUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending was unchanged compared with last week.'**
+  String get weeklySummaryComparisonUnchanged;
+
+  /// No description provided for @weeklySummaryComparisonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough previous-week spending yet to compare.'**
+  String get weeklySummaryComparisonUnavailable;
+
+  /// No description provided for @weeklySummaryTopCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} was your highest spending category.'**
+  String weeklySummaryTopCategory(String category);
+
+  /// No description provided for @weeklySummaryNoSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses recorded this week yet.'**
+  String get weeklySummaryNoSpending;
+
+  /// No description provided for @weeklyInsightsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly insights are temporarily unavailable.'**
+  String get weeklyInsightsUnavailable;
+
+  /// No description provided for @spendingComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending Comparison'**
+  String get spendingComparison;
+
+  /// No description provided for @spendingIncreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending increased'**
+  String get spendingIncreased;
+
+  /// No description provided for @spendingDecreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending decreased'**
+  String get spendingDecreased;
+
+  /// No description provided for @spendingUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending unchanged'**
+  String get spendingUnchanged;
+
+  /// No description provided for @spendingIncreasedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending increased by {percentage}% compared with last week.'**
+  String spendingIncreasedMessage(String percentage);
+
+  /// No description provided for @spendingIncreasedCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending increased by {percentage}% compared with last week. {category} was your highest spending category this week.'**
+  String spendingIncreasedCategoryMessage(String percentage, String category);
+
+  /// No description provided for @spendingDecreasedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending decreased by {percentage}% compared with last week.'**
+  String spendingDecreasedMessage(String percentage);
+
+  /// No description provided for @spendingDecreasedCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending decreased by {percentage}% compared with last week. {category} was your highest spending category this week.'**
+  String spendingDecreasedCategoryMessage(String percentage, String category);
+
+  /// No description provided for @spendingUnchangedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending was unchanged compared with the same days last week.'**
+  String get spendingUnchangedMessage;
+
+  /// No description provided for @highestCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Category'**
+  String get highestCategory;
+
+  /// No description provided for @highestCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} was your highest spending category this week.'**
+  String highestCategoryMessage(String category);
+
+  /// No description provided for @highestCategoryUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No spending category is available for this week yet.'**
+  String get highestCategoryUnavailable;
+
+  /// No description provided for @budgetPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Performance'**
+  String get budgetPerformance;
+
+  /// No description provided for @budgetWithinLimitsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You stayed within your limits for {within} out of {total} active budgets.'**
+  String budgetWithinLimitsMessage(int within, int total);
+
+  /// No description provided for @upcomingFourteenDaysMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{You have no upcoming planned expenses in the next 14 days.} =1{You have 1 upcoming planned expense in the next 14 days.} other{You have {count} upcoming planned expenses in the next 14 days.}}'**
+  String upcomingFourteenDaysMessage(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -1141,4 +1141,126 @@ class AppLocalizationsAr extends AppLocalizations {
   String upcomingWeekMessage(int count, String amount) {
     return 'الأيام السبعة القادمة: $count مصروفات مخططة بإجمالي $amount.';
   }
+
+  @override
+  String get weeklyInsights => 'رؤى أسبوعية';
+
+  @override
+  String get weeklyInsightsSubtitle =>
+      'ملخص مباشر مبني على إنفاقك وخططك الفعلية.';
+
+  @override
+  String get spentThisWeek => 'المصروف هذا الأسبوع';
+
+  @override
+  String get weeklyComparisonUnavailable =>
+      'لا توجد بيانات كافية من الأسبوع الماضي لإجراء مقارنة مفيدة بعد.';
+
+  @override
+  String get noWeeklySpending => 'لا توجد مصروفات مسجلة هذا الأسبوع حتى الآن.';
+
+  @override
+  String get noActiveBudgetsThisMonth =>
+      'لا توجد ميزانيات نشطة لهذا الشهر حتى الآن.';
+
+  @override
+  String get viewDetails => 'عرض التفاصيل';
+
+  @override
+  String weeklySummaryComparisonIncreased(String percentage) {
+    return 'زاد إنفاقك بنسبة $percentage% مقارنة بالأسبوع الماضي.';
+  }
+
+  @override
+  String weeklySummaryComparisonDecreased(String percentage) {
+    return 'انخفض إنفاقك بنسبة $percentage% مقارنة بالأسبوع الماضي.';
+  }
+
+  @override
+  String get weeklySummaryComparisonUnchanged =>
+      'لم يتغير إنفاقك مقارنة بالأسبوع الماضي.';
+
+  @override
+  String get weeklySummaryComparisonUnavailable =>
+      'لا توجد بيانات كافية من الأسبوع الماضي للمقارنة بعد.';
+
+  @override
+  String weeklySummaryTopCategory(String category) {
+    return 'كانت $category أعلى فئة إنفاق لديك.';
+  }
+
+  @override
+  String get weeklySummaryNoSpending =>
+      'لا توجد مصروفات مسجلة هذا الأسبوع حتى الآن.';
+
+  @override
+  String get weeklyInsightsUnavailable => 'الرؤى الأسبوعية غير متاحة مؤقتًا.';
+
+  @override
+  String get spendingComparison => 'مقارنة الإنفاق';
+
+  @override
+  String get spendingIncreased => 'زاد الإنفاق';
+
+  @override
+  String get spendingDecreased => 'انخفض الإنفاق';
+
+  @override
+  String get spendingUnchanged => 'لم يتغير الإنفاق';
+
+  @override
+  String spendingIncreasedMessage(String percentage) {
+    return 'زاد إنفاقك بنسبة $percentage% مقارنة بالأسبوع الماضي.';
+  }
+
+  @override
+  String spendingIncreasedCategoryMessage(String percentage, String category) {
+    return 'زاد إنفاقك بنسبة $percentage% مقارنة بالأسبوع الماضي. كانت $category أعلى فئة إنفاق لديك هذا الأسبوع.';
+  }
+
+  @override
+  String spendingDecreasedMessage(String percentage) {
+    return 'انخفض إنفاقك بنسبة $percentage% مقارنة بالأسبوع الماضي.';
+  }
+
+  @override
+  String spendingDecreasedCategoryMessage(String percentage, String category) {
+    return 'انخفض إنفاقك بنسبة $percentage% مقارنة بالأسبوع الماضي. كانت $category أعلى فئة إنفاق لديك هذا الأسبوع.';
+  }
+
+  @override
+  String get spendingUnchangedMessage =>
+      'لم يتغير إنفاقك مقارنة بنفس الأيام من الأسبوع الماضي.';
+
+  @override
+  String get highestCategory => 'أعلى فئة';
+
+  @override
+  String highestCategoryMessage(String category) {
+    return 'كانت $category أعلى فئة إنفاق لديك هذا الأسبوع.';
+  }
+
+  @override
+  String get highestCategoryUnavailable =>
+      'لا توجد فئة إنفاق متاحة لهذا الأسبوع حتى الآن.';
+
+  @override
+  String get budgetPerformance => 'أداء الميزانية';
+
+  @override
+  String budgetWithinLimitsMessage(int within, int total) {
+    return 'بقيت ضمن الحدود في $within من أصل $total ميزانيات نشطة.';
+  }
+
+  @override
+  String upcomingFourteenDaysMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'لديك $count مصروفات مخططة قادمة خلال الأيام الـ14 القادمة.',
+      one: 'لديك مصروف مخطط قادم واحد خلال الأيام الـ14 القادمة.',
+      zero: 'لا توجد مصروفات مخططة قادمة خلال الأيام الـ14 القادمة.',
+    );
+    return '$_temp0';
+  }
 }

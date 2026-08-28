@@ -31,6 +31,7 @@ class MainShellScreen extends StatefulWidget {
     required this.onOpenBudget,
     required this.onCreatePlannedExpense,
     required this.onOpenPlannedExpense,
+    required this.onOpenWeeklyInsights,
     required this.onLogoutSuccess,
     super.key,
   });
@@ -45,6 +46,7 @@ class MainShellScreen extends StatefulWidget {
   final ValueChanged<int> onOpenBudget;
   final VoidCallback onCreatePlannedExpense;
   final ValueChanged<int> onOpenPlannedExpense;
+  final VoidCallback onOpenWeeklyInsights;
   final VoidCallback onLogoutSuccess;
 
   @override
@@ -128,6 +130,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         onOpenTransaction: widget.onOpenTransaction,
         onOpenPlannedExpense: widget.onOpenPlannedExpense,
         onOpenBudget: widget.onOpenBudget,
+        onOpenWeeklyInsights: widget.onOpenWeeklyInsights,
       ),
       TransactionHistoryScreen(
         onOpenTransaction: widget.onOpenTransaction,
