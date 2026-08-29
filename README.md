@@ -6,6 +6,66 @@ It helps a user securely track income and expenses, monitor the wallet balance, 
 
 > SmartWallet is a personal tracking application. It does not connect to banks and does not process real money transfers.
 
+## Product Vision
+
+SmartWallet is a secure personal spending coach for users who want a simple view of what they have, what they spent, what is planned next, and whether their current spending is still within budget.
+
+The application combines actual transactions with future planned expenses so the user can make better day-to-day spending decisions without pretending to be a banking or payment platform.
+
+## Problem Statement
+
+Personal finances are often tracked across notes, spreadsheets, banking screenshots, or memory. This makes it difficult to answer practical questions such as:
+
+- How much money do I currently have?
+- Where did I spend the most this week?
+- Am I close to exceeding a monthly category budget?
+- Which payments are coming soon?
+- How much is realistically safe to spend before the end of the month?
+
+SmartWallet centralizes these decisions in one authenticated mobile application backed by consistent server-side financial rules.
+
+## Target Users
+
+The MVP is intended for:
+
+- students
+- recent graduates
+- young professionals
+- users who want lightweight personal income/expense tracking
+- users who want budgets and planned-expense awareness without bank integration
+
+## Spending-Coach User Stories
+
+- As a user, I want to record income and expenses so that my wallet balance stays understandable.
+- As a user, I want to edit or delete an incorrect transaction and have dependent calculations update correctly.
+- As a user, I want to set a monthly category budget so that I can monitor spending against a limit.
+- As a user, I want a warning when a budget reaches my chosen threshold.
+- As a user, I want to record future planned expenses so that expected payments are visible before they happen.
+- As a user, I want to mark a planned expense as paid so that the real expense transaction is created once and the plan moves to Paid.
+- As a user, I want Safe to Spend so that upcoming obligations are considered before I decide how much I can spend.
+- As a user, I want Weekly Insights so that I can compare recent spending, identify my highest spending category, review budget performance, and see payments due soon.
+- As a user, I want English and Arabic support so that I can use the application in my preferred supported language.
+- As a user, I want my financial records isolated from other accounts.
+
+## Out of Scope for the MVP
+
+The current SmartWallet MVP intentionally does not include:
+
+- real bank-account integration
+- real money transfers
+- credit/debit card processing
+- Stripe or other payment-gateway processing
+- shared wallets or member invitations
+- admin financial controls
+- investment or trading features
+- receipt OCR/scanning
+- biometric authentication
+- push-notification infrastructure
+- multiple wallet currencies with live FX conversion
+- PDF financial-report export
+
+These can be future enhancements only after the current secure personal-finance workflow remains stable.
+
 ## Current Status
 
 The current application includes the complete MVP and spending-coach flow:
@@ -46,6 +106,8 @@ A budget is a monthly spending limit for one expense category.
 - `spent` is calculated from active expense transactions for the budget category and month.
 - `remaining = limit - spent`.
 - Budget warnings respect the authenticated user's warning preference and threshold.
+- A budget enters warning state when its spending percentage reaches the configured warning threshold.
+- A budget is over limit only when actual spending exceeds its limit; being in warning state does not mean it is already over budget.
 - Archived budgets are excluded from active budget lists.
 
 ### Planned Expenses
