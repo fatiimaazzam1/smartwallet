@@ -79,6 +79,22 @@ abstract final class LocalizedErrorMessage {
       return l10n.transactionUnavailableBody;
     }
 
+    if (normalized.contains('budget not found')) {
+      return l10n.budgetUnavailable;
+    }
+
+    if (normalized.contains('planned expense not found')) {
+      return l10n.plannedExpenseUnavailable;
+    }
+
+    if (normalized.contains('budget changed')) {
+      return l10n.budgetConflict;
+    }
+
+    if (normalized.contains('planned expense changed')) {
+      return l10n.plannedExpenseConflict;
+    }
+
     if (normalized.contains('transaction changed') ||
         normalized.contains('refresh and try again')) {
       return l10n.transactionEditConflict;

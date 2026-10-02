@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smartwallet_mobile/l10n/l10n.dart';
 
-import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../budgets/presentation/controllers/budget_controller.dart';
+import '../../../dashboard/presentation/controllers/dashboard_controller.dart';
 import '../../../home/presentation/screens/home_screen.dart';
+import '../../../planned_expenses/presentation/controllers/planned_expense_controller.dart';
+import '../../../planning/presentation/screens/plans_screen.dart';
 import '../../../profile/presentation/controllers/profile_controller.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 import '../../../transactions/data/models/transaction_type.dart';
@@ -24,6 +27,11 @@ class MainShellScreen extends StatefulWidget {
     required this.onAddIncome,
     required this.onAddExpense,
     required this.onOpenTransaction,
+    required this.onCreateBudget,
+    required this.onOpenBudget,
+    required this.onCreatePlannedExpense,
+    required this.onOpenPlannedExpense,
+    required this.onOpenWeeklyInsights,
     required this.onLogoutSuccess,
     super.key,
   });
@@ -34,6 +42,11 @@ class MainShellScreen extends StatefulWidget {
   final VoidCallback onAddIncome;
   final VoidCallback onAddExpense;
   final ValueChanged<int> onOpenTransaction;
+  final VoidCallback onCreateBudget;
+  final ValueChanged<int> onOpenBudget;
+  final VoidCallback onCreatePlannedExpense;
+  final ValueChanged<int> onOpenPlannedExpense;
+  final VoidCallback onOpenWeeklyInsights;
   final VoidCallback onLogoutSuccess;
 
   @override
@@ -52,6 +65,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         context.read<ProfileController>().load();
         context.read<WalletController>().load();
         context.read<TransactionHistoryController>().loadRecent();
+        context.read<DashboardController>().load();
       }
     });
   }
@@ -64,6 +78,13 @@ class _MainShellScreenState extends State<MainShellScreen> {
     setState(() {
       _selectedIndex = index;
     });
+
+    if (index == 0) {
+      context.read<DashboardController>().load(force: true);
+    } else if (index == 2) {
+      context.read<BudgetController>().load();
+      context.read<PlannedExpenseController>().load();
+    }
   }
 
   Future<void> _showAddNew() async {
@@ -107,14 +128,18 @@ class _MainShellScreenState extends State<MainShellScreen> {
         onAddExpense: widget.onAddExpense,
         onViewAllTransactions: () => _selectIndex(1),
         onOpenTransaction: widget.onOpenTransaction,
+        onOpenPlannedExpense: widget.onOpenPlannedExpense,
+        onOpenBudget: widget.onOpenBudget,
+        onOpenWeeklyInsights: widget.onOpenWeeklyInsights,
       ),
       TransactionHistoryScreen(
         onOpenTransaction: widget.onOpenTransaction,
       ),
-      _ComingSoonScreen(
-        icon: Icons.flag_outlined,
-        title: l10n.plansComingTitle,
-        body: l10n.plansComingBody,
+      PlansScreen(
+        onCreateBudget: widget.onCreateBudget,
+        onOpenBudget: widget.onOpenBudget,
+        onCreatePlanned: widget.onCreatePlannedExpense,
+        onOpenPlanned: widget.onOpenPlannedExpense,
       ),
       ProfileScreen(
         onEditProfile: widget.onEditProfile,
@@ -353,58 +378,6 @@ class _NavigationItem extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ComingSoonScreen extends StatelessWidget {
-  const _ComingSoonScreen({
-    required this.icon,
-    required this.title,
-    required this.body,
-  });
-
-  final IconData icon;
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.screenHorizontal),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Container(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, size: 52, color: AppColors.primary),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.screenTitle,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    body,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.body,
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ),

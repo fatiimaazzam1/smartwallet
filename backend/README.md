@@ -1,8 +1,8 @@
 # SmartWallet Backend
 
-Spring Boot REST API for the SmartWallet personal finance mobile application.
+Spring Boot REST API for SmartWallet.
 
-## Technology Stack
+## Stack
 
 - Java 21
 - Spring Boot
@@ -11,231 +11,224 @@ Spring Boot REST API for the SmartWallet personal finance mobile application.
 - Spring Data JPA
 - PostgreSQL
 - Flyway
-- Maven
+- Maven Wrapper
 - JWT authentication
-- OpenAPI and Swagger UI
+- OpenAPI / Swagger
 - SMTP email delivery
-- H2 for isolated automated tests
+- H2 for automated tests
 
-## Requirements
+## Configuration
 
-Before running the backend, install:
+Private configuration is supplied through environment variables. Never commit real values.
 
-- Java JDK 21
-- PostgreSQL
-- Git
-- Maven Wrapper support
-
-## Database Configuration
-
-The local PostgreSQL database used by the project is:
-
-```text
-Database: smartwallet_db
-Application role: smartwallet_app
-Port: 5432
-```
-
-Database passwords and private credentials must never be committed to GitHub.
-
-## Environment Variables
-
-SmartWallet reads private configuration values from environment variables.
-
-Configure the following variables before starting the backend:
+Typical development variables include:
 
 ```text
 DB_URL=jdbc:postgresql://localhost:5432/smartwallet_db
 DB_USERNAME=smartwallet_app
-DB_PASSWORD=your-private-database-password
-JWT_SECRET=your-private-jwt-secret
-```
-
-Do not replace these example values with real passwords or secrets inside this
-file.
-
-## Email Configuration
-
-The authentication flow sends email-verification and password-reset codes
-through SMTP.
-
-Configure the following environment variables:
-
-```text
+DB_PASSWORD=<private>
+JWT_SECRET=<private>
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=your-email-address
-MAIL_PASSWORD=your-private-app-password
-MAIL_FROM=your-email-address
+MAIL_USERNAME=<private>
+MAIL_PASSWORD=<private>
+MAIL_FROM=<private>
 ```
 
-For Gmail development accounts, enable two-step verification and use a Google
-App Password instead of the regular Google Account password.
-
-Email credentials must never be committed to GitHub.
-
-## Local Development Profile
-
-The backend uses the following Spring profile for local development:
+The development profile is:
 
 ```text
 dev
 ```
 
-In Eclipse, open the Spring Boot Run Configuration and add this program
-argument:
+## Run
 
-```text
---spring.profiles.active=dev
-```
-
-Add the database, JWT, and email environment variables to the Environment
-section of the same Run Configuration.
-
-## Running the Backend
-
-From the `backend` directory, run:
+From `backend/`:
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-The required environment variables must be available in the same terminal
-session.
-
-The backend starts by default at:
+Default local server:
 
 ```text
 http://localhost:8080
 ```
 
-## Running the Tests
-
-From the `backend` directory, run:
-
-```bash
-./mvnw test
-```
-
-The automated test configuration uses an isolated H2 database through the test
-profile. It does not replace or modify the PostgreSQL configuration used by the
-`dev` or production profiles.
-
-A successful execution ends with:
+Swagger:
 
 ```text
-BUILD SUCCESS
+http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/v3/api-docs
 ```
 
-## Flyway Database Migrations
+## Automated Tests
 
-Flyway migration files are located in:
+```bash
+./mvnw clean test
+```
+
+Tests use an isolated H2 test profile and do not replace the PostgreSQL development configuration.
+
+## Flyway Migrations
+
+Location:
 
 ```text
 src/main/resources/db/migration
 ```
 
-The current migrations are:
+Current history:
 
 ```text
 V1__create_initial_schema.sql
 V2__add_email_authentication.sql
 V3__add_user_language_preference.sql
+V4__add_wallet_currency_and_seed_categories.sql
+V5__archive_other_default_categories.sql
+V6__prepare_transactions_for_history.sql
+V7__add_planning_foundation.sql
 ```
 
-`V1__create_initial_schema.sql` creates the initial SmartWallet database
-foundation.
+Purpose:
 
-`V2__add_email_authentication.sql` adds email verification and password-reset
-database support.
+- **V1** — initial users, wallets, categories, transactions, budgets, preferences and refresh tokens.
+- **V2** — pending email verification, `email_verified_at`, and secure `email_action_codes`.
+- **V3** — user language preference and legacy preference-row backfill.
+- **V4** — wallet currency, category display order, and default category seeds.
+- **V5** — archives generic system `Other` categories while preserving historical references.
+- **V6** — transaction calendar date, active/archive status, optimistic version, client request id and history/search indexes.
+- **V7** — budget archive/version support and the `planned_expenses` table.
 
-`V3__add_user_language_preference.sql` adds the controlled language preference
-to `user_preferences` and creates default preference rows for users who do not
-already have one.
+Applied migrations must never be modified. The next schema migration, if one is ever required, must be V8 or later.
 
-The migration accepts these stored language values:
+## Authentication and Account Security
 
-```text
-SYSTEM
-ENGLISH
-ARABIC
-```
+Implemented flows:
 
-Applied Flyway migrations must never be modified.
-
-Every future database change must use a new migration with the next available
-version number.
-
-## OpenAPI and Swagger UI
-
-After starting the backend, Swagger UI is available at:
-
-```text
-http://localhost:8080/swagger-ui.html
-```
-
-It is also available through:
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
-The generated OpenAPI specification is available at:
-
-```text
-http://localhost:8080/v3/api-docs
-```
-
-Swagger automatically discovers available REST controllers and displays their
-endpoints after the application starts.
-
-Protected profile and preference endpoints are marked with the JWT Bearer
-security requirement.
-
-To test a protected endpoint in Swagger:
-
-```text
-1. Log in through POST /api/v1/auth/login.
-2. Copy the returned access token.
-3. Click Authorize in Swagger.
-4. Enter the access token in the Bearer authorization field.
-5. Execute the protected request.
-```
-
-Passwords, access tokens, refresh tokens, reset tokens, and email codes must
-never be shared or committed.
-
-## Authentication Features
-
-The SmartWallet backend currently supports:
-
-- User registration
-- Email verification using a six-digit code
-- Verification-code resend with cooldown protection
-- Login using email and password
+- registration
+- six-digit email verification
+- verification-code resend with cooldown
+- login
 - JWT access-token authentication
-- Database-backed refresh tokens
-- Access-token refresh
-- Logout and refresh-token revocation
-- Forgot-password email delivery
-- Password-reset code resend
-- Password-reset code verification
-- Short-lived one-time password-reset tokens
-- Secure password update
-- Revocation of existing refresh tokens after password reset
-- Retrieval of the currently authenticated user
-- Update of the authenticated user's first and last names
-- Retrieval and update of authenticated-user preferences
+- refresh-token rotation/refresh flow
+- logout and revocation
+- forgot password
+- password-reset code verification
+- one-time password-reset token
+- password update and active refresh-token revocation
+- authenticated profile retrieval/update
+- authenticated preferences retrieval/update
 
-## Authentication API Endpoints
+Important security rules:
 
-The authentication controller uses the following base path:
+- BCrypt for password hashing.
+- Verification/reset codes are never stored in plaintext.
+- Refresh tokens are persisted only as hashes.
+- Sensitive values are never returned in normal financial responses.
+- Protected endpoints resolve the authenticated user server-side.
+- Financial ownership is enforced through the authenticated user's wallet.
+- Raw internal exceptions and SQL/database details are not exposed to clients.
+
+## Core Finance Model
+
+### Wallet
+
+Each user owns exactly one personal wallet.
+
+The effective balance is derived from active transactions:
+
+- Income adds to balance.
+- Expense subtracts from balance.
+- Archived transactions no longer affect balance.
+
+### Categories
+
+Categories can be:
+
+- shared system categories
+- authenticated-user custom categories
+
+Historical references are preserved even when a category is archived.
+
+### Transactions
+
+Implemented:
+
+- create
+- list/history
+- search/filter/pagination
+- details
+- edit
+- soft archive/delete
+- optimistic versioning
+- idempotent create via `clientRequestId`
+
+Only active transactions contribute to financial calculations.
+
+### Budgets
+
+A budget belongs to the authenticated user's wallet and an expense category.
+
+Rules:
+
+- positive limit with two-decimal precision
+- budget month stored as the first day of the month
+- creation only for the current or a future month
+- one active budget per wallet/category/month
+- soft archive via status
+- optimistic versioning
+- spent calculated from active expense transactions in the same category/month
+- related-expense endpoint returns the transactions counted by the budget
+
+### Planned Expenses
+
+A planned expense is an expected future payment.
+
+Rules:
+
+- positive amount
+- expense category only
+- new due date cannot be in the past
+- statuses: `UPCOMING`, `PAID`, `CANCELLED`, `ARCHIVED`
+- recurrence: `NONE`, `WEEKLY`, `MONTHLY`, `YEARLY`
+- create idempotency through `create_client_request_id`
+- payment idempotency through `payment_client_request_id`
+- optimistic versioning
+- Mark as Paid creates the real expense transaction and marks the plan Paid inside one database transaction
+- a recurring paid plan may create the next occurrence according to the recurrence rule
+
+### Dashboard and Weekly Insights
+
+`GET /api/v1/dashboard` returns server-calculated authenticated-user data, including:
+
+- current balance
+- Safe to Spend
+- upcoming planned-expense summary
+- budget warning
+- Weekly Insights
+
+Safe to Spend:
 
 ```text
-/api/v1/auth
+current balance
+- outstanding upcoming planned expenses through the current month end
 ```
 
-### Public Authentication Endpoints
+Weekly Insights include:
+
+- current-week expense spending
+- equivalent elapsed-period previous-week comparison
+- increase/decrease percentage when a valid previous comparison exists
+- highest spending category
+- active-budget performance
+- planned expenses due within the next 14 days
+
+Safe to Spend and Weekly Insights are calculated values and are not database entities.
+
+## REST API Summary
+
+### Public authentication
 
 ```text
 POST /api/v1/auth/register
@@ -249,13 +242,7 @@ POST /api/v1/auth/verify-password-reset-code
 POST /api/v1/auth/reset-password
 ```
 
-These endpoints are public because users may need to register, verify their
-email, log in, refresh an access token, or recover their password without
-already having a valid JWT access token.
-
-The endpoints still validate their required credentials, codes, and tokens.
-
-### Protected Authentication, Profile, and Preference Endpoints
+### Protected account
 
 ```text
 POST  /api/v1/auth/logout
@@ -265,528 +252,78 @@ GET   /api/v1/users/me/preferences
 PUT   /api/v1/users/me/preferences
 ```
 
-Protected endpoints require a valid JWT access token in the HTTP authorization
-header:
+### Wallet and categories
 
 ```text
-Authorization: Bearer <access-token>
+GET /api/v1/wallet
+GET /api/v1/categories
 ```
 
-## Authenticated User Profile API
+Category-management endpoints are exposed by the category controller according to the current application flow.
 
-### Retrieve the Current User
+### Transactions
 
 ```text
-GET /api/v1/users/me
+POST   /api/v1/transactions
+GET    /api/v1/transactions
+GET    /api/v1/transactions/{transactionId}
+PATCH  /api/v1/transactions/{transactionId}
+DELETE /api/v1/transactions/{transactionId}
 ```
 
-A successful response contains the authenticated user's public profile fields:
-
-```json
-{
-  "id": 1,
-  "firstName": "Example",
-  "lastName": "User",
-  "email": "example@example.com"
-}
-```
-
-The password hash and authentication secrets are never returned.
-
-### Update the Current User
+### Budgets
 
 ```text
-PATCH /api/v1/users/me
+POST   /api/v1/budgets
+GET    /api/v1/budgets?month=YYYY-MM-01
+GET    /api/v1/budgets/{budgetId}
+GET    /api/v1/budgets/{budgetId}/expenses?size=5
+PATCH  /api/v1/budgets/{budgetId}
+DELETE /api/v1/budgets/{budgetId}?version=<version>
 ```
 
-Example request:
-
-```json
-{
-  "firstName": "Updated",
-  "lastName": "User"
-}
-```
-
-Only supported editable profile fields are updated. The email address and
-authentication credentials are not changed through this endpoint.
-
-Submitted values are validated before they are saved.
-
-## User Preferences API
-
-### Retrieve Preferences
+### Planned Expenses
 
 ```text
-GET /api/v1/users/me/preferences
+POST   /api/v1/planned-expenses
+GET    /api/v1/planned-expenses?status=UPCOMING&page=0&size=20
+GET    /api/v1/planned-expenses/{plannedExpenseId}
+PATCH  /api/v1/planned-expenses/{plannedExpenseId}
+POST   /api/v1/planned-expenses/{plannedExpenseId}/cancel
+POST   /api/v1/planned-expenses/{plannedExpenseId}/mark-paid
+DELETE /api/v1/planned-expenses/{plannedExpenseId}?version=<version>
 ```
 
-A successful response contains:
-
-```json
-{
-  "hideBalanceByDefault": false,
-  "compactTransactionList": false,
-  "showBudgetWarnings": true,
-  "budgetWarningThreshold": 70,
-  "dateFormat": "DD_MM_YYYY",
-  "dashboardPeriod": "CURRENT_MONTH",
-  "language": "SYSTEM"
-}
-```
-
-### Update Preferences
+### Dashboard
 
 ```text
-PUT /api/v1/users/me/preferences
+GET /api/v1/dashboard
 ```
 
-Example request:
+All finance endpoints are protected.
 
-```json
-{
-  "hideBalanceByDefault": true,
-  "compactTransactionList": true,
-  "showBudgetWarnings": true,
-  "budgetWarningThreshold": 80,
-  "dateFormat": "YYYY_MM_DD",
-  "dashboardPeriod": "LAST_30_DAYS",
-  "language": "ENGLISH"
-}
-```
+## Data Integrity
 
-The complete preference object is submitted when updating preferences.
+- Money uses `NUMERIC(19,2)` / `BigDecimal`.
+- Resource ownership is checked server-side.
+- Transactions, budgets and planned expenses use soft archive/state semantics where appropriate.
+- Optimistic versions detect stale edits.
+- Client-request UUIDs protect critical operations from accidental duplicate submissions.
+- Planned payment state has database constraints tying `PAID` to payment date, generated transaction and payment request id.
+- Foreign keys preserve category/transaction integrity.
 
-### Preference Defaults
+## Error Handling
+
+The API returns controlled validation/authentication/conflict/not-found responses.
+
+Internal implementation details, stack traces, database credentials, SQL statements and tokens must not be exposed to the mobile user.
+
+## Database Documentation
+
+Final Phase 5 ERD:
 
 ```text
-hideBalanceByDefault: false
-compactTransactionList: false
-showBudgetWarnings: true
-budgetWarningThreshold: 70
-dateFormat: DD_MM_YYYY
-dashboardPeriod: CURRENT_MONTH
-language: SYSTEM
+../docs/database/SmartWallet ERD v3 — Planning.png
 ```
 
-### Supported Preference Values
-
-Budget warning threshold:
-
-```text
-70
-80
-90
-```
-
-Date format:
-
-```text
-DD_MM_YYYY
-MM_DD_YYYY
-YYYY_MM_DD
-```
-
-Dashboard period:
-
-```text
-CURRENT_MONTH
-LAST_30_DAYS
-```
-
-Application language:
-
-```text
-SYSTEM
-ENGLISH
-ARABIC
-```
-
-`FRENCH` is not a backend language value.
-
-When the mobile application uses `SYSTEM`, it follows Arabic or English when
-supported. For another device language, such as French, the mobile application
-uses English as the fallback.
-
-## Request Validation and Error Responses
-
-Invalid request bodies return a controlled API error response.
-
-Examples include:
-
-- Unsupported enum values such as `FRENCH`
-- Incorrect enum formatting such as `YYYY-MM-DD`
-- Malformed JSON
-- Invalid profile values
-- Missing authentication for protected endpoints
-
-An invalid enum or malformed JSON returns:
-
-```text
-400 Bad Request
-```
-
-with a clean message such as:
-
-```json
-{
-  "timestamp": "2026-08-01T20:39:37.688",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Invalid request value or malformed JSON",
-  "path": "/api/v1/users/me/preferences"
-}
-```
-
-Internal Java stack traces are not returned in the API response.
-
-A protected request without a valid JWT returns:
-
-```text
-401 Unauthorized
-```
-
-## Registration and Email Verification Flow
-
-The registration and email-verification flow works as follows:
-
-```text
-User registration
-→ Account created with PENDING_VERIFICATION status
-→ Six-digit verification code sent by email
-→ User submits the verification code
-→ Account becomes ACTIVE
-→ User can log in
-```
-
-An account with the `PENDING_VERIFICATION` status cannot authenticate until
-email verification is completed.
-
-After successful email verification:
-
-```text
-account_status = ACTIVE
-email_verified_at = not null
-```
-
-A verification code can only be used once.
-
-## Password-Reset Flow
-
-The password-reset flow works as follows:
-
-```text
-Forgot-password request
-→ Six-digit password-reset code sent by email
-→ User submits the six-digit code
-→ Backend verifies the code
-→ Backend creates a short-lived reset token
-→ User submits the reset token with the new password
-→ Password is updated
-→ Reset token becomes used
-→ Existing refresh tokens are revoked
-→ User logs in again using the new password
-```
-
-The password-reset token does not provide normal access to the account.
-
-It can only authorize the final password-reset operation.
-
-## Password-Reset Code Rules
-
-Password-reset and email-verification codes use the following rules:
-
-```text
-Code length: 6 digits
-Expiration: 10 minutes
-Resend cooldown: 60 seconds
-Maximum failed attempts: 5
-```
-
-When a new code is issued after the cooldown, the previous active code is
-invalidated.
-
-A code is also invalidated when:
-
-- It expires and is checked
-- It reaches the maximum number of failed attempts
-- It is replaced by a newer code
-
-## Authentication Token Types
-
-SmartWallet uses three different token types.
-
-### Access Token
-
-The access token is a signed JWT used to access protected API endpoints.
-
-The access token:
-
-- Is generated by the backend after login
-- Has a short lifetime
-- Is sent by the client with protected requests
-- Is not stored in the database
-- Is validated using its signature and expiration
-
-### Refresh Token
-
-The refresh token keeps a login session active after the access token expires.
-
-The refresh token:
-
-- Is generated by the backend after login
-- Has a longer lifetime than the access token
-- Can generate a new access token
-- Can be revoked during logout
-- Can be revoked after a successful password reset
-- Is stored in the database only as a SHA-256 hash
-
-The raw refresh token is returned to the client, while the database stores only
-its hash.
-
-### Password-Reset Token
-
-The password-reset token is generated after a correct six-digit
-password-reset code is verified.
-
-The password-reset token:
-
-- Is generated by the backend
-- Is short-lived
-- Expires after 10 minutes
-- Can be used only once
-- Can only authorize a password change
-- Is stored in the database only as a SHA-256 hash
-
-The raw password-reset token is returned once to the client.
-
-The database stores only the value of:
-
-```text
-SHA-256(raw password-reset token)
-```
-
-## Authentication Security
-
-### Password Storage
-
-User passwords are stored using BCrypt.
-
-Raw passwords are never stored in the database.
-
-### Six-Digit Code Storage
-
-Email-verification and password-reset codes are stored using BCrypt.
-
-A six-digit code has a limited number of possible values, so BCrypt is used to
-make offline guessing slower.
-
-The database never stores the raw six-digit code.
-
-### Refresh-Token Storage
-
-Refresh tokens are generated using a cryptographically secure random
-generator.
-
-Only the SHA-256 refresh-token hash is stored in the `refresh_tokens` table.
-
-The raw refresh token is returned to the client and must be stored securely by
-the mobile application.
-
-### Password-Reset Token Storage
-
-Password-reset tokens are also generated using a cryptographically secure
-random generator.
-
-Only the SHA-256 reset-token hash is stored in:
-
-```text
-email_action_codes.action_token_hash
-```
-
-The raw reset token is not stored in the database.
-
-### Generic Security Responses
-
-Forgot-password and resend-password-reset-code requests return a generic
-response whether or not an eligible account exists.
-
-Invalid password-reset code requests also return a generic error.
-
-This behavior reduces email and account enumeration risks.
-
-## Email Action Status Fields
-
-The `email_action_codes` table tracks the lifecycle of email-verification and
-password-reset operations.
-
-### `verified_at`
-
-```text
-The six-digit code was submitted correctly.
-```
-
-### `used_at`
-
-```text
-The operation completed successfully.
-```
-
-For password reset, this means the password was changed successfully.
-
-### `invalidated_at`
-
-```text
-The operation was cancelled, replaced, expired, or blocked.
-```
-
-A successful password-reset operation normally has:
-
-```text
-verified_at = not null
-used_at = not null
-invalidated_at = null
-```
-
-An expired, cancelled, replaced, or blocked operation can have:
-
-```text
-invalidated_at = not null
-```
-
-## Password Reset and Session Revocation
-
-After a successful password reset, all active refresh tokens belonging to the
-user are revoked.
-
-This means that old devices and existing sessions cannot continue generating
-new access tokens.
-
-After resetting the password, the user must log in again using the new
-password.
-
-An already-issued access token may remain valid until its short expiration
-time, but its related refresh token can no longer renew the session.
-
-## Authentication Transaction Safety
-
-The final password-reset operation is transactional.
-
-The following actions are completed as one database operation:
-
-```text
-Update the password hash
-Revoke active refresh tokens
-Mark the password-reset action as used
-```
-
-If one of these actions fails, the transaction is rolled back to prevent a
-partially completed password reset.
-
-## Authentication QA Status
-
-The authentication system has been manually tested using Postman, Swagger UI,
-and PostgreSQL.
-
-Verified scenarios include:
-
-- Registration creates a pending account
-- Email-verification code delivery
-- Successful email verification
-- Login rejection before email verification
-- Successful login after email verification
-- Verification-code resend cooldown
-- Forgot-password email delivery
-- Generic forgot-password responses for unknown email addresses
-- Password-reset code resend
-- Old password-reset code invalidation after resend
-- Wrong password-reset code attempts
-- Password-reset code expiration checks
-- Successful password-reset code verification
-- Secure password-reset token generation
-- Storage of token hashes instead of raw tokens
-- Password confirmation mismatch rejection
-- Successful password reset
-- Password-reset token reuse rejection
-- Old-password login rejection
-- New-password login success
-- Revocation of previous refresh tokens
-- Rejection of revoked refresh tokens
-- Protected endpoint access using a valid JWT
-- Unauthorized protected endpoint access without a JWT
-- Retrieval of the authenticated user profile
-- Update and persistence of first and last names
-- Retrieval of user preferences
-- Update and persistence of user preferences
-- Rejection of unsupported preference enum values
-- Clean `400` responses without exposed Java stack traces
-- Flyway validation through database schema version 3
-- Successful automated backend test suite
-
-## Authentication Development Status
-
-```text
-Backend authentication implementation: Complete
-Email verification: Complete
-JWT login and access-token authentication: Complete
-Refresh-token support: Complete
-Logout and token revocation: Complete
-Forgot-password flow: Complete
-Password-reset flow: Complete
-Manual authentication QA: Complete
-Flutter authentication integration: Complete
-Backend profile retrieval and update: Complete
-Backend preference retrieval and update: Complete
-Profile photo upload: Planned
-Flutter profile and preference integration: Current milestone
-```
-
-## Secrets and Deployment
-
-Private credentials are provided through environment variables and must never
-be committed to the repository.
-
-Each developer must configure their own local database, JWT, and email
-credentials.
-
-For automated workflows, private values must be stored using GitHub Actions
-Secrets.
-
-For production, the hosting platform or server must provide the required
-environment variables when the backend starts.
-
-Production environments must use:
-
-- Separate database credentials
-- A strong production JWT secret
-- Dedicated production email-delivery credentials
-- Secure HTTPS communication
-
-The Flutter mobile application must never contain:
-
-```text
-Database credentials
-SMTP credentials
-JWT signing secret
-Backend private configuration
-```
-
-Flutter communicates only with the SmartWallet REST API.
-
-## Main Project Structure
-
-```text
-backend/
-├── src/main/java
-│   └── Application source code
-├── src/main/resources
-│   ├── Application configuration
-│   └── db/migration
-│       └── Flyway database migrations
-├── src/test
-│   ├── Backend tests
-│   └── resources
-│       └── Isolated test-profile configuration
-├── pom.xml
-└── README.md
-```
+The ERD contains persisted entities only. Safe to Spend and Weekly Insights are intentionally not database tables.

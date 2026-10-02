@@ -1699,6 +1699,642 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This transaction request conflicts with a previous submission. Review the form before trying again.'**
   String get transactionRequestConflict;
+
+  /// No description provided for @budgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets'**
+  String get budgets;
+
+  /// No description provided for @planned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get planned;
+
+  /// No description provided for @createBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Budget'**
+  String get createBudget;
+
+  /// No description provided for @editBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Budget'**
+  String get editBudget;
+
+  /// No description provided for @budgetDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Details'**
+  String get budgetDetails;
+
+  /// No description provided for @noBudgetsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No budgets yet'**
+  String get noBudgetsYet;
+
+  /// No description provided for @noBudgetsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a monthly category budget to track spending against a real limit.'**
+  String get noBudgetsBody;
+
+  /// No description provided for @totalPlannedBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Total planned budget'**
+  String get totalPlannedBudget;
+
+  /// No description provided for @monthlyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly limit'**
+  String get monthlyLimit;
+
+  /// No description provided for @budgetMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget month'**
+  String get budgetMonth;
+
+  /// No description provided for @selectBudgetMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select budget month'**
+  String get selectBudgetMonth;
+
+  /// No description provided for @budgetCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget created successfully.'**
+  String get budgetCreated;
+
+  /// No description provided for @budgetUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget updated successfully.'**
+  String get budgetUpdated;
+
+  /// No description provided for @deleteBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Budget'**
+  String get deleteBudget;
+
+  /// No description provided for @deleteBudgetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the budget from active planning. Existing transactions are not deleted.'**
+  String get deleteBudgetBody;
+
+  /// No description provided for @budgetDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget deleted successfully.'**
+  String get budgetDeleted;
+
+  /// No description provided for @remaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remaining;
+
+  /// No description provided for @daysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Days remaining'**
+  String get daysRemaining;
+
+  /// No description provided for @used.
+  ///
+  /// In en, this message translates to:
+  /// **'used'**
+  String get used;
+
+  /// No description provided for @noteOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get noteOptional;
+
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get note;
+
+  /// No description provided for @createPlannedExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Planned Expense'**
+  String get createPlannedExpense;
+
+  /// No description provided for @editPlannedExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Planned Expense'**
+  String get editPlannedExpense;
+
+  /// No description provided for @plannedExpenseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned Expense Details'**
+  String get plannedExpenseDetails;
+
+  /// No description provided for @noPlannedExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No planned expenses'**
+  String get noPlannedExpenses;
+
+  /// No description provided for @noPlannedExpensesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an upcoming expense so SmartWallet can include it in your planning.'**
+  String get noPlannedExpensesBody;
+
+  /// No description provided for @plannedExpenseCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned expense created successfully.'**
+  String get plannedExpenseCreated;
+
+  /// No description provided for @plannedExpenseUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned expense updated successfully.'**
+  String get plannedExpenseUpdated;
+
+  /// No description provided for @plannedTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Internet bill'**
+  String get plannedTitleHint;
+
+  /// No description provided for @dueDateCannotBePast.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date cannot be in the past.'**
+  String get dueDateCannotBePast;
+
+  /// No description provided for @overdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get overdue;
+
+  /// No description provided for @dueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get dueDate;
+
+  /// No description provided for @recurrence.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurrence'**
+  String get recurrence;
+
+  /// No description provided for @recurrenceNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get recurrenceNone;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @yearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get yearly;
+
+  /// No description provided for @markAsPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Paid'**
+  String get markAsPaid;
+
+  /// No description provided for @confirmPaymentDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm payment date'**
+  String get confirmPaymentDate;
+
+  /// No description provided for @plannedMarkedPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned expense marked as paid. A real expense transaction was created.'**
+  String get plannedMarkedPaid;
+
+  /// No description provided for @cancelPlannedExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Planned Expense'**
+  String get cancelPlannedExpense;
+
+  /// No description provided for @cancelPlannedExpenseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this item in cancelled history without creating a transaction?'**
+  String get cancelPlannedExpenseBody;
+
+  /// No description provided for @keepPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Planned'**
+  String get keepPlanned;
+
+  /// No description provided for @plannedCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned expense cancelled.'**
+  String get plannedCancelled;
+
+  /// No description provided for @deletePlannedExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Planned Expense'**
+  String get deletePlannedExpense;
+
+  /// No description provided for @deletePlannedExpenseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the planned item from your visible planning list.'**
+  String get deletePlannedExpenseBody;
+
+  /// No description provided for @plannedDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned expense deleted.'**
+  String get plannedDeleted;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get fieldRequired;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @safeToSpend.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe to Spend'**
+  String get safeToSpend;
+
+  /// No description provided for @budgetWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget warning'**
+  String get budgetWarning;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @upcomingExpenseCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 upcoming expense} other{{count} upcoming expenses}}'**
+  String upcomingExpenseCount(num count);
+
+  /// No description provided for @upcomingExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Expenses'**
+  String get upcomingExpenses;
+
+  /// No description provided for @noUpcomingExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming planned expenses.'**
+  String get noUpcomingExpenses;
+
+  /// No description provided for @increased.
+  ///
+  /// In en, this message translates to:
+  /// **'increased'**
+  String get increased;
+
+  /// No description provided for @decreased.
+  ///
+  /// In en, this message translates to:
+  /// **'decreased'**
+  String get decreased;
+
+  /// No description provided for @unchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'unchanged'**
+  String get unchanged;
+
+  /// No description provided for @budgetUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget unavailable.'**
+  String get budgetUnavailable;
+
+  /// No description provided for @plannedExpenseUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned expense unavailable.'**
+  String get plannedExpenseUnavailable;
+
+  /// No description provided for @budgetConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This budget changed elsewhere. Reload the latest version before editing again.'**
+  String get budgetConflict;
+
+  /// No description provided for @plannedExpenseConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This planned expense changed elsewhere. Reload the latest version before continuing.'**
+  String get plannedExpenseConflict;
+
+  /// No description provided for @budgetWarningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is at {percentage}% of its monthly limit.'**
+  String budgetWarningMessage(String category, String percentage);
+
+  /// No description provided for @weeklyComparisonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending {direction} by {percentage}% versus the same days last week.'**
+  String weeklyComparisonMessage(String percentage, String direction);
+
+  /// No description provided for @topSpendingCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Top category: {category} ({amount})'**
+  String topSpendingCategoryMessage(String category, String amount);
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// No description provided for @paid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paid;
+
+  /// No description provided for @cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get cancelled;
+
+  /// No description provided for @spent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get spent;
+
+  /// No description provided for @category.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// No description provided for @relatedExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Related expenses'**
+  String get relatedExpenses;
+
+  /// No description provided for @noRelatedExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses have been recorded for this budget yet.'**
+  String get noRelatedExpenses;
+
+  /// No description provided for @relatedExpensesHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Active expenses in this category during this budget month are counted here.'**
+  String get relatedExpensesHelper;
+
+  /// No description provided for @relatedExpensesLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Related expenses could not be loaded. Your budget totals are still available.'**
+  String get relatedExpensesLoadError;
+
+  /// No description provided for @noRelatedExpensesForMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses in this category have been recorded for this budget month yet.'**
+  String get noRelatedExpensesForMonth;
+
+  /// No description provided for @budgetPerformanceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets: {safe} safe, {warning} warning, {exceeded} over limit.'**
+  String budgetPerformanceMessage(int safe, int warning, int exceeded);
+
+  /// No description provided for @upcomingWeekMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next 7 days: {count} planned expenses totaling {amount}.'**
+  String upcomingWeekMessage(int count, String amount);
+
+  /// No description provided for @weeklyInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Insights'**
+  String get weeklyInsights;
+
+  /// No description provided for @weeklyInsightsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A live summary from your real spending and plans.'**
+  String get weeklyInsightsSubtitle;
+
+  /// No description provided for @spentThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this week'**
+  String get spentThisWeek;
+
+  /// No description provided for @weeklyComparisonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough previous-week spending yet for a meaningful comparison.'**
+  String get weeklyComparisonUnavailable;
+
+  /// No description provided for @noWeeklySpending.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses recorded this week yet.'**
+  String get noWeeklySpending;
+
+  /// No description provided for @noActiveBudgetsThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'No active budgets for this month yet.'**
+  String get noActiveBudgetsThisMonth;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @weeklySummaryComparisonIncreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending increased by {percentage}% compared with last week.'**
+  String weeklySummaryComparisonIncreased(String percentage);
+
+  /// No description provided for @weeklySummaryComparisonDecreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending decreased by {percentage}% compared with last week.'**
+  String weeklySummaryComparisonDecreased(String percentage);
+
+  /// No description provided for @weeklySummaryComparisonUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending was unchanged compared with last week.'**
+  String get weeklySummaryComparisonUnchanged;
+
+  /// No description provided for @weeklySummaryComparisonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough previous-week spending yet to compare.'**
+  String get weeklySummaryComparisonUnavailable;
+
+  /// No description provided for @weeklySummaryTopCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} was your highest spending category.'**
+  String weeklySummaryTopCategory(String category);
+
+  /// No description provided for @weeklySummaryNoSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses recorded this week yet.'**
+  String get weeklySummaryNoSpending;
+
+  /// No description provided for @weeklyInsightsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly insights are temporarily unavailable.'**
+  String get weeklyInsightsUnavailable;
+
+  /// No description provided for @spendingComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending Comparison'**
+  String get spendingComparison;
+
+  /// No description provided for @spendingIncreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending increased'**
+  String get spendingIncreased;
+
+  /// No description provided for @spendingDecreased.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending decreased'**
+  String get spendingDecreased;
+
+  /// No description provided for @spendingUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending unchanged'**
+  String get spendingUnchanged;
+
+  /// No description provided for @spendingIncreasedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending increased by {percentage}% compared with last week.'**
+  String spendingIncreasedMessage(String percentage);
+
+  /// No description provided for @spendingIncreasedCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending increased by {percentage}% compared with last week. {category} was your highest spending category this week.'**
+  String spendingIncreasedCategoryMessage(String percentage, String category);
+
+  /// No description provided for @spendingDecreasedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending decreased by {percentage}% compared with last week.'**
+  String spendingDecreasedMessage(String percentage);
+
+  /// No description provided for @spendingDecreasedCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending decreased by {percentage}% compared with last week. {category} was your highest spending category this week.'**
+  String spendingDecreasedCategoryMessage(String percentage, String category);
+
+  /// No description provided for @spendingUnchangedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending was unchanged compared with the same days last week.'**
+  String get spendingUnchangedMessage;
+
+  /// No description provided for @highestCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Category'**
+  String get highestCategory;
+
+  /// No description provided for @highestCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} was your highest spending category this week.'**
+  String highestCategoryMessage(String category);
+
+  /// No description provided for @highestCategoryUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No spending category is available for this week yet.'**
+  String get highestCategoryUnavailable;
+
+  /// No description provided for @budgetPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Performance'**
+  String get budgetPerformance;
+
+  /// No description provided for @budgetWithinLimitsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You stayed within your limits for {within} out of {total} active budgets.'**
+  String budgetWithinLimitsMessage(int within, int total);
+
+  /// No description provided for @upcomingFourteenDaysMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{You have no upcoming planned expenses in the next 14 days.} =1{You have 1 upcoming planned expense in the next 14 days.} other{You have {count} upcoming planned expenses in the next 14 days.}}'**
+  String upcomingFourteenDaysMessage(int count);
 }
 
 class _AppLocalizationsDelegate

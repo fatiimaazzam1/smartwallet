@@ -324,5 +324,243 @@
         "type": "int"
       }
     }
+  },
+  "budgets": "Budgets",
+  "planned": "Planned",
+  "createBudget": "Create Budget",
+  "editBudget": "Edit Budget",
+  "budgetDetails": "Budget Details",
+  "noBudgetsYet": "No budgets yet",
+  "noBudgetsBody": "Create a monthly category budget to track spending against a real limit.",
+  "totalPlannedBudget": "Total planned budget",
+  "monthlyLimit": "Monthly limit",
+  "budgetMonth": "Budget month",
+  "selectBudgetMonth": "Select budget month",
+  "budgetCreated": "Budget created successfully.",
+  "budgetUpdated": "Budget updated successfully.",
+  "deleteBudget": "Delete Budget",
+  "deleteBudgetBody": "This removes the budget from active planning. Existing transactions are not deleted.",
+  "budgetDeleted": "Budget deleted successfully.",
+  "remaining": "Remaining",
+  "daysRemaining": "Days remaining",
+  "used": "used",
+  "noteOptional": "Note (optional)",
+  "note": "Note",
+  "createPlannedExpense": "Create Planned Expense",
+  "editPlannedExpense": "Edit Planned Expense",
+  "plannedExpenseDetails": "Planned Expense Details",
+  "noPlannedExpenses": "No planned expenses",
+  "noPlannedExpensesBody": "Add an upcoming expense so SmartWallet can include it in your planning.",
+  "plannedExpenseCreated": "Planned expense created successfully.",
+  "plannedExpenseUpdated": "Planned expense updated successfully.",
+  "plannedTitleHint": "e.g. Internet bill",
+  "dueDateCannotBePast": "Due date cannot be in the past.",
+  "overdue": "Overdue",
+  "dueDate": "Due date",
+  "recurrence": "Recurrence",
+  "recurrenceNone": "None",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "markAsPaid": "Mark as Paid",
+  "confirmPaymentDate": "Confirm payment date",
+  "plannedMarkedPaid": "Planned expense marked as paid. A real expense transaction was created.",
+  "cancelPlannedExpense": "Cancel Planned Expense",
+  "cancelPlannedExpenseBody": "Keep this item in cancelled history without creating a transaction?",
+  "keepPlanned": "Keep Planned",
+  "plannedCancelled": "Planned expense cancelled.",
+  "deletePlannedExpense": "Delete Planned Expense",
+  "deletePlannedExpenseBody": "This removes the planned item from your visible planning list.",
+  "plannedDeleted": "Planned expense deleted.",
+  "fieldRequired": "This field is required.",
+  "title": "Title",
+  "safeToSpend": "Safe to Spend",
+  "budgetWarning": "Budget warning",
+  "total": "Total",
+  "upcomingExpenseCount": "{count, plural, =1{1 upcoming expense} other{{count} upcoming expenses}}",
+  "upcomingExpenses": "Upcoming Expenses",
+  "noUpcomingExpenses": "No upcoming planned expenses.",
+  "increased": "increased",
+  "decreased": "decreased",
+  "unchanged": "unchanged",
+  "budgetUnavailable": "Budget unavailable.",
+  "plannedExpenseUnavailable": "Planned expense unavailable.",
+  "budgetConflict": "This budget changed elsewhere. Reload the latest version before editing again.",
+  "plannedExpenseConflict": "This planned expense changed elsewhere. Reload the latest version before continuing.",
+  "budgetWarningMessage": "{category} is at {percentage}% of its monthly limit.",
+  "@budgetWarningMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklyComparisonMessage": "Spending {direction} by {percentage}% versus the same days last week.",
+  "@weeklyComparisonMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "direction": {
+        "type": "String"
+      }
+    }
+  },
+  "topSpendingCategoryMessage": "Top category: {category} ({amount})",
+  "@topSpendingCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "upcoming": "Upcoming",
+  "paid": "Paid",
+  "cancelled": "Cancelled",
+  "spent": "Spent",
+  "category": "Category",
+  "relatedExpenses": "Related expenses",
+  "noRelatedExpenses": "No expenses have been recorded for this budget yet.",
+  "relatedExpensesHelper": "Active expenses in this category during this budget month are counted here.",
+  "relatedExpensesLoadError": "Related expenses could not be loaded. Your budget totals are still available.",
+  "noRelatedExpensesForMonth": "No expenses in this category have been recorded for this budget month yet.",
+  "budgetPerformanceMessage": "Budgets: {safe} safe, {warning} warning, {exceeded} over limit.",
+  "@budgetPerformanceMessage": {
+    "placeholders": {
+      "safe": {
+        "type": "int"
+      },
+      "warning": {
+        "type": "int"
+      },
+      "exceeded": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingWeekMessage": "Next 7 days: {count} planned expenses totaling {amount}.",
+  "@upcomingWeekMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklyInsights": "Weekly Insights",
+  "weeklyInsightsSubtitle": "A live summary from your real spending and plans.",
+  "spentThisWeek": "Spent this week",
+  "weeklyComparisonUnavailable": "Not enough previous-week spending yet for a meaningful comparison.",
+  "noWeeklySpending": "No expenses recorded this week yet.",
+  "noActiveBudgetsThisMonth": "No active budgets for this month yet.",
+  "viewDetails": "View Details",
+  "weeklySummaryComparisonIncreased": "Your spending increased by {percentage}% compared with last week.",
+  "@weeklySummaryComparisonIncreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonDecreased": "Your spending decreased by {percentage}% compared with last week.",
+  "@weeklySummaryComparisonDecreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonUnchanged": "Your spending was unchanged compared with last week.",
+  "weeklySummaryComparisonUnavailable": "Not enough previous-week spending yet to compare.",
+  "weeklySummaryTopCategory": "{category} was your highest spending category.",
+  "@weeklySummaryTopCategory": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryNoSpending": "No expenses recorded this week yet.",
+  "weeklyInsightsUnavailable": "Weekly insights are temporarily unavailable.",
+  "spendingComparison": "Spending Comparison",
+  "spendingIncreased": "Spending increased",
+  "spendingDecreased": "Spending decreased",
+  "spendingUnchanged": "Spending unchanged",
+  "spendingIncreasedMessage": "Your spending increased by {percentage}% compared with last week.",
+  "@spendingIncreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingIncreasedCategoryMessage": "Your spending increased by {percentage}% compared with last week. {category} was your highest spending category this week.",
+  "@spendingIncreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedMessage": "Your spending decreased by {percentage}% compared with last week.",
+  "@spendingDecreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedCategoryMessage": "Your spending decreased by {percentage}% compared with last week. {category} was your highest spending category this week.",
+  "@spendingDecreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingUnchangedMessage": "Your spending was unchanged compared with the same days last week.",
+  "highestCategory": "Highest Category",
+  "highestCategoryMessage": "{category} was your highest spending category this week.",
+  "@highestCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "highestCategoryUnavailable": "No spending category is available for this week yet.",
+  "budgetPerformance": "Budget Performance",
+  "budgetWithinLimitsMessage": "You stayed within your limits for {within} out of {total} active budgets.",
+  "@budgetWithinLimitsMessage": {
+    "placeholders": {
+      "within": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingFourteenDaysMessage": "{count, plural, =0{You have no upcoming planned expenses in the next 14 days.} =1{You have 1 upcoming planned expense in the next 14 days.} other{You have {count} upcoming planned expenses in the next 14 days.}}",
+  "@upcomingFourteenDaysMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

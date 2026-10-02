@@ -22,6 +22,20 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/auth/presentation/screens/verify_email_screen.dart';
 import '../../features/auth/presentation/screens/verify_password_reset_code_screen.dart';
+import '../../features/budgets/data/repositories/budget_repository.dart';
+import '../../features/budgets/presentation/controllers/budget_controller.dart';
+import '../../features/budgets/presentation/controllers/budget_details_controller.dart';
+import '../../features/budgets/presentation/controllers/budget_form_controller.dart';
+import '../../features/budgets/presentation/screens/budget_details_screen.dart';
+import '../../features/budgets/presentation/screens/budget_form_screen.dart';
+import '../../features/dashboard/presentation/controllers/dashboard_controller.dart';
+import '../../features/dashboard/presentation/screens/weekly_insights_screen.dart';
+import '../../features/planned_expenses/data/repositories/planned_expense_repository.dart';
+import '../../features/planned_expenses/presentation/controllers/planned_expense_controller.dart';
+import '../../features/planned_expenses/presentation/controllers/planned_expense_details_controller.dart';
+import '../../features/planned_expenses/presentation/controllers/planned_expense_form_controller.dart';
+import '../../features/planned_expenses/presentation/screens/planned_expense_details_screen.dart';
+import '../../features/planned_expenses/presentation/screens/planned_expense_form_screen.dart';
 import '../../features/categories/presentation/controllers/category_controller.dart';
 import '../../features/categories/presentation/screens/manage_categories_screen.dart';
 import '../../features/transactions/data/models/transaction_type.dart';
@@ -50,13 +64,23 @@ final class AppRouter {
     required CategoryController categoryController,
     required TransactionRepository transactionRepository,
     required TransactionHistoryController transactionHistoryController,
+    required BudgetRepository budgetRepository,
+    required BudgetController budgetController,
+    required PlannedExpenseRepository plannedExpenseRepository,
+    required PlannedExpenseController plannedExpenseController,
+    required DashboardController dashboardController,
   }) : _onboardingStorage = onboardingStorage,
        _authRepository = authRepository,
        _profileController = profileController,
        _walletController = walletController,
        _categoryController = categoryController,
        _transactionRepository = transactionRepository,
-       _transactionHistoryController = transactionHistoryController {
+       _transactionHistoryController = transactionHistoryController,
+       _budgetRepository = budgetRepository,
+       _budgetController = budgetController,
+       _plannedExpenseRepository = plannedExpenseRepository,
+       _plannedExpenseController = plannedExpenseController,
+       _dashboardController = dashboardController {
     router = GoRouter(
       initialLocation: AppRoutes.startupPath,
       redirect: _redirect,
@@ -76,6 +100,11 @@ final class AppRouter {
   final CategoryController _categoryController;
   final TransactionRepository _transactionRepository;
   final TransactionHistoryController _transactionHistoryController;
+  final BudgetRepository _budgetRepository;
+  final BudgetController _budgetController;
+  final PlannedExpenseRepository _plannedExpenseRepository;
+  final PlannedExpenseController _plannedExpenseController;
+  final DashboardController _dashboardController;
 
   late final GoRouter router;
 
@@ -84,10 +113,13 @@ final class AppRouter {
 
     final bool isProtectedRoute =
         location == AppRoutes.homePath ||
+        location == AppRoutes.weeklyInsightsPath ||
         location == AppRoutes.editProfilePath ||
         location == AppRoutes.preferencesPath ||
         location == AppRoutes.categoriesPath ||
-        location.startsWith('/transactions/');
+        location.startsWith('/transactions/') ||
+        location.startsWith('/budgets/') ||
+        location.startsWith('/planned-expenses/');
 
     if (isProtectedRoute && !_authRepository.hasAccessToken) {
       return AppRoutes.loginPath;
@@ -344,6 +376,15 @@ final class AppRouter {
               ChangeNotifierProvider<TransactionHistoryController>.value(
                 value: _transactionHistoryController,
               ),
+              ChangeNotifierProvider<BudgetController>.value(
+                value: _budgetController,
+              ),
+              ChangeNotifierProvider<PlannedExpenseController>.value(
+                value: _plannedExpenseController,
+              ),
+              ChangeNotifierProvider<DashboardController>.value(
+                value: _dashboardController,
+              ),
             ],
             child: MainShellScreen(
               onEditProfile: () =>
@@ -366,11 +407,55 @@ final class AppRouter {
                   },
                 );
               },
+              onCreateBudget: () {
+                context.pushNamed<bool>(AppRoutes.createBudgetName);
+              },
+              onOpenBudget: (int budgetId) {
+                context.pushNamed<bool>(
+                  AppRoutes.budgetDetailsName,
+                  pathParameters: <String, String>{'budgetId': '$budgetId'},
+                );
+              },
+              onCreatePlannedExpense: () {
+                context.pushNamed<bool>(AppRoutes.createPlannedExpenseName);
+              },
+              onOpenPlannedExpense: (int plannedExpenseId) {
+                context.pushNamed<bool>(
+                  AppRoutes.plannedExpenseDetailsName,
+                  pathParameters: <String, String>{
+                    'plannedExpenseId': '$plannedExpenseId',
+                  },
+                );
+              },
+              onOpenWeeklyInsights: () {
+                context.pushNamed(AppRoutes.weeklyInsightsName);
+              },
               onLogoutSuccess: () {
                 _transactionHistoryController.clear();
+                _budgetController.clear();
+                _plannedExpenseController.clear();
+                _dashboardController.clear();
                 _walletController.clear();
                 _categoryController.clear();
                 context.goNamed(AppRoutes.loginName);
+              },
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.weeklyInsightsName,
+        path: AppRoutes.weeklyInsightsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return ChangeNotifierProvider<DashboardController>.value(
+            value: _dashboardController,
+            child: WeeklyInsightsScreen(
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.goNamed(AppRoutes.homeName);
+                }
               },
             ),
           );
@@ -398,8 +483,15 @@ final class AppRouter {
         name: AppRoutes.preferencesName,
         path: AppRoutes.preferencesPath,
         builder: (BuildContext context, GoRouterState state) {
-          return ChangeNotifierProvider<ProfileController>.value(
-            value: _profileController,
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<ProfileController>.value(
+                value: _profileController,
+              ),
+              ChangeNotifierProvider<DashboardController>.value(
+                value: _dashboardController,
+              ),
+            ],
             child: PreferencesScreen(
               onBack: () {
                 if (context.canPop()) {
@@ -448,6 +540,12 @@ final class AppRouter {
               ChangeNotifierProvider<TransactionHistoryController>.value(
                 value: _transactionHistoryController,
               ),
+              ChangeNotifierProvider<BudgetController>.value(
+                value: _budgetController,
+              ),
+              ChangeNotifierProvider<DashboardController>.value(
+                value: _dashboardController,
+              ),
               ChangeNotifierProvider<AddTransactionController>(
                 create: (_) => AddTransactionController(
                   transactionRepository: _transactionRepository,
@@ -476,6 +574,12 @@ final class AppRouter {
               ChangeNotifierProvider<TransactionHistoryController>.value(
                 value: _transactionHistoryController,
               ),
+              ChangeNotifierProvider<BudgetController>.value(
+                value: _budgetController,
+              ),
+              ChangeNotifierProvider<DashboardController>.value(
+                value: _dashboardController,
+              ),
               ChangeNotifierProvider<AddTransactionController>(
                 create: (_) => AddTransactionController(
                   transactionRepository: _transactionRepository,
@@ -502,6 +606,12 @@ final class AppRouter {
               ),
               ChangeNotifierProvider<TransactionHistoryController>.value(
                 value: _transactionHistoryController,
+              ),
+              ChangeNotifierProvider<BudgetController>.value(
+                value: _budgetController,
+              ),
+              ChangeNotifierProvider<DashboardController>.value(
+                value: _dashboardController,
               ),
               ChangeNotifierProvider<TransactionDetailsController>(
                 create: (_) => TransactionDetailsController(
@@ -541,6 +651,12 @@ final class AppRouter {
               ChangeNotifierProvider<TransactionHistoryController>.value(
                 value: _transactionHistoryController,
               ),
+              ChangeNotifierProvider<BudgetController>.value(
+                value: _budgetController,
+              ),
+              ChangeNotifierProvider<DashboardController>.value(
+                value: _dashboardController,
+              ),
               ChangeNotifierProvider<EditTransactionController>(
                 create: (_) => EditTransactionController(
                   transactionRepository: _transactionRepository,
@@ -549,6 +665,135 @@ final class AppRouter {
               ),
             ],
             child: const EditTransactionScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.createBudgetName,
+        path: AppRoutes.createBudgetPath,
+        builder: (BuildContext context, GoRouterState state) {
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<CategoryController>.value(value: _categoryController),
+              ChangeNotifierProvider<BudgetController>.value(value: _budgetController),
+              ChangeNotifierProvider<DashboardController>.value(value: _dashboardController),
+              ChangeNotifierProvider<BudgetFormController>(
+                create: (_) => BudgetFormController(repository: _budgetRepository),
+              ),
+            ],
+            child: const BudgetFormScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.budgetDetailsName,
+        path: AppRoutes.budgetDetailsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          final int budgetId = int.tryParse(state.pathParameters['budgetId'] ?? '') ?? -1;
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<ProfileController>.value(value: _profileController),
+              ChangeNotifierProvider<BudgetController>.value(value: _budgetController),
+              ChangeNotifierProvider<DashboardController>.value(value: _dashboardController),
+              ChangeNotifierProvider<BudgetDetailsController>(
+                create: (_) => BudgetDetailsController(
+                  repository: _budgetRepository,
+                  budgetId: budgetId,
+                ),
+              ),
+            ],
+            child: BudgetDetailsScreen(
+              onEdit: () => context.pushNamed<bool>(
+                AppRoutes.editBudgetName,
+                pathParameters: <String, String>{'budgetId': '$budgetId'},
+              ),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.editBudgetName,
+        path: AppRoutes.editBudgetPath,
+        builder: (BuildContext context, GoRouterState state) {
+          final int budgetId = int.tryParse(state.pathParameters['budgetId'] ?? '') ?? -1;
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<CategoryController>.value(value: _categoryController),
+              ChangeNotifierProvider<BudgetController>.value(value: _budgetController),
+              ChangeNotifierProvider<DashboardController>.value(value: _dashboardController),
+              ChangeNotifierProvider<BudgetFormController>(
+                create: (_) => BudgetFormController(repository: _budgetRepository),
+              ),
+            ],
+            child: BudgetFormScreen(budgetId: budgetId),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.createPlannedExpenseName,
+        path: AppRoutes.createPlannedExpensePath,
+        builder: (BuildContext context, GoRouterState state) {
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<ProfileController>.value(value: _profileController),
+              ChangeNotifierProvider<CategoryController>.value(value: _categoryController),
+              ChangeNotifierProvider<PlannedExpenseController>.value(value: _plannedExpenseController),
+              ChangeNotifierProvider<DashboardController>.value(value: _dashboardController),
+              ChangeNotifierProvider<PlannedExpenseFormController>(
+                create: (_) => PlannedExpenseFormController(repository: _plannedExpenseRepository),
+              ),
+            ],
+            child: const PlannedExpenseFormScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.plannedExpenseDetailsName,
+        path: AppRoutes.plannedExpenseDetailsPath,
+        builder: (BuildContext context, GoRouterState state) {
+          final int plannedExpenseId = int.tryParse(state.pathParameters['plannedExpenseId'] ?? '') ?? -1;
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<ProfileController>.value(value: _profileController),
+              ChangeNotifierProvider<WalletController>.value(value: _walletController),
+              ChangeNotifierProvider<TransactionHistoryController>.value(value: _transactionHistoryController),
+              ChangeNotifierProvider<BudgetController>.value(value: _budgetController),
+              ChangeNotifierProvider<PlannedExpenseController>.value(value: _plannedExpenseController),
+              ChangeNotifierProvider<DashboardController>.value(value: _dashboardController),
+              ChangeNotifierProvider<PlannedExpenseDetailsController>(
+                create: (_) => PlannedExpenseDetailsController(
+                  repository: _plannedExpenseRepository,
+                  plannedExpenseId: plannedExpenseId,
+                ),
+              ),
+            ],
+            child: PlannedExpenseDetailsScreen(
+              onEdit: () => context.pushNamed<bool>(
+                AppRoutes.editPlannedExpenseName,
+                pathParameters: <String, String>{
+                  'plannedExpenseId': '$plannedExpenseId',
+                },
+              ),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.editPlannedExpenseName,
+        path: AppRoutes.editPlannedExpensePath,
+        builder: (BuildContext context, GoRouterState state) {
+          final int plannedExpenseId = int.tryParse(state.pathParameters['plannedExpenseId'] ?? '') ?? -1;
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider<ProfileController>.value(value: _profileController),
+              ChangeNotifierProvider<CategoryController>.value(value: _categoryController),
+              ChangeNotifierProvider<PlannedExpenseController>.value(value: _plannedExpenseController),
+              ChangeNotifierProvider<DashboardController>.value(value: _dashboardController),
+              ChangeNotifierProvider<PlannedExpenseFormController>(
+                create: (_) => PlannedExpenseFormController(repository: _plannedExpenseRepository),
+              ),
+            ],
+            child: PlannedExpenseFormScreen(plannedExpenseId: plannedExpenseId),
           );
         },
       ),

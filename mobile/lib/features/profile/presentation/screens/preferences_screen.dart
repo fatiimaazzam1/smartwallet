@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +11,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_status_message.dart';
+import '../../../dashboard/presentation/controllers/dashboard_controller.dart';
 import '../../data/models/user_preferences_model.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/profile_load_failure.dart';
@@ -54,6 +57,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     if (!mounted || !success) {
       return;
     }
+
+    unawaited(context.read<DashboardController>().load(force: true));
 
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
     messenger
@@ -192,25 +197,6 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                               onChanged: (DateFormatPreference value) => _update(
                                 draft.copyWith(dateFormat: value),
                               ),
-                            ),
-                            const Divider(height: 1),
-                            _DropdownTile<DashboardPeriodPreference>(
-                              label: l10n.dashboardPeriod,
-                              value: draft.dashboardPeriod,
-                              enabled: !controller.isSavingPreferences,
-                              items: DashboardPeriodPreference.values,
-                              itemLabel: (DashboardPeriodPreference value) {
-                                switch (value) {
-                                  case DashboardPeriodPreference.currentMonth:
-                                    return l10n.currentMonth;
-                                  case DashboardPeriodPreference.lastThirtyDays:
-                                    return l10n.lastThirtyDays;
-                                }
-                              },
-                              onChanged:
-                                  (DashboardPeriodPreference value) => _update(
-                                    draft.copyWith(dashboardPeriod: value),
-                                  ),
                             ),
                           ],
                         ),

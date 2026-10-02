@@ -15,6 +15,14 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/data/datasources/auth_local_data_source.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/budgets/data/datasources/budget_remote_data_source.dart';
+import 'features/budgets/data/repositories/budget_repository.dart';
+import 'features/budgets/presentation/controllers/budget_controller.dart';
+import 'features/dashboard/data/repositories/dashboard_repository.dart';
+import 'features/dashboard/presentation/controllers/dashboard_controller.dart';
+import 'features/planned_expenses/data/datasources/planned_expense_remote_data_source.dart';
+import 'features/planned_expenses/data/repositories/planned_expense_repository.dart';
+import 'features/planned_expenses/presentation/controllers/planned_expense_controller.dart';
 import 'features/categories/data/datasources/category_remote_data_source.dart';
 import 'features/categories/data/repositories/category_repository.dart';
 import 'features/categories/presentation/controllers/category_controller.dart';
@@ -75,6 +83,24 @@ void main() {
   final TransactionHistoryController transactionHistoryController =
       TransactionHistoryController(transactionRepository: transactionRepository);
 
+  final BudgetRepository budgetRepository = BudgetRepository(
+    remoteDataSource: BudgetRemoteDataSource(apiClient: apiClient),
+  );
+  final BudgetController budgetController = BudgetController(
+    repository: budgetRepository,
+  );
+
+  final PlannedExpenseRepository plannedExpenseRepository =
+      PlannedExpenseRepository(
+        remoteDataSource: PlannedExpenseRemoteDataSource(apiClient: apiClient),
+      );
+  final PlannedExpenseController plannedExpenseController =
+      PlannedExpenseController(repository: plannedExpenseRepository);
+
+  final DashboardController dashboardController = DashboardController(
+    repository: DashboardRepository(apiClient: apiClient),
+  );
+
   final AppRouter appRouter = AppRouter(
     onboardingStorage: OnboardingStorage(),
     authRepository: authRepository,
@@ -83,6 +109,11 @@ void main() {
     categoryController: categoryController,
     transactionRepository: transactionRepository,
     transactionHistoryController: transactionHistoryController,
+    budgetRepository: budgetRepository,
+    budgetController: budgetController,
+    plannedExpenseRepository: plannedExpenseRepository,
+    plannedExpenseController: plannedExpenseController,
+    dashboardController: dashboardController,
   );
 
   runApp(

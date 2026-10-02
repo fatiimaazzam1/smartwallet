@@ -891,4 +891,387 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get transactionRequestConflict =>
       'This transaction request conflicts with a previous submission. Review the form before trying again.';
+
+  @override
+  String get budgets => 'Budgets';
+
+  @override
+  String get planned => 'Planned';
+
+  @override
+  String get createBudget => 'Create Budget';
+
+  @override
+  String get editBudget => 'Edit Budget';
+
+  @override
+  String get budgetDetails => 'Budget Details';
+
+  @override
+  String get noBudgetsYet => 'No budgets yet';
+
+  @override
+  String get noBudgetsBody =>
+      'Create a monthly category budget to track spending against a real limit.';
+
+  @override
+  String get totalPlannedBudget => 'Total planned budget';
+
+  @override
+  String get monthlyLimit => 'Monthly limit';
+
+  @override
+  String get budgetMonth => 'Budget month';
+
+  @override
+  String get selectBudgetMonth => 'Select budget month';
+
+  @override
+  String get budgetCreated => 'Budget created successfully.';
+
+  @override
+  String get budgetUpdated => 'Budget updated successfully.';
+
+  @override
+  String get deleteBudget => 'Delete Budget';
+
+  @override
+  String get deleteBudgetBody =>
+      'This removes the budget from active planning. Existing transactions are not deleted.';
+
+  @override
+  String get budgetDeleted => 'Budget deleted successfully.';
+
+  @override
+  String get remaining => 'Remaining';
+
+  @override
+  String get daysRemaining => 'Days remaining';
+
+  @override
+  String get used => 'used';
+
+  @override
+  String get noteOptional => 'Note (optional)';
+
+  @override
+  String get note => 'Note';
+
+  @override
+  String get createPlannedExpense => 'Create Planned Expense';
+
+  @override
+  String get editPlannedExpense => 'Edit Planned Expense';
+
+  @override
+  String get plannedExpenseDetails => 'Planned Expense Details';
+
+  @override
+  String get noPlannedExpenses => 'No planned expenses';
+
+  @override
+  String get noPlannedExpensesBody =>
+      'Add an upcoming expense so SmartWallet can include it in your planning.';
+
+  @override
+  String get plannedExpenseCreated => 'Planned expense created successfully.';
+
+  @override
+  String get plannedExpenseUpdated => 'Planned expense updated successfully.';
+
+  @override
+  String get plannedTitleHint => 'e.g. Internet bill';
+
+  @override
+  String get dueDateCannotBePast => 'Due date cannot be in the past.';
+
+  @override
+  String get overdue => 'Overdue';
+
+  @override
+  String get dueDate => 'Due date';
+
+  @override
+  String get recurrence => 'Recurrence';
+
+  @override
+  String get recurrenceNone => 'None';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get yearly => 'Yearly';
+
+  @override
+  String get markAsPaid => 'Mark as Paid';
+
+  @override
+  String get confirmPaymentDate => 'Confirm payment date';
+
+  @override
+  String get plannedMarkedPaid =>
+      'Planned expense marked as paid. A real expense transaction was created.';
+
+  @override
+  String get cancelPlannedExpense => 'Cancel Planned Expense';
+
+  @override
+  String get cancelPlannedExpenseBody =>
+      'Keep this item in cancelled history without creating a transaction?';
+
+  @override
+  String get keepPlanned => 'Keep Planned';
+
+  @override
+  String get plannedCancelled => 'Planned expense cancelled.';
+
+  @override
+  String get deletePlannedExpense => 'Delete Planned Expense';
+
+  @override
+  String get deletePlannedExpenseBody =>
+      'This removes the planned item from your visible planning list.';
+
+  @override
+  String get plannedDeleted => 'Planned expense deleted.';
+
+  @override
+  String get fieldRequired => 'This field is required.';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get safeToSpend => 'Safe to Spend';
+
+  @override
+  String get budgetWarning => 'Budget warning';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String upcomingExpenseCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count upcoming expenses',
+      one: '1 upcoming expense',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get upcomingExpenses => 'Upcoming Expenses';
+
+  @override
+  String get noUpcomingExpenses => 'No upcoming planned expenses.';
+
+  @override
+  String get increased => 'increased';
+
+  @override
+  String get decreased => 'decreased';
+
+  @override
+  String get unchanged => 'unchanged';
+
+  @override
+  String get budgetUnavailable => 'Budget unavailable.';
+
+  @override
+  String get plannedExpenseUnavailable => 'Planned expense unavailable.';
+
+  @override
+  String get budgetConflict =>
+      'This budget changed elsewhere. Reload the latest version before editing again.';
+
+  @override
+  String get plannedExpenseConflict =>
+      'This planned expense changed elsewhere. Reload the latest version before continuing.';
+
+  @override
+  String budgetWarningMessage(String category, String percentage) {
+    return '$category is at $percentage% of its monthly limit.';
+  }
+
+  @override
+  String weeklyComparisonMessage(String percentage, String direction) {
+    return 'Spending $direction by $percentage% versus the same days last week.';
+  }
+
+  @override
+  String topSpendingCategoryMessage(String category, String amount) {
+    return 'Top category: $category ($amount)';
+  }
+
+  @override
+  String get upcoming => 'Upcoming';
+
+  @override
+  String get paid => 'Paid';
+
+  @override
+  String get cancelled => 'Cancelled';
+
+  @override
+  String get spent => 'Spent';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get relatedExpenses => 'Related expenses';
+
+  @override
+  String get noRelatedExpenses =>
+      'No expenses have been recorded for this budget yet.';
+
+  @override
+  String get relatedExpensesHelper =>
+      'Active expenses in this category during this budget month are counted here.';
+
+  @override
+  String get relatedExpensesLoadError =>
+      'Related expenses could not be loaded. Your budget totals are still available.';
+
+  @override
+  String get noRelatedExpensesForMonth =>
+      'No expenses in this category have been recorded for this budget month yet.';
+
+  @override
+  String budgetPerformanceMessage(int safe, int warning, int exceeded) {
+    return 'Budgets: $safe safe, $warning warning, $exceeded over limit.';
+  }
+
+  @override
+  String upcomingWeekMessage(int count, String amount) {
+    return 'Next 7 days: $count planned expenses totaling $amount.';
+  }
+
+  @override
+  String get weeklyInsights => 'Weekly Insights';
+
+  @override
+  String get weeklyInsightsSubtitle =>
+      'A live summary from your real spending and plans.';
+
+  @override
+  String get spentThisWeek => 'Spent this week';
+
+  @override
+  String get weeklyComparisonUnavailable =>
+      'Not enough previous-week spending yet for a meaningful comparison.';
+
+  @override
+  String get noWeeklySpending => 'No expenses recorded this week yet.';
+
+  @override
+  String get noActiveBudgetsThisMonth =>
+      'No active budgets for this month yet.';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String weeklySummaryComparisonIncreased(String percentage) {
+    return 'Your spending increased by $percentage% compared with last week.';
+  }
+
+  @override
+  String weeklySummaryComparisonDecreased(String percentage) {
+    return 'Your spending decreased by $percentage% compared with last week.';
+  }
+
+  @override
+  String get weeklySummaryComparisonUnchanged =>
+      'Your spending was unchanged compared with last week.';
+
+  @override
+  String get weeklySummaryComparisonUnavailable =>
+      'Not enough previous-week spending yet to compare.';
+
+  @override
+  String weeklySummaryTopCategory(String category) {
+    return '$category was your highest spending category.';
+  }
+
+  @override
+  String get weeklySummaryNoSpending => 'No expenses recorded this week yet.';
+
+  @override
+  String get weeklyInsightsUnavailable =>
+      'Weekly insights are temporarily unavailable.';
+
+  @override
+  String get spendingComparison => 'Spending Comparison';
+
+  @override
+  String get spendingIncreased => 'Spending increased';
+
+  @override
+  String get spendingDecreased => 'Spending decreased';
+
+  @override
+  String get spendingUnchanged => 'Spending unchanged';
+
+  @override
+  String spendingIncreasedMessage(String percentage) {
+    return 'Your spending increased by $percentage% compared with last week.';
+  }
+
+  @override
+  String spendingIncreasedCategoryMessage(String percentage, String category) {
+    return 'Your spending increased by $percentage% compared with last week. $category was your highest spending category this week.';
+  }
+
+  @override
+  String spendingDecreasedMessage(String percentage) {
+    return 'Your spending decreased by $percentage% compared with last week.';
+  }
+
+  @override
+  String spendingDecreasedCategoryMessage(String percentage, String category) {
+    return 'Your spending decreased by $percentage% compared with last week. $category was your highest spending category this week.';
+  }
+
+  @override
+  String get spendingUnchangedMessage =>
+      'Your spending was unchanged compared with the same days last week.';
+
+  @override
+  String get highestCategory => 'Highest Category';
+
+  @override
+  String highestCategoryMessage(String category) {
+    return '$category was your highest spending category this week.';
+  }
+
+  @override
+  String get highestCategoryUnavailable =>
+      'No spending category is available for this week yet.';
+
+  @override
+  String get budgetPerformance => 'Budget Performance';
+
+  @override
+  String budgetWithinLimitsMessage(int within, int total) {
+    return 'You stayed within your limits for $within out of $total active budgets.';
+  }
+
+  @override
+  String upcomingFourteenDaysMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You have $count upcoming planned expenses in the next 14 days.',
+      one: 'You have 1 upcoming planned expense in the next 14 days.',
+      zero: 'You have no upcoming planned expenses in the next 14 days.',
+    );
+    return '$_temp0';
+  }
 }

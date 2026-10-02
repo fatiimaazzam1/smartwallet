@@ -10,11 +10,15 @@ import '../../../../core/errors/localized_error_message.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_status_message.dart';
+import '../../../dashboard/data/models/dashboard_model.dart';
+import '../../../dashboard/presentation/controllers/dashboard_controller.dart';
+import '../../../planned_expenses/presentation/widgets/planned_expense_card.dart';
 import '../../../profile/data/models/user_preferences_model.dart';
 import '../../../profile/data/models/user_profile_model.dart';
 import '../../../profile/presentation/controllers/profile_controller.dart';
 import '../../../transactions/presentation/controllers/transaction_history_controller.dart';
 import '../../../transactions/presentation/widgets/transaction_card.dart';
+import '../../../transactions/utils/transaction_formatters.dart';
 import '../../../wallet/data/models/wallet_model.dart';
 import '../../../wallet/presentation/controllers/wallet_controller.dart';
 
@@ -24,6 +28,9 @@ class HomeScreen extends StatefulWidget {
     required this.onAddExpense,
     required this.onViewAllTransactions,
     required this.onOpenTransaction,
+    required this.onOpenPlannedExpense,
+    required this.onOpenBudget,
+    required this.onOpenWeeklyInsights,
     super.key,
   });
 
@@ -31,6 +38,9 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback onAddExpense;
   final VoidCallback onViewAllTransactions;
   final ValueChanged<int> onOpenTransaction;
+  final ValueChanged<int> onOpenPlannedExpense;
+  final ValueChanged<int> onOpenBudget;
+  final VoidCallback onOpenWeeklyInsights;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context.read<ProfileController>().load(force: true),
       context.read<WalletController>().load(force: true),
       context.read<TransactionHistoryController>().loadRecent(force: true),
+      context.read<DashboardController>().load(force: true),
     ]);
   }
 
@@ -53,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final WalletController walletController = context.watch<WalletController>();
     final TransactionHistoryController transactionController = context
         .watch<TransactionHistoryController>();
+    final DashboardController dashboardController = context.watch<DashboardController>();
     final UserProfileModel? profile = profileController.profile;
     final UserPreferencesModel preferences =
         profileController.preferences ?? UserPreferencesModel.defaults;
@@ -87,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             else
               _WalletBalanceCard(
                 wallet: wallet,
+                dashboard: dashboardController.data,
                 showBalance: showBalance,
                 onToggleVisibility: () {
                   setState(() {
@@ -126,6 +139,31 @@ class _HomeScreenState extends State<HomeScreen> {
               onAddIncome: widget.onAddIncome,
               onAddExpense: widget.onAddExpense,
             ),
+            if (dashboardController.data == null && dashboardController.error != null) ...[
+              const SizedBox(height: AppSpacing.lg),
+              _HomeSectionError(
+                message: LocalizedErrorMessage.fromException(
+                  context,
+                  dashboardController.error,
+                ),
+                onRetry: () => dashboardController.load(force: true),
+              ),
+            ],
+            if (dashboardController.data != null) ...[
+              const SizedBox(height: AppSpacing.xl),
+              _PlanningSnapshotSection(
+                dashboard: dashboardController.data!,
+                preferences: preferences,
+                showBalance: showBalance,
+                onOpenPlannedExpense: widget.onOpenPlannedExpense,
+                onOpenBudget: widget.onOpenBudget,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              _WeeklyInsightsSection(
+                insights: dashboardController.data!.weeklyInsights,
+                onViewDetails: widget.onOpenWeeklyInsights,
+              ),
+            ],
             const SizedBox(height: AppSpacing.xl),
             _RecentTransactionsSection(
               controller: transactionController,
@@ -187,11 +225,13 @@ class _HomeHeader extends StatelessWidget {
 class _WalletBalanceCard extends StatelessWidget {
   const _WalletBalanceCard({
     required this.wallet,
+    required this.dashboard,
     required this.showBalance,
     required this.onToggleVisibility,
   });
 
   final WalletModel wallet;
+  final DashboardModel? dashboard;
   final bool showBalance;
   final VoidCallback onToggleVisibility;
 
@@ -265,6 +305,47 @@ class _WalletBalanceCard extends StatelessWidget {
               ),
             ),
           ),
+          if (dashboard != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.surface.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.savings_outlined, color: AppColors.surface, size: 20),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      context.l10n.safeToSpend,
+                      style: AppTextStyles.helperText.copyWith(
+                        color: AppColors.surface.withValues(alpha: 0.78),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  Directionality(
+                    textDirection: ui.TextDirection.ltr,
+                    child: Text(
+                      showBalance
+                          ? TransactionFormatters.formatCurrencyAmount(
+                              context: context,
+                              currencyCode: dashboard!.currencyCode,
+                              amount: dashboard!.safeToSpend,
+                            )
+                          : '••••',
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.surface,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.xl),
           Container(
             padding: const EdgeInsets.symmetric(
@@ -395,6 +476,313 @@ class _QuickActionCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class _PlanningSnapshotSection extends StatelessWidget {
+  const _PlanningSnapshotSection({
+    required this.dashboard,
+    required this.preferences,
+    required this.showBalance,
+    required this.onOpenPlannedExpense,
+    required this.onOpenBudget,
+  });
+
+  final DashboardModel dashboard;
+  final UserPreferencesModel preferences;
+  final bool showBalance;
+  final ValueChanged<int> onOpenPlannedExpense;
+  final ValueChanged<int> onOpenBudget;
+
+  @override
+  Widget build(BuildContext context) {
+    final DashboardBudgetWarningModel? warning = dashboard.budgetWarning;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (warning != null) ...[
+          Material(
+            color: warning.health == 'LIMIT_REACHED'
+                ? AppColors.error.withValues(alpha: 0.08)
+                : const Color(0xFFFFF7ED),
+            borderRadius: BorderRadius.circular(18),
+            child: InkWell(
+              onTap: () => onOpenBudget(warning.budgetId),
+              borderRadius: BorderRadius.circular(18),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Row(
+                  children: [
+                    Icon(
+                      warning.health == 'LIMIT_REACHED'
+                          ? Icons.error_outline_rounded
+                          : Icons.warning_amber_rounded,
+                      color: warning.health == 'LIMIT_REACHED'
+                          ? AppColors.error
+                          : Colors.orange.shade800,
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.l10n.budgetWarning,
+                            style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            context.l10n.budgetWarningMessage(
+                              warning.categoryName,
+                              warning.percentageUsed,
+                            ),
+                            style: AppTextStyles.helperText,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right_rounded),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    context.l10n.upcomingExpenses,
+                    style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    context.l10n.upcomingExpenseCount(
+                      dashboard.upcomingExpenseCount,
+                    ),
+                    style: AppTextStyles.helperText,
+                  ),
+                ],
+              ),
+            ),
+            if (dashboard.upcomingExpenseCount > 0)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Text(context.l10n.total, style: AppTextStyles.helperText),
+                  const SizedBox(height: 2),
+                  Directionality(
+                    textDirection: ui.TextDirection.ltr,
+                    child: Text(
+                      showBalance
+                          ? TransactionFormatters.formatCurrencyAmount(
+                              context: context,
+                              currencyCode: dashboard.currencyCode,
+                              amount: dashboard.upcomingExpenseTotal,
+                            )
+                          : '••••',
+                      style: AppTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (dashboard.upcomingExpenses.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Text(
+              context.l10n.noUpcomingExpenses,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.helperText,
+            ),
+          )
+        else
+          for (int index = 0; index < dashboard.upcomingExpenses.length; index++) ...[
+            PlannedExpenseCard(
+              item: dashboard.upcomingExpenses[index],
+              dateFormat: preferences.dateFormat,
+              onTap: () => onOpenPlannedExpense(dashboard.upcomingExpenses[index].id),
+            ),
+            if (index != dashboard.upcomingExpenses.length - 1)
+              const SizedBox(height: AppSpacing.sm),
+          ],
+      ],
+    );
+  }
+}
+
+class _WeeklyInsightsSection extends StatelessWidget {
+  const _WeeklyInsightsSection({
+    required this.insights,
+    required this.onViewDetails,
+  });
+
+  final DashboardWeeklyInsightsModel insights;
+  final VoidCallback onViewDetails;
+
+  String _comparisonSummary(BuildContext context) {
+    if (!insights.comparisonAvailable) {
+      return context.l10n.weeklySummaryComparisonUnavailable;
+    }
+
+    final String percentage = insights.comparisonPercentage ?? '0.00';
+    return switch (insights.comparisonDirection) {
+      'INCREASED' => context.l10n.weeklySummaryComparisonIncreased(percentage),
+      'DECREASED' => context.l10n.weeklySummaryComparisonDecreased(percentage),
+      _ => context.l10n.weeklySummaryComparisonUnchanged,
+    };
+  }
+
+  String _categorySummary(BuildContext context) {
+    final DashboardTopSpendingCategoryModel? top =
+        insights.topSpendingCategory;
+    if (top == null) {
+      return context.l10n.weeklySummaryNoSpending;
+    }
+    return context.l10n.weeklySummaryTopCategory(top.categoryName);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE9EDF2),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.border),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x0D0F172A),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  context.l10n.weeklyInsights,
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: onViewDetails,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                    vertical: 4,
+                  ),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  foregroundColor: AppColors.textPrimary,
+                ),
+                child: Text(
+                  context.l10n.viewDetails,
+                  style: AppTextStyles.smallLink.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _WeeklySummaryBullet(text: _comparisonSummary(context)),
+          const SizedBox(height: AppSpacing.xs),
+          _WeeklySummaryBullet(text: _categorySummary(context)),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeeklySummaryBullet extends StatelessWidget {
+  const _WeeklySummaryBullet({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 7),
+          child: Container(
+            width: 4,
+            height: 4,
+            decoration: const BoxDecoration(
+              color: AppColors.textPrimary,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Text(
+            text,
+            style: AppTextStyles.helperText.copyWith(
+              color: AppColors.textPrimary,
+              height: 1.45,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HomeSectionError extends StatelessWidget {
+  const _HomeSectionError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: <Widget>[
+          const Icon(Icons.cloud_off_outlined, color: AppColors.textSecondary),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              message,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.helperText,
+            ),
+          ),
+          TextButton(onPressed: onRetry, child: Text(context.l10n.retry)),
+        ],
       ),
     );
   }

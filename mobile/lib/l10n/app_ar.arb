@@ -324,5 +324,243 @@
         "type": "int"
       }
     }
+  },
+  "budgets": "الميزانيات",
+  "planned": "المخطط",
+  "createBudget": "إنشاء ميزانية",
+  "editBudget": "تعديل الميزانية",
+  "budgetDetails": "تفاصيل الميزانية",
+  "noBudgetsYet": "لا توجد ميزانيات بعد",
+  "noBudgetsBody": "أنشئ ميزانية شهرية لفئة المصروفات لمتابعة الإنفاق مقابل حد فعلي.",
+  "totalPlannedBudget": "إجمالي الميزانية المخططة",
+  "monthlyLimit": "الحد الشهري",
+  "budgetMonth": "شهر الميزانية",
+  "selectBudgetMonth": "اختر شهر الميزانية",
+  "budgetCreated": "تم إنشاء الميزانية بنجاح.",
+  "budgetUpdated": "تم تحديث الميزانية بنجاح.",
+  "deleteBudget": "حذف الميزانية",
+  "deleteBudgetBody": "يؤدي هذا إلى إزالة الميزانية من التخطيط النشط. لن يتم حذف المعاملات الحالية.",
+  "budgetDeleted": "تم حذف الميزانية بنجاح.",
+  "remaining": "المتبقي",
+  "daysRemaining": "الأيام المتبقية",
+  "used": "مستخدم",
+  "noteOptional": "ملاحظة (اختياري)",
+  "note": "ملاحظة",
+  "createPlannedExpense": "إنشاء مصروف مخطط",
+  "editPlannedExpense": "تعديل المصروف المخطط",
+  "plannedExpenseDetails": "تفاصيل المصروف المخطط",
+  "noPlannedExpenses": "لا توجد مصروفات مخططة",
+  "noPlannedExpensesBody": "أضف مصروفاً قادماً ليتم احتسابه ضمن التخطيط.",
+  "plannedExpenseCreated": "تم إنشاء المصروف المخطط بنجاح.",
+  "plannedExpenseUpdated": "تم تحديث المصروف المخطط بنجاح.",
+  "plannedTitleHint": "مثال: فاتورة الإنترنت",
+  "dueDateCannotBePast": "لا يمكن أن يكون تاريخ الاستحقاق في الماضي.",
+  "overdue": "متأخر",
+  "dueDate": "تاريخ الاستحقاق",
+  "recurrence": "التكرار",
+  "recurrenceNone": "بدون تكرار",
+  "weekly": "أسبوعي",
+  "monthly": "شهري",
+  "yearly": "سنوي",
+  "markAsPaid": "تحديد كمدفوع",
+  "confirmPaymentDate": "تأكيد تاريخ الدفع",
+  "plannedMarkedPaid": "تم تحديد المصروف المخطط كمدفوع وإنشاء معاملة مصروف فعلية.",
+  "cancelPlannedExpense": "إلغاء المصروف المخطط",
+  "cancelPlannedExpenseBody": "الاحتفاظ بهذا العنصر في سجل الملغاة من دون إنشاء معاملة؟",
+  "keepPlanned": "الإبقاء عليه",
+  "plannedCancelled": "تم إلغاء المصروف المخطط.",
+  "deletePlannedExpense": "حذف المصروف المخطط",
+  "deletePlannedExpenseBody": "يؤدي هذا إلى إزالة العنصر المخطط من قائمة التخطيط الظاهرة.",
+  "plannedDeleted": "تم حذف المصروف المخطط.",
+  "fieldRequired": "هذا الحقل مطلوب.",
+  "title": "العنوان",
+  "safeToSpend": "المتاح الآمن للإنفاق",
+  "budgetWarning": "تنبيه الميزانية",
+  "total": "الإجمالي",
+  "upcomingExpenseCount": "{count, plural, =1{مصروف قادم واحد} other{{count} مصروفات قادمة}}",
+  "upcomingExpenses": "المصروفات القادمة",
+  "noUpcomingExpenses": "لا توجد مصروفات مخططة قادمة.",
+  "increased": "زاد",
+  "decreased": "انخفض",
+  "unchanged": "لم يتغير",
+  "budgetUnavailable": "الميزانية غير متاحة.",
+  "plannedExpenseUnavailable": "المصروف المخطط غير متاح.",
+  "budgetConflict": "تم تعديل هذه الميزانية في مكان آخر. أعد تحميل أحدث نسخة قبل التعديل.",
+  "plannedExpenseConflict": "تم تعديل هذا المصروف المخطط في مكان آخر. أعد تحميل أحدث نسخة قبل المتابعة.",
+  "budgetWarningMessage": "فئة {category} وصلت إلى {percentage}% من حدها الشهري.",
+  "@budgetWarningMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklyComparisonMessage": "الإنفاق {direction} بنسبة {percentage}% مقارنة بنفس الأيام من الأسبوع الماضي.",
+  "@weeklyComparisonMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "direction": {
+        "type": "String"
+      }
+    }
+  },
+  "topSpendingCategoryMessage": "أعلى فئة: {category} ({amount})",
+  "@topSpendingCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "upcoming": "القادمة",
+  "paid": "المدفوعة",
+  "cancelled": "الملغاة",
+  "spent": "المصروف",
+  "category": "الفئة",
+  "relatedExpenses": "المصروفات المرتبطة",
+  "noRelatedExpenses": "لا توجد مصروفات مسجلة لهذه الميزانية حتى الآن.",
+  "relatedExpensesHelper": "تظهر هنا المصروفات النشطة في هذه الفئة خلال شهر الميزانية.",
+  "relatedExpensesLoadError": "تعذر تحميل المصروفات المرتبطة. ما زالت إجماليات الميزانية متاحة.",
+  "noRelatedExpensesForMonth": "لا توجد مصروفات مسجلة في هذه الفئة خلال شهر الميزانية حتى الآن.",
+  "budgetPerformanceMessage": "الميزانيات: {safe} آمنة، {warning} تحذير، {exceeded} تجاوزت الحد.",
+  "@budgetPerformanceMessage": {
+    "placeholders": {
+      "safe": {
+        "type": "int"
+      },
+      "warning": {
+        "type": "int"
+      },
+      "exceeded": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingWeekMessage": "الأيام السبعة القادمة: {count} مصروفات مخططة بإجمالي {amount}.",
+  "@upcomingWeekMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklyInsights": "رؤى أسبوعية",
+  "weeklyInsightsSubtitle": "ملخص مباشر مبني على إنفاقك وخططك الفعلية.",
+  "spentThisWeek": "المصروف هذا الأسبوع",
+  "weeklyComparisonUnavailable": "لا توجد بيانات كافية من الأسبوع الماضي لإجراء مقارنة مفيدة بعد.",
+  "noWeeklySpending": "لا توجد مصروفات مسجلة هذا الأسبوع حتى الآن.",
+  "noActiveBudgetsThisMonth": "لا توجد ميزانيات نشطة لهذا الشهر حتى الآن.",
+  "viewDetails": "عرض التفاصيل",
+  "weeklySummaryComparisonIncreased": "زاد إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@weeklySummaryComparisonIncreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonDecreased": "انخفض إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@weeklySummaryComparisonDecreased": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryComparisonUnchanged": "لم يتغير إنفاقك مقارنة بالأسبوع الماضي.",
+  "weeklySummaryComparisonUnavailable": "لا توجد بيانات كافية من الأسبوع الماضي للمقارنة بعد.",
+  "weeklySummaryTopCategory": "كانت {category} أعلى فئة إنفاق لديك.",
+  "@weeklySummaryTopCategory": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "weeklySummaryNoSpending": "لا توجد مصروفات مسجلة هذا الأسبوع حتى الآن.",
+  "weeklyInsightsUnavailable": "الرؤى الأسبوعية غير متاحة مؤقتًا.",
+  "spendingComparison": "مقارنة الإنفاق",
+  "spendingIncreased": "زاد الإنفاق",
+  "spendingDecreased": "انخفض الإنفاق",
+  "spendingUnchanged": "لم يتغير الإنفاق",
+  "spendingIncreasedMessage": "زاد إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@spendingIncreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingIncreasedCategoryMessage": "زاد إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي. كانت {category} أعلى فئة إنفاق لديك هذا الأسبوع.",
+  "@spendingIncreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedMessage": "انخفض إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي.",
+  "@spendingDecreasedMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingDecreasedCategoryMessage": "انخفض إنفاقك بنسبة {percentage}% مقارنة بالأسبوع الماضي. كانت {category} أعلى فئة إنفاق لديك هذا الأسبوع.",
+  "@spendingDecreasedCategoryMessage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spendingUnchangedMessage": "لم يتغير إنفاقك مقارنة بنفس الأيام من الأسبوع الماضي.",
+  "highestCategory": "أعلى فئة",
+  "highestCategoryMessage": "كانت {category} أعلى فئة إنفاق لديك هذا الأسبوع.",
+  "@highestCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "highestCategoryUnavailable": "لا توجد فئة إنفاق متاحة لهذا الأسبوع حتى الآن.",
+  "budgetPerformance": "أداء الميزانية",
+  "budgetWithinLimitsMessage": "بقيت ضمن الحدود في {within} من أصل {total} ميزانيات نشطة.",
+  "@budgetWithinLimitsMessage": {
+    "placeholders": {
+      "within": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingFourteenDaysMessage": "{count, plural, =0{لا توجد مصروفات مخططة قادمة خلال الأيام الـ14 القادمة.} =1{لديك مصروف مخطط قادم واحد خلال الأيام الـ14 القادمة.} other{لديك {count} مصروفات مخططة قادمة خلال الأيام الـ14 القادمة.}}",
+  "@upcomingFourteenDaysMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

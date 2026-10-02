@@ -15,6 +15,19 @@ abstract final class TransactionDecimal {
     return smallestUnits != null && smallestUnits > BigInt.zero;
   }
 
+
+  static bool isValidNonNegative(String value) {
+    final String normalized = value.trim();
+    if (!_pattern.hasMatch(normalized)) {
+      return false;
+    }
+
+    final BigInt? smallestUnits = BigInt.tryParse(
+      normalized.replaceAll('.', ''),
+    );
+    return smallestUnits != null && smallestUnits >= BigInt.zero;
+  }
+
   static String requireValidPositive(String value) {
     final String normalized = value.trim();
     if (!isValidPositive(normalized)) {
