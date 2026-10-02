@@ -17,6 +17,7 @@ import com.smartwallet.backend.category.domain.Category;
 import com.smartwallet.backend.category.domain.CategoryStatus;
 import com.smartwallet.backend.category.exception.CategoryNotFoundException;
 import com.smartwallet.backend.category.repository.CategoryRepository;
+import com.smartwallet.backend.plannedexpense.repository.PlannedExpenseRepository;
 import com.smartwallet.backend.transaction.domain.TransactionStatus;
 import com.smartwallet.backend.transaction.domain.TransactionType;
 import com.smartwallet.backend.transaction.domain.WalletTransaction;
@@ -44,6 +45,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final WalletRepository walletRepository;
     private final CategoryRepository categoryRepository;
+    private final PlannedExpenseRepository plannedExpenseRepository;
 
     @Transactional
     public TransactionResponse createTransaction(
@@ -115,7 +117,14 @@ public class TransactionService {
             Long transactionId
     ) {
         Wallet wallet = findCurrentUserWallet(currentUserId);
-        return toResponse(findActiveTransaction(wallet.getId(), transactionId));
+        WalletTransaction transaction = findActiveTransaction(
+                wallet.getId(),
+                transactionId
+        );
+        return toResponse(
+                transaction,
+                isPlannedExpensePayment(wallet.getId(), transactionId)
+        );
     }
 
     @Transactional(readOnly = true)
@@ -175,6 +184,7 @@ public class TransactionService {
                 wallet.getId(),
                 transactionId
         );
+        requireMutableTransaction(wallet.getId(), transactionId);
 
         if (transaction.getVersion() != request.version()) {
             throw new TransactionConflictException(
@@ -218,6 +228,7 @@ public class TransactionService {
                 wallet.getId(),
                 transactionId
         );
+        requireMutableTransaction(wallet.getId(), transactionId);
         transaction.archive();
         transactionRepository.saveAndFlush(transaction);
     }
@@ -237,6 +248,25 @@ public class TransactionService {
                         TransactionStatus.ACTIVE
                 )
                 .orElseThrow(TransactionNotFoundException::new);
+    }
+
+    private void requireMutableTransaction(
+            Long walletId,
+            Long transactionId
+    ) {
+        if (isPlannedExpensePayment(walletId, transactionId)) {
+            throw new TransactionConflictException(
+                    "Transactions created from paid planned expenses cannot be edited or deleted"
+            );
+        }
+    }
+
+    private boolean isPlannedExpensePayment(
+            Long walletId,
+            Long transactionId
+    ) {
+        return plannedExpenseRepository
+                .existsByWalletIdAndPaidTransactionId(walletId, transactionId);
     }
 
     private Category findUsableCategory(
@@ -403,6 +433,13 @@ public class TransactionService {
     }
 
     private TransactionResponse toResponse(WalletTransaction transaction) {
+        return toResponse(transaction, false);
+    }
+
+    private TransactionResponse toResponse(
+            WalletTransaction transaction,
+            boolean plannedExpensePayment
+    ) {
         Category category = transaction.getCategory();
 
         return new TransactionResponse(
@@ -414,6 +451,7 @@ public class TransactionService {
                 transaction.getOccurredOn(),
                 transaction.getWallet().getCurrencyCode(),
                 RECORDED_STATUS,
+                plannedExpensePayment,
                 new TransactionCategoryResponse(
                         category.getId(),
                         category.getName(),

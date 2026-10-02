@@ -13,6 +13,7 @@ final class TransactionModel {
     required this.status,
     required this.category,
     this.description,
+    this.plannedExpensePayment = false,
   });
 
   final int id;
@@ -27,7 +28,7 @@ final class TransactionModel {
   final String currencyCode;
   final String status;
   final TransactionCategoryModel category;
-
+  final bool plannedExpensePayment;
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     final Object? rawId = json['id'];
@@ -39,6 +40,7 @@ final class TransactionModel {
     final Object? rawCurrencyCode = json['currencyCode'];
     final Object? rawStatus = json['status'];
     final Object? rawCategory = json['category'];
+    final Object? rawPlannedExpensePayment = json['plannedExpensePayment'];
 
     if (rawId is! num ||
         rawVersion is! num ||
@@ -48,7 +50,9 @@ final class TransactionModel {
         rawOccurredOn is! String ||
         rawCurrencyCode is! String ||
         rawStatus is! String ||
-        rawCategory is! Map<String, dynamic>) {
+        rawCategory is! Map<String, dynamic> ||
+        (rawPlannedExpensePayment != null &&
+            rawPlannedExpensePayment is! bool)) {
       throw const FormatException('Invalid transaction response');
     }
 
@@ -90,6 +94,7 @@ final class TransactionModel {
       currencyCode: currencyCode,
       status: status,
       category: TransactionCategoryModel.fromJson(rawCategory),
+      plannedExpensePayment: rawPlannedExpensePayment as bool? ?? false,
     );
   }
 }

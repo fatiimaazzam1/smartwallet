@@ -1263,4 +1263,12 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get plannedExpensePaymentLockedTitle =>
+      'دفعة مرتبطة بمصروف مخطط مدفوع';
+
+  @override
+  String get plannedExpensePaymentLockedBody =>
+      'تم إنشاء هذه المعاملة عند تعليم مصروف مخطط له كمدفوع. تبقى للقراءة فقط للحفاظ على اتساق الخطة المدفوعة والرصيد والميزانيات والتحليلات.';
 }
