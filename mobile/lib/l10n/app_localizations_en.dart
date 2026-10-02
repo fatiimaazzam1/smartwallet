@@ -1274,4 +1274,11 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get plannedExpensePaymentLockedTitle => 'Paid planned expense';
+
+  @override
+  String get plannedExpensePaymentLockedBody =>
+      'This transaction was created when a planned expense was marked as paid. It is read-only so the paid plan, balance, budgets, and insights stay consistent.';
 }

@@ -31,6 +31,7 @@ import com.smartwallet.backend.category.domain.CategoryStatus;
 import com.smartwallet.backend.category.domain.CategoryType;
 import com.smartwallet.backend.category.exception.CategoryNotFoundException;
 import com.smartwallet.backend.category.repository.CategoryRepository;
+import com.smartwallet.backend.plannedexpense.repository.PlannedExpenseRepository;
 import com.smartwallet.backend.transaction.domain.TransactionStatus;
 import com.smartwallet.backend.transaction.domain.TransactionType;
 import com.smartwallet.backend.transaction.domain.WalletTransaction;
@@ -57,6 +58,9 @@ class TransactionServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
+    @Mock
+    private PlannedExpenseRepository plannedExpenseRepository;
+
     private TransactionService transactionService;
 
     @BeforeEach
@@ -64,7 +68,8 @@ class TransactionServiceTest {
         transactionService = new TransactionService(
                 transactionRepository,
                 walletRepository,
-                categoryRepository
+                categoryRepository,
+                plannedExpenseRepository
         );
     }
 
@@ -515,6 +520,70 @@ class TransactionServiceTest {
                 LocalDate.now()
         );
         assertThat(response.category().id()).isEqualTo(5L);
+    }
+
+    @Test
+    void updateTransactionRejectsPaidPlannedExpensePayment() {
+        Wallet wallet = wallet(10L, "USD");
+        WalletTransaction transaction = mock(WalletTransaction.class);
+
+        when(walletRepository.findByUserId(1L))
+                .thenReturn(Optional.of(wallet));
+        when(transactionRepository.findByIdAndWalletIdAndStatus(
+                20L,
+                10L,
+                TransactionStatus.ACTIVE
+        )).thenReturn(Optional.of(transaction));
+        when(plannedExpenseRepository.existsByWalletIdAndPaidTransactionId(
+                10L,
+                20L
+        )).thenReturn(true);
+
+        assertThatThrownBy(() -> transactionService.updateTransaction(
+                1L,
+                20L,
+                new UpdateTransactionRequest(
+                        0L,
+                        new BigDecimal("30.00"),
+                        5L,
+                        LocalDate.now(),
+                        "Changed"
+                )
+        ))
+                .isInstanceOf(TransactionConflictException.class)
+                .hasMessageContaining("paid planned expenses");
+
+        verify(transaction, never()).update(any(), any(), any(), any());
+        verify(transactionRepository, never())
+                .saveAndFlush(any(WalletTransaction.class));
+    }
+
+    @Test
+    void archiveTransactionRejectsPaidPlannedExpensePayment() {
+        Wallet wallet = wallet(10L, "USD");
+        WalletTransaction transaction = mock(WalletTransaction.class);
+
+        when(walletRepository.findByUserId(1L))
+                .thenReturn(Optional.of(wallet));
+        when(transactionRepository.findByIdAndWalletIdAndStatus(
+                20L,
+                10L,
+                TransactionStatus.ACTIVE
+        )).thenReturn(Optional.of(transaction));
+        when(plannedExpenseRepository.existsByWalletIdAndPaidTransactionId(
+                10L,
+                20L
+        )).thenReturn(true);
+
+        assertThatThrownBy(() ->
+                transactionService.archiveTransaction(1L, 20L)
+        )
+                .isInstanceOf(TransactionConflictException.class)
+                .hasMessageContaining("paid planned expenses");
+
+        verify(transaction, never()).archive();
+        verify(transactionRepository, never())
+                .saveAndFlush(any(WalletTransaction.class));
     }
 
     @Test

@@ -196,6 +196,7 @@ Rules:
 - payment idempotency through `payment_client_request_id`
 - optimistic versioning
 - Mark as Paid creates the real expense transaction and marks the plan Paid inside one database transaction
+- the generated payment transaction is read-only while linked to the paid planned expense; direct transaction edit/archive is rejected to keep financial history consistent
 - a recurring paid plan may create the next occurrence according to the recurrence rule
 
 ### Dashboard and Weekly Insights

@@ -136,7 +136,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         appBar: AppBar(
           title: Text(context.l10n.transactionDetails),
           actions: [
-            if (transaction != null)
+            if (transaction != null && !transaction.plannedExpensePayment)
               TextButton(
                 onPressed: controller.isDeleting || _isOpeningEdit ? null : _edit,
                 style: TextButton.styleFrom(
@@ -292,22 +292,61 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
             ),
           ),
           const SizedBox(height: AppSpacing.xl),
-          TextButton(
-            onPressed: controller.isDeleting || _isOpeningEdit
-                ? null
-                : _delete,
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-              minimumSize: const Size.fromHeight(48),
+          if (transaction.plannedExpensePayment)
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: AppColors.accent.withValues(alpha: 0.24),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.lock_outline,
+                    color: AppColors.accent,
+                    size: 22,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          context.l10n.plannedExpensePaymentLockedTitle,
+                          style: AppTextStyles.subtitle,
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          context.l10n.plannedExpensePaymentLockedBody,
+                          style: AppTextStyles.helperText,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            TextButton(
+              onPressed: controller.isDeleting || _isOpeningEdit
+                  ? null
+                  : _delete,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.error,
+                minimumSize: const Size.fromHeight(48),
+              ),
+              child: controller.isDeleting
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2.2),
+                    )
+                  : Text(context.l10n.deleteTransaction),
             ),
-            child: controller.isDeleting
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2.2),
-                  )
-                : Text(context.l10n.deleteTransaction),
-          ),
           if (controller.error != null && !controller.isDeleting) ...[
             const SizedBox(height: AppSpacing.md),
             Text(

@@ -14,6 +14,7 @@ public record TransactionResponse(
         LocalDate occurredOn,
         String currencyCode,
         String status,
+        boolean plannedExpensePayment,
         TransactionCategoryResponse category
 ) {
 }

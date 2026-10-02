@@ -562,5 +562,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "plannedExpensePaymentLockedTitle": "Paid planned expense",
+  "plannedExpensePaymentLockedBody": "This transaction was created when a planned expense was marked as paid. It is read-only so the paid plan, balance, budgets, and insights stay consistent."
 }
