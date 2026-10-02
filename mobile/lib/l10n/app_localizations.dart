@@ -2335,6 +2335,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{You have no upcoming planned expenses in the next 14 days.} =1{You have 1 upcoming planned expense in the next 14 days.} other{You have {count} upcoming planned expenses in the next 14 days.}}'**
   String upcomingFourteenDaysMessage(int count);
+
+  /// No description provided for @plannedExpensePaymentLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid planned expense'**
+  String get plannedExpensePaymentLockedTitle;
+
+  /// No description provided for @plannedExpensePaymentLockedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This transaction was created when a planned expense was marked as paid. It is read-only so the paid plan, balance, budgets, and insights stay consistent.'**
+  String get plannedExpensePaymentLockedBody;
 }
 
 class _AppLocalizationsDelegate
